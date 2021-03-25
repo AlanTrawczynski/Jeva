@@ -1,4 +1,4 @@
-package com.example.jeva
+package com.jeva.jeva
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

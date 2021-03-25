@@ -1,4 +1,4 @@
-package com.example.jeva
+package com.jeva.jeva
 
 import org.junit.Test
 
