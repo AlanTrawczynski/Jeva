@@ -20,58 +20,76 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <EditText
-            android:id="@+id/signupName"
-            android:layout_width="246dp"
-            android:layout_marginTop="150dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ems="10"
-            android:hint="Name"
-            android:inputType="textPassword" />
 
-        <EditText
-            android:id="@+id/signupUsername"
-            android:layout_width="246dp"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:layout_width="316dp"
+            android:layout_height="469dp"
             android:layout_gravity="center"
-            android:ellipsize="start"
-            android:hint="Username"
-            android:singleLine="true"></EditText>
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/signupEmail"
-            android:layout_width="246dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="start"
-            android:hint="Email"
-            android:singleLine="true"></EditText>
+            <EditText
+                android:id="@+id/signupName"
+                android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="150dp"
+                android:ems="10"
+                android:hint="Name"
+                android:inputType="textPassword" />
 
-        <EditText
-            android:id="@+id/signupPassword"
-            android:layout_width="246dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ems="10"
-            android:hint="Password"
-            android:inputType="textPassword" />
+            <EditText
+                android:id="@+id/signupUsername"
+                android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="start"
+                android:hint="Username"
+                android:singleLine="true"></EditText>
 
-        <EditText
-            android:id="@+id/signupPasswordRepeat"
-            android:layout_width="246dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:ellipsize="start"
-            android:hint="Repeat Password"
-            android:singleLine="true"></EditText>
+            <EditText
+                android:id="@+id/signupEmail"
+                android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="start"
+                android:hint="Email"
+                android:singleLine="true"></EditText>
 
-        <Button
-            android:id="@+id/singupBtnCreate"
-            android:layout_width="246dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Create Account!" />
+            <EditText
+                android:id="@+id/signupPassword"
+                android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:hint="Password"
+                android:inputType="textPassword" />
+
+            <EditText
+                android:id="@+id/signupPasswordRepeat"
+                android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="start"
+                android:hint="Repeat Password"
+                android:singleLine="true"></EditText>
+
+            <Button
+                android:id="@+id/singupBtnCreate"
+                android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Create Account!" />
+
+            <TextView
+                android:id="@+id/signupLinkReturnToLogin"
+                android:layout_width="174dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:onClick="@android:activity_auth_signup.xml"
+                android:text="Return to login screen"
+                android:textColor="@color/purple_700" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
