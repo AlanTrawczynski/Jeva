@@ -26,6 +26,11 @@ class AuthActivity : AppCompatActivity() {
 
 
     private fun setup() {
+        loginBtnGoToSignup.setOnClickListener { setContentView(R.layout.activity_auth_signup) }
+        loginLinkForgotPassword.setOnClickListener { setContentView(R.layout.activity_auth_forgotpassword) }
+        signupLinkGoToLogin.setOnClickListener { setContentView(R.layout.activity_auth_login) }
+        forgotpwdLinkGoToLogin.setOnClickListener { setContentView(R.layout.activity_auth_login) }
+
         loginBtnLogin.setOnClickListener {
             val email = loginEmail.text.toString()
             val pwd = loginPassword.text.toString()
