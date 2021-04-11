@@ -2,6 +2,7 @@ package com.jeva.jeva
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -33,7 +34,8 @@ class AuthActivity : AppCompatActivity() {
                 logIn(email, pwd)
             }
             else {
-                // Toast
+                Log.d("loginError", "Email no válido")
+                authToast("Introduce un email válido")
             }
         }
 
@@ -45,14 +47,16 @@ class AuthActivity : AppCompatActivity() {
             val pwd2 = signupPasswordRepeat.text.toString()
 
             if (!isValidEmail(email)) {
-                // Toast
+                Log.d("signupError", "Email no válido")
+                authToast("Introduce un email válido")
             }
             else if (!isValidPassword(pwd1)) {
-                // Toast
+                Log.d("signupError", "Contraseña no válida")
+                authToast("Introduce una contraseña válida (...)")
             }
             else if (pwd1 != pwd2) {
-                Log.e("loginError", "Las contraseñas no coinciden")
-                // Toast
+                Log.d("signupError", "Las contraseñas no coinciden")
+                authToast("Las contraseñas no coinciden")
             }
             else {
                 // creo que el resto de datos de la cuenta no pueden asignarse en la creación de la cuenta
@@ -76,11 +80,13 @@ class AuthActivity : AppCompatActivity() {
                 }
                 catch (_: FirebaseAuthInvalidCredentialsException) {
                     Log.d("loginError", "Credenciales incorrectas")
+                    authToast("Credenciales incorrectas")
                 }
                 catch (e: Exception) {
                     Log.d("loginError", "Se ha producido el error: $e")
                     Log.d("loginError", "Se ha producido el error: ${e.message}")
                     Log.d("loginError", "Se ha producido el error: ${e.stackTrace}")
+                    authToast("Ha ocurrido un error, inténtelo de nuevo")
                 }
             }
         }
@@ -98,12 +104,15 @@ class AuthActivity : AppCompatActivity() {
                 }
                 catch (_: FirebaseAuthInvalidCredentialsException) {
                     Log.d("signupError", "Credenciales incorrectas")
+                    authToast("Credenciales incorrectas")
                 }
                 catch (_: FirebaseAuthUserCollisionException) {
                     Log.d("signupError", "Email en uso")
+                    authToast("El email ya se encuentra en uso")
                 }
                 catch (e: Exception) {
                     Log.d("signupError", "Se ha producido un error: $e")
+                    authToast("Ha ocurrido un error, inténtelo de nuevo")
                 }
             }
         }
@@ -117,6 +126,11 @@ class AuthActivity : AppCompatActivity() {
 
     private fun isValidPassword(pwd: String): Boolean {
         return true
+    }
+
+
+    private fun authToast(message: CharSequence) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 
 }
