@@ -1,152 +1,122 @@
 package com.jeva.jeva
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_auth.*
-import sun.rmi.runtime.Log
+import kotlinx.android.synthetic.main.activity_auth_login.*
+import kotlinx.android.synthetic.main.activity_auth_signup.*
 
 
 class AuthActivity : AppCompatActivity() {
 
-    private lateinit var auth: FirebaseAuth
+    private val auth = Firebase.auth
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.`activity_auth_log_in.xml`)
+        setContentView(R.layout.activity_auth_login)
 
         setup()
     }
 
 
     private fun setup() {
-        auth = Firebase.auth
+        loginBtnLogin.setOnClickListener {
+            val email = loginEmail.text.toString()
+            val pwd = loginPassword.text.toString()
 
-        loginButton.setOnClickListener {
-            // try login -> init home activity
-        }
-
-        signupButton.setOnClickListener {
-            if (!checkEmail()) {
-                // email error
-            }
-            else if (!checkPassword()) {
-                // pw error
+            if (isValidEmail(email)) {
+                logIn(email, pwd)
             }
             else {
-                // try signup
-                // init home activity
+                // Toast
+            }
+        }
+
+        loginBtnGoToSignup.setOnClickListener {
+            val name = signupName.text.toString()
+            val username = signupUsername.text.toString()
+            val email = signupEmail.text.toString()
+            val pwd1 = signupPassword.text.toString()
+            val pwd2 = signupPasswordRepeat.text.toString()
+
+            if (!isValidEmail(email)) {
+                // Toast
+            }
+            else if (!isValidPassword(pwd1)) {
+                // Toast
+            }
+            else if (pwd1 != pwd2) {
+                Log.e("loginError", "Las contraseñas no coinciden")
+                // Toast
+            }
+            else {
+                // creo que el resto de datos de la cuenta no pueden asignarse en la creación de la cuenta
+                // y hay que actualizarla a posteriori
+                signUp(email, pwd1)
             }
         }
     }
 
 
-    private fun checkEmail(): Boolean {
-        return true
-    }
-
-
-    private fun checkPassword(): Boolean {
-        return true
-    }
-
-
-    private fun logIn(email: String, pwd: String){
-
-        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
-
-            if (task.isSuccessful) {
-
+    private fun logIn(email: String, pwd: String) {
+        auth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener {
+            if (it.isSuccessful) {
                 val user = auth.currentUser
-
-            } else {
-
+                Log.i("User data", user!!.toString())
+                // go to home activity
+            }
+            else {
                 try {
-                    // Lanzamos error si se produce en la tarea petición como tal
-                    throw task.getException()
-
+                    throw it.exception!!
                 }
-
-                // El usuario introduce un email que no existe
-                catch (invalidEmail: FirebaseAuthInvalidUserException) {
-                    Log.d(TAG, "El email introducido no es correcto")
-
+                catch (_: FirebaseAuthInvalidCredentialsException) {
+                    Log.d("loginError", "Credenciales incorrectas")
                 }
-
-                // El usuario introduce una contraseña errónea
-                catch (wrongPassword: FirebaseAuthInvalidCredentialsException) {
-                    Log.d(TAG, "La contraseña introducida no es correcta")
-
-                }
-
-                // Capturamos cualquier otro error que pueda suceder
                 catch (e: Exception) {
-                    Log.d(TAG, "Se ha producido el error: " + e.message)
+                    Log.d("loginError", "Se ha producido el error: $e")
+                    Log.d("loginError", "Se ha producido el error: ${e.message}")
+                    Log.d("loginError", "Se ha producido el error: ${e.stackTrace}")
                 }
-
             }
-
         }
-
     }
 
 
-
-    private fun signIn(email: String, pwd1: String, pwd2: String){
-        if ( ! pwd1.equals(pwd2) ) {
-            Log.e(WARN, "La contraseña está mal repetida")
-        }
-
-        else {
-
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this){ task ->
-
-                if (task.isSuccessful()) {
-
-                    // Aquí crearemos lo que sea que vayamos a meter en la DB
-
-                }else{
-                    try {
-                        // Si sucede un error en la tarea de petición
-                        throw task.getException()
-
-                    }
-
-                    // Si la contraseña introducida es demasiado débil
-                    catch (weakPassword: FirebaseAuthWeakPasswordException) {
-
-                        Log.d(TAG, "La contraseña introducida es demasiado débil")
-
-                    }
-
-                    // Si la dirección de email está mal escrita
-                    catch (malformedEmail: FirebaseAuthInvalidCredentialsException) {
-
-                        Log.d(TAG, "La dirección de email está mal escrita")
-
-                    }
-
-                    // Si el email que se pretende usar ya tiene una cuenta asociada
-                    catch (existEmail: FirebaseAuthUserCollisionException) {
-
-                        Log.d(TAG, "El email introducido ya tiene una cuenta asociada")
-
-                    }
-
-                    // Cualquier otro tipo de error
-                    catch (e: Exception) {
-
-                        Log.d(TAG, "Se ha producido el error: " + e.message)
-
-                    }
-                }
-
+    private fun signUp(email: String, pwd: String) {
+        auth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener {
+            if (it.isSuccessful) {
+                // Aquí crearemos lo que sea que vayamos a meter en la DB
             }
-
+            else {
+                try {
+                    throw it.exception!!
+                }
+                catch (_: FirebaseAuthInvalidCredentialsException) {
+                    Log.d("signupError", "Credenciales incorrectas")
+                }
+                catch (_: FirebaseAuthUserCollisionException) {
+                    Log.d("signupError", "Email en uso")
+                }
+                catch (e: Exception) {
+                    Log.d("signupError", "Se ha producido un error: $e")
+                }
+            }
         }
     }
 
+
+    private fun isValidEmail(email: String): Boolean {
+        return true
+    }
+
+
+    private fun isValidPassword(pwd: String): Boolean {
+        return true
+    }
 
 }
