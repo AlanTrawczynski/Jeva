@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <EditText
-            android:id="@+id/signUpName"
+            android:id="@+id/signupName"
             android:layout_width="246dp"
             android:layout_marginTop="150dp"
             android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
             android:inputType="textPassword" />
 
         <EditText
-            android:id="@+id/signUpUsername"
+            android:id="@+id/signupUsername"
             android:layout_width="246dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -40,7 +40,7 @@
             android:singleLine="true"></EditText>
 
         <EditText
-            android:id="@+id/signUpEmail"
+            android:id="@+id/signupEmail"
             android:layout_width="246dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -49,7 +49,7 @@
             android:singleLine="true"></EditText>
 
         <EditText
-            android:id="@+id/signUpPassword"
+            android:id="@+id/signupPassword"
             android:layout_width="246dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -58,7 +58,7 @@
             android:inputType="textPassword" />
 
         <EditText
-            android:id="@+id/signUpPasswordRepeat"
+            android:id="@+id/signupPasswordRepeat"
             android:layout_width="246dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -67,7 +67,7 @@
             android:singleLine="true"></EditText>
 
         <Button
-            android:id="@+id/createAccountBtn"
+            android:id="@+id/singupBtnCreate"
             android:layout_width="246dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

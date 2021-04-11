@@ -22,7 +22,7 @@
 
 
         <EditText
-            android:id="@+id/emailAuth"
+            android:id="@+id/loginEmail"
             android:layout_width="246dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -33,7 +33,7 @@
             android:singleLine="true"></EditText>
 
         <EditText
-            android:id="@+id/passwordAuth"
+            android:id="@+id/loginPassword"
             android:layout_width="246dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -43,14 +43,14 @@
             android:inputType="textPassword" />
 
         <Button
-            android:id="@+id/loginButton"
+            android:id="@+id/loginBtnLogin"
             android:layout_width="246dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Log In" />
 
         <Button
-            android:id="@+id/signupButton"
+            android:id="@+id/loginBtnGoToSignup"
             android:layout_width="246dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
