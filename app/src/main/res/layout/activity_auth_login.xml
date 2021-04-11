@@ -35,7 +35,7 @@
                 android:layout_marginTop="150dp"
                 android:ellipsize="start"
                 android:hint="Email"
-                android:singleLine="true"></EditText>
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/loginPassword"
@@ -61,13 +61,12 @@
                 android:text="Sign Up" />
 
             <TextView
-                android:id="@+id/signupLinkReturnToLogin"
+                android:id="@+id/loginLinkForgotPassword"
                 android:layout_width="174dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
                 android:text="Forgot your password?"
-                android:onClick="@android:activity_auth_signup.xml"
-                android:textColor="@color/purple_700"/>
+                android:textColor="@color/purple_700" />
 
         </LinearLayout>
 

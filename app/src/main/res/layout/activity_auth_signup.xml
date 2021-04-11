@@ -44,16 +44,7 @@
                 android:layout_gravity="center"
                 android:ellipsize="start"
                 android:hint="Username"
-                android:singleLine="true"></EditText>
-
-            <EditText
-                android:id="@+id/signupEmail"
-                android:layout_width="246dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:ellipsize="start"
-                android:hint="Email"
-                android:singleLine="true"></EditText>
+                android:singleLine="true" />
 
             <EditText
                 android:id="@+id/signupPassword"
@@ -65,13 +56,22 @@
                 android:inputType="textPassword" />
 
             <EditText
+                android:id="@+id/signupEmail"
+                android:layout_width="246dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="start"
+                android:hint="Email"
+                android:singleLine="true" />
+
+            <EditText
                 android:id="@+id/signupPasswordRepeat"
                 android:layout_width="246dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:ellipsize="start"
                 android:hint="Repeat Password"
-                android:singleLine="true"></EditText>
+                android:singleLine="true" />
 
             <Button
                 android:id="@+id/singupBtnCreate"
@@ -81,11 +81,10 @@
                 android:text="Create Account!" />
 
             <TextView
-                android:id="@+id/signupLinkReturnToLogin"
+                android:id="@+id/signupLinkGoToLogin"
                 android:layout_width="174dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:onClick="@android:activity_auth_signup.xml"
+                android:layout_gravity="end"
                 android:text="Return to login screen"
                 android:textColor="@color/purple_700" />
 
