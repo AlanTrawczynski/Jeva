@@ -5,11 +5,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_auth_login.*
 import kotlinx.android.synthetic.main.activity_auth_signup.*
+import java.util.regex.Pattern
 
 
 class AuthActivity : AppCompatActivity() {
@@ -57,7 +59,7 @@ class AuthActivity : AppCompatActivity() {
             }
             else if (!isValidPassword(pwd1)) {
                 Log.d("signupError", "Contraseña no válida")
-                authToast("Introduce una contraseña válida (...)")
+                authToast("Introduce una contraseña válida: 6 o más caracteres con una letra mayúscula, una minúscula y un número")
             }
             else if (pwd1 != pwd2) {
                 Log.d("signupError", "Las contraseñas no coinciden")
@@ -66,7 +68,7 @@ class AuthActivity : AppCompatActivity() {
             else {
                 // creo que el resto de datos de la cuenta no pueden asignarse en la creación de la cuenta
                 // y hay que actualizarla a posteriori
-                signUp(email, pwd1)
+                signUp(email, pwd1, username, name)
             }
         }
     }
@@ -83,14 +85,16 @@ class AuthActivity : AppCompatActivity() {
                 try {
                     throw it.exception!!
                 }
+                catch (_: FirebaseAuthInvalidUserException) {
+                    Log.d("loginError", "Usuario no registrado o deshabilitado")
+                    authToast("El email no se encuentra registrado o ha sido deshabilitado")
+                }
                 catch (_: FirebaseAuthInvalidCredentialsException) {
-                    Log.d("loginError", "Credenciales incorrectas")
-                    authToast("Credenciales incorrectas")
+                    Log.d("loginError", "Contraseña incorrecta")
+                    authToast("Contraseña incorrecta")
                 }
                 catch (e: Exception) {
                     Log.d("loginError", "Se ha producido el error: $e")
-                    Log.d("loginError", "Se ha producido el error: ${e.message}")
-                    Log.d("loginError", "Se ha producido el error: ${e.stackTrace}")
                     authToast("Ha ocurrido un error, inténtelo de nuevo")
                 }
             }
@@ -98,7 +102,7 @@ class AuthActivity : AppCompatActivity() {
     }
 
 
-    private fun signUp(email: String, pwd: String) {
+    private fun signUp(email: String, pwd: String, username: String, name: String) {
         auth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener {
             if (it.isSuccessful) {
                 // Aquí crearemos lo que sea que vayamos a meter en la DB
@@ -106,10 +110,6 @@ class AuthActivity : AppCompatActivity() {
             else {
                 try {
                     throw it.exception!!
-                }
-                catch (_: FirebaseAuthInvalidCredentialsException) {
-                    Log.d("signupError", "Credenciales incorrectas")
-                    authToast("Credenciales incorrectas")
                 }
                 catch (_: FirebaseAuthUserCollisionException) {
                     Log.d("signupError", "Email en uso")
@@ -125,12 +125,12 @@ class AuthActivity : AppCompatActivity() {
 
 
     private fun isValidEmail(email: String): Boolean {
-        return true
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
 
     private fun isValidPassword(pwd: String): Boolean {
-        return true
+        return Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{6,}$").matcher(pwd).matches();
     }
 
 
