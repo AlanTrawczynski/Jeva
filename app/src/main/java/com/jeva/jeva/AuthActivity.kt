@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.activity_auth_forgotpassword.*
 import kotlinx.android.synthetic.main.activity_auth_login.*
 import kotlinx.android.synthetic.main.activity_auth_signup.*
 import java.util.regex.Pattern
@@ -33,7 +34,7 @@ class AuthActivity : AppCompatActivity() {
         signupLinkGoToLogin.setOnClickListener { setContentView(R.layout.activity_auth_login) }
         forgotpwdLinkGoToLogin.setOnClickListener { setContentView(R.layout.activity_auth_login) }
 
-        loginBtnLogin.setOnClickListener {
+        loginBtnSubmit.setOnClickListener {
             val email = loginEmail.text.toString()
             val pwd = loginPassword.text.toString()
 
@@ -46,7 +47,7 @@ class AuthActivity : AppCompatActivity() {
             }
         }
 
-        loginBtnGoToSignup.setOnClickListener {
+        loginBtnSubmit.setOnClickListener {
             val name = signupName.text.toString()
             val username = signupUsername.text.toString()
             val email = signupEmail.text.toString()
