@@ -58,11 +58,16 @@ class AuthActivity : AppCompatActivity() {
             val email = loginEmail.text.toString()
             val pwd = loginPassword.text.toString()
 
-            if (isValidEmail(email)) {
-                logIn(email, pwd)
-            }   else {
+            if (!isValidEmail(email)) {
                 Log.e("loginError", "Email no válido")
                 authToast("Introduce un email válido")
+            }
+            else if (!isValidPassword(pwd)) {
+                Log.e("loginError", "Contraseña no válida")
+                authToast("Introduce una contraseña válida")
+            }
+            else {
+                logIn(email, pwd)
             }
         }
     }
@@ -171,16 +176,25 @@ class AuthActivity : AppCompatActivity() {
         val email = forgotpwdEmail.text.toString()
 
         if (isValidEmail(email)) {
-            auth.sendPasswordResetEmail(email)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        Log.i("forgotPwd", "Email sent.")
-                        authToast("Se ha enviado el email")
-                    }   else {
-                        Log.d("forgotPwdError", "Failure sending the email.")
-                        authToast("Error al enviar el mensaje de restablecimiento")
+            auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.i("forgotPwd", "Email sent.")
+                    authToast("Se ha enviado el email")
+                }
+                else {
+                    try {
+                        throw task.exception!!
+                    }
+                    catch (_: FirebaseAuthInvalidUserException) {
+                        Log.d("forgotpwdError", "Email no registrado")
+                        authToast("El email no se encuentra registrado")
+                    }
+                    catch (e: Exception) {
+                        Log.d("forgotpwdError", "Se ha producido un error: $e")
+                        authToast("Ha ocurrido un error, inténtelo de nuevo")
                     }
                 }
+            }
         }
     }
 
