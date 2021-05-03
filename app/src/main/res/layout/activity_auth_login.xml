@@ -6,12 +6,22 @@
     android:layout_height="match_parent"
     tools:context=".AuthActivity">
 
+    <include
+        android:id="@+id/signupLayout"
+        layout="@layout/activity_auth_signup" />
+
+    <include
+        android:id="@+id/forgotpwdLayout"
+        layout="@layout/activity_auth_forgotpassword" />
+
     <LinearLayout
+        android:id="@+id/loginLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,8 +42,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="150dp"
                 android:ellipsize="start"
                 android:hint="Email"
+                android:inputType="textEmailAddress"
                 android:singleLine="true" />
 
             <EditText

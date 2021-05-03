@@ -2,6 +2,8 @@ package com.jeva.jeva
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -20,21 +22,37 @@ class AuthActivity : AppCompatActivity() {
 
     private val auth = Firebase.auth
     private val db = Firebase.firestore
+    private enum class LayoutType { LOGIN, SIGNUP, FORGOTPWD}
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth_login)
 
-        setup()
+        setupLogin()
+        setupSignup()
+        setupForgotpassword()
+
+        showLayout(LayoutType.LOGIN)
     }
 
 
-    private fun setup() {
-        loginBtnGoToSignup.setOnClickListener { setContentView(R.layout.activity_auth_signup) }
-        loginLinkForgotPassword.setOnClickListener { setContentView(R.layout.activity_auth_forgotpassword) }
-        signupLinkGoToLogin.setOnClickListener { setContentView(R.layout.activity_auth_login) }
-        forgotpwdLinkGoToLogin.setOnClickListener { setContentView(R.layout.activity_auth_login) }
+    private fun showLayout(layout: LayoutType) {
+        loginLayout.visibility = GONE
+        signupLayout.visibility = GONE
+        forgotpwdLayout.visibility = GONE
+
+        when (layout){
+            LayoutType.LOGIN -> loginLayout.visibility = VISIBLE
+            LayoutType.SIGNUP -> signupLayout.visibility = VISIBLE
+            LayoutType.FORGOTPWD -> forgotpwdLayout.visibility = VISIBLE
+        }
+    }
+
+
+    private fun setupLogin() {
+        loginBtnGoToSignup.setOnClickListener { showLayout(LayoutType.SIGNUP) }
+        loginLinkForgotPassword.setOnClickListener { showLayout(LayoutType.FORGOTPWD) }
 
         loginBtnSubmit.setOnClickListener {
             val email = loginEmail.text.toString()
@@ -42,14 +60,18 @@ class AuthActivity : AppCompatActivity() {
 
             if (isValidEmail(email)) {
                 logIn(email, pwd)
-            }
-            else {
-                Log.d("loginError", "Email no válido")
+            }   else {
+                Log.e("loginError", "Email no válido")
                 authToast("Introduce un email válido")
             }
         }
+    }
 
-        loginBtnSubmit.setOnClickListener {
+
+    private fun setupSignup() {
+        signupLinkGoToLogin.setOnClickListener { showLayout(LayoutType.LOGIN) }
+
+        signupBtnSubmit.setOnClickListener {
             val name = signupName.text.toString()
             val username = signupUsername.text.toString()
             val email = signupEmail.text.toString()
@@ -57,23 +79,27 @@ class AuthActivity : AppCompatActivity() {
             val pwd2 = signupPasswordRepeat.text.toString()
 
             if (!isValidEmail(email)) {
-                Log.d("signupError", "Email no válido")
+                Log.e("signupError", "Email no válido")
                 authToast("Introduce un email válido")
             }
             else if (!isValidPassword(pwd1)) {
-                Log.d("signupError", "Contraseña no válida")
+                Log.e("signupError", "Contraseña no válida")
                 authToast("Introduce una contraseña válida: 6 o más caracteres con una letra mayúscula, una minúscula y un número")
             }
             else if (pwd1 != pwd2) {
-                Log.d("signupError", "Las contraseñas no coinciden")
+                Log.e("signupError", "Las contraseñas no coinciden")
                 authToast("Las contraseñas no coinciden")
             }
             else {
-                // creo que el resto de datos de la cuenta no pueden asignarse en la creación de la cuenta
-                // y hay que actualizarla a posteriori
                 signUp(email, pwd1, username, name)
             }
         }
+    }
+
+
+    private fun setupForgotpassword() {
+        forgotpwdLinkGoToLogin.setOnClickListener { showLayout(LayoutType.LOGIN) }
+        forgotpwdBtnSubmit.setOnClickListener { forgotPwd() }
     }
 
 
@@ -89,15 +115,15 @@ class AuthActivity : AppCompatActivity() {
                     throw it.exception!!
                 }
                 catch (_: FirebaseAuthInvalidUserException) {
-                    Log.d("loginError", "Usuario no registrado o deshabilitado")
+                    Log.e("loginError", "Usuario no registrado o deshabilitado")
                     authToast("El email no se encuentra registrado o ha sido deshabilitado")
                 }
                 catch (_: FirebaseAuthInvalidCredentialsException) {
-                    Log.d("loginError", "Contraseña incorrecta")
+                    Log.e("loginError", "Contraseña incorrecta")
                     authToast("Contraseña incorrecta")
                 }
                 catch (e: Exception) {
-                    Log.d("loginError", "Se ha producido el error: $e")
+                    Log.e("loginError", "Se ha producido el error: $e")
                     authToast("Ha ocurrido un error, inténtelo de nuevo")
                 }
             }
@@ -109,19 +135,20 @@ class AuthActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener {
             if (it.isSuccessful) {
                 val city = hashMapOf(
-                        "name" to name,
-                        "username" to username
+                    "name" to name,
+                    "username" to username
                 )
 
                 db.collection("users").document(auth.currentUser.uid)
-                        .set(city)
-                        .addOnSuccessListener { /*Go to home activity*/
-                            authToast("Usuario añadido a la base de datos")
-                        }
-                        .addOnFailureListener {
-                            e -> Log.w("signUp", "Error writing document", e)
-                            authToast("Error al crear el documento de usuario")
-                        }
+                    .set(city)
+                    .addOnSuccessListener {
+                        // Go to home activity
+                        authToast("Usuario añadido a la base de datos")
+                    }
+                    .addOnFailureListener {
+                        e -> Log.e("signupError", "Error writing document", e)
+                        authToast("Error al crear el documento de usuario")
+                    }
             }
             else {
                 try {
@@ -140,20 +167,23 @@ class AuthActivity : AppCompatActivity() {
     }
 
 
-    private fun forgotPwd(){
+    private fun forgotPwd() {
         val email = forgotpwdEmail.text.toString()
+
         if (isValidEmail(email)) {
             auth.sendPasswordResetEmail(email)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d("forgotPwd", "Email sent.")
-                        } else{
-                            Log.d("forgotPwdError", "Failure sending the email.")
-                            authToast("Error al enviar el mensaje de restablecimiento")
-                        }
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.i("forgotPwd", "Email sent.")
+                        authToast("Se ha enviado el email")
+                    }   else {
+                        Log.d("forgotPwdError", "Failure sending the email.")
+                        authToast("Error al enviar el mensaje de restablecimiento")
                     }
+                }
         }
     }
+
 
     private fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()

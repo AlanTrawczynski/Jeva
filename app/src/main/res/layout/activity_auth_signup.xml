@@ -35,7 +35,7 @@
                 android:layout_gravity="center"
                 android:ems="10"
                 android:hint="Name"
-                android:inputType="textPassword" />
+                android:inputType="textPersonName" />
 
             <EditText
                 android:id="@+id/signupUsername"
@@ -44,6 +44,7 @@
                 android:layout_gravity="center"
                 android:ellipsize="start"
                 android:hint="Username"
+                android:inputType="text"
                 android:singleLine="true" />
 
             <EditText
@@ -62,6 +63,7 @@
                 android:layout_gravity="center"
                 android:ellipsize="start"
                 android:hint="Email"
+                android:inputType="textEmailAddress"
                 android:singleLine="true" />
 
             <EditText
@@ -71,10 +73,11 @@
                 android:layout_gravity="center"
                 android:ellipsize="start"
                 android:hint="Repeat Password"
+                android:inputType="textPassword"
                 android:singleLine="true" />
 
             <Button
-                android:id="@+id/singupBtnSubmit"
+                android:id="@+id/signupBtnSubmit"
                 android:layout_width="246dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
