@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_auth_forgotpassword.*
 import kotlinx.android.synthetic.main.activity_auth_login.*
@@ -18,6 +19,7 @@ import java.util.regex.Pattern
 class AuthActivity : AppCompatActivity() {
 
     private val auth = Firebase.auth
+    private val db = Firebase.firestore
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,7 +108,20 @@ class AuthActivity : AppCompatActivity() {
     private fun signUp(email: String, pwd: String, username: String, name: String) {
         auth.createUserWithEmailAndPassword(email, pwd).addOnCompleteListener {
             if (it.isSuccessful) {
-                // Aquí crearemos lo que sea que vayamos a meter en la DB
+                val city = hashMapOf(
+                        "name" to name,
+                        "username" to username
+                )
+
+                db.collection("users").document(auth.currentUser.uid)
+                        .set(city)
+                        .addOnSuccessListener { /*Go to home activity*/
+                            authToast("Usuario añadido a la base de datos")
+                        }
+                        .addOnFailureListener {
+                            e -> Log.w("signUp", "Error writing document", e)
+                            authToast("Error al crear el documento de usuario")
+                        }
             }
             else {
                 try {
@@ -124,6 +139,21 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun forgotPwd(){
+        val email = forgotpwdEmail.text.toString()
+        if (isValidEmail(email)) {
+            auth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("forgotPwd", "Email sent.")
+                        } else{
+                            Log.d("forgotPwdError", "Failure sending the email.")
+                            authToast("Error al enviar el mensaje de restablecimiento")
+                        }
+                    }
+        }
+    }
 
     private fun isValidEmail(email: String): Boolean {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
