@@ -1,5 +1,4 @@
-
-package com.example.aplicaciondepruebas
+package com.jeva.jeva
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -21,7 +20,7 @@ class GestionarPermisos {
                 //Nos dice si al usuario se le debe de mostrar una ui que explique el por qué es necesario el permiso
                 if(shouldShowRequestPermissionRationale(contexto, FINE_LOCATION_PERMISSION)) {
                     // recibe un título y una explicación. Tras presionar vale, llama a la función que se le pasa como parámetro.
-                    cuadroExplicativo("Acepte los permisos","Empleamos la ubicación para ofrecerle rutas cercanas", contexto, ::askPermission)
+                    cuadroExplicativo("Acepte los permisos","Empleamos la ubicación para ofrecerle rutas cercanas", contexto, Companion::askPermission)
                 } else {
                     askPermission(contexto)
                 }
