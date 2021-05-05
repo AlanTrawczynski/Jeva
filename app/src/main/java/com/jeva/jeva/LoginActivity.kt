@@ -30,11 +30,9 @@ class LoginActivity : AppCompatActivity() {
     private fun setup() {
         loginBtnGoToSignup.setOnClickListener {
             startActivity(Intent(this, SignupActivity::class.java))
-            loginPassword.text.clear()
         }
         loginLinkForgotPassword.setOnClickListener {
             startActivity(Intent(this, ForgotpwdActivity::class.java))
-            loginPassword.text.clear()
         }
 
         loginBtnSubmit.setOnClickListener {
@@ -60,7 +58,6 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 startActivity(Intent(this, HomeActivity::class.java))
-                loginPassword.text.clear()
             }
             else {
                 try {
@@ -80,6 +77,12 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+
+    override fun onStop() {
+        loginPassword.text.clear()
+        super.onStop()
     }
 
 

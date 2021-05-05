@@ -12,6 +12,7 @@ class HomeActivity : AppCompatActivity() {
     private val auth = Firebase.auth
     private val db = Firebase.firestore
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
