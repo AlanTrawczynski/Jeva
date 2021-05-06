@@ -1,4 +1,4 @@
-package com.jeva.jeva
+package com.jeva.jeva.auth
 
 import android.content.Context
 import android.widget.Toast

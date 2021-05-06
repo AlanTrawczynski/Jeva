@@ -1,10 +1,11 @@
-package com.jeva.jeva
+package com.jeva.jeva.home
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.jeva.jeva.R
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
@@ -33,7 +34,7 @@ class HomeActivity : AppCompatActivity() {
                     }
                 }
                 .addOnFailureListener {
-                    pruebaText.text = "no user"
+                    pruebaText.text = "exc"
                 }
         }
     }

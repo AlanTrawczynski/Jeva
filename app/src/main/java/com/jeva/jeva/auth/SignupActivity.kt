@@ -1,4 +1,4 @@
-package com.jeva.jeva
+package com.jeva.jeva.auth
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,8 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.jeva.jeva.R
+import com.jeva.jeva.home.HomeActivity
 import kotlinx.android.synthetic.main.activity_signup.*
 
 class SignupActivity : AppCompatActivity() {

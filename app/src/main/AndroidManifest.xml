@@ -12,10 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Jeva">
-        <activity android:name=".HomeActivity" />
-        <activity android:name=".SignupActivity" />
-        <activity android:name=".ForgotpwdActivity" />
-        <activity android:name=".LoginActivity">
+        <activity android:name=".home.HomeActivity" />
+        <activity android:name=".auth.SignupActivity" />
+        <activity android:name=".auth.ForgotpwdActivity" />
+        <activity android:name=".auth.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
