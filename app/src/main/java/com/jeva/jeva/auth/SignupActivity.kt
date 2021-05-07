@@ -61,7 +61,7 @@ class SignupActivity : AppCompatActivity() {
                 val user = hashMapOf(
                     "name"      to name,
                     "username"  to username,
-                    "bio"       to ""
+                    "routes"    to listOf<String>() // read-only list
                 )
 
                 db.collection("users").document(auth.currentUser!!.uid)
