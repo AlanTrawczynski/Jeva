@@ -1,4 +1,4 @@
-package com.example.proovingfragments.ui.notifications
+package com.jeva.jeva.ui.notifications
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

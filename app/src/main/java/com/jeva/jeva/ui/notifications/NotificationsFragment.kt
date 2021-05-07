@@ -1,4 +1,4 @@
-package com.example.proovingfragments.ui.notifications
+package com.jeva.jeva.ui.notifications
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.proovingfragments.R
+import com.jeva.jeva.R
 
 class NotificationsFragment : Fragment() {
 

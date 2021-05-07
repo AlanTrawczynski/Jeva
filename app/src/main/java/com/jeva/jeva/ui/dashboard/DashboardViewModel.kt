@@ -1,4 +1,4 @@
-package com.example.proovingfragments.ui.dashboard
+package com.jeva.jeva.ui.dashboard
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

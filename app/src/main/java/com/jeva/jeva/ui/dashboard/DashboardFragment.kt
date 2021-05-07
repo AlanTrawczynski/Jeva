@@ -1,4 +1,4 @@
-package com.example.proovingfragments.ui.dashboard
+package com.jeva.jeva.ui.dashboard
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,12 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.proovingfragments.R
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.MapsInitializer
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.LatLng
-import java.lang.Exception
+import com.jeva.jeva.R
 
 class DashboardFragment : Fragment() {
 

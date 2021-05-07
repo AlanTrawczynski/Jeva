@@ -1,13 +1,13 @@
-package com.example.proovingfragments.ui.maps
+package com.jeva.jeva.ui.maps
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.proovingfragments.R
+import com.jeva.jeva.R
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.OnMapReadyCallback
 
 
 class MapFragment : Fragment(),OnMapReadyCallback {
@@ -32,9 +32,9 @@ class MapFragment : Fragment(),OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if(savedInstanceState != null){
-            val coord = LatLng(savedInstanceState.getDouble("lat"),savedInstanceState.getDouble("lon"))
+            /*val coord = LatLng(savedInstanceState.getDouble("lat"),savedInstanceState.getDouble("lon"))
             val zoom: Float = savedInstanceState.getFloat("zoom")
-            nMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coord,zoom))
+            nMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coord,zoom))*/
             mapView?.onCreate(savedInstanceState.getBundle("mapView"))
         }
         super.onCreate(savedInstanceState)
