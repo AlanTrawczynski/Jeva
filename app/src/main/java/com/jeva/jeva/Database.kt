@@ -59,12 +59,20 @@ class Database {
 
 
 //    Firestore - Routes
+    fun getAllRoutes(callback: (List<Map<String, Any>>?) -> Unit) {
+        fs.collection("routes").get()
+            .addOnSuccessListener { docs ->
+                callback(docs.map { it.data })
+            }
+            .addOnFailureListener { callback(null) }
+    }
+
     fun getRouteTask(routeId: String) : Task<DocumentSnapshot> {
         return fs.collection("routes").document(routeId).get()
     }
 
-    fun getRoute(routeId: String, callback: (Map<String, Any>?) -> Unit) : Task<DocumentSnapshot> {
-        return getRouteTask(routeId)
+    fun getRoute(routeId: String, callback: (Map<String, Any>?) -> Unit) {
+        getRouteTask(routeId)
             .addOnSuccessListener { callback(it?.data) }
             .addOnFailureListener { callback(null) }
     }
