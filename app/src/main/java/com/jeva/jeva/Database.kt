@@ -2,6 +2,7 @@ package com.jeva.jeva
 
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -106,7 +107,7 @@ class Database {
             "title" to title,
             "description" to description,
             "position" to GeoPoint(markers[0].position.latitude, markers[0].position.longitude),
-            "markers" to markers
+            "markers" to markers.map { markerToMap(it) }
         )
 
         fs.runBatch { batch ->
@@ -114,6 +115,14 @@ class Database {
             batch.set(routeRef, data)
         }   .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
+    }
+
+    private fun markerToMap(marker: Marker) : Map<String, Any> {
+        return mapOf(
+            "lat" to marker.position.latitude,
+            "lng" to marker.position.longitude,
+            "tag" to (marker.tag ?: emptyMap<String, Any>())
+        )
     }
 
 
