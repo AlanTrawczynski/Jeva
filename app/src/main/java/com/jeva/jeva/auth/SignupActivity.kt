@@ -8,7 +8,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.jeva.jeva.FragmentsActivity
+import com.jeva.jeva.home.HomeActivity
 import com.jeva.jeva.R
 import kotlinx.android.synthetic.main.activity_signup.*
 
@@ -68,7 +68,7 @@ class SignupActivity : AppCompatActivity() {
                     .set(user)
                     .addOnSuccessListener {
                         Auth.authToast("Usuario añadido a la base de datos", applicationContext)
-                        startActivity(Intent(this, FragmentsActivity::class.java))
+                        startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     }
                     .addOnFailureListener {

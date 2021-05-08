@@ -1,4 +1,4 @@
-package com.jeva.jeva.ui.dashboard
+package com.jeva.jeva.home.dashboard
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

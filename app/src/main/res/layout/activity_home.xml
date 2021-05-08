@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.HomeActivity">
+    tools:context=".PruebasActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,6 +36,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView" />
+
+        <EditText
+            android:id="@+id/pruebaEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="name"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/pruebaEdit2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="username"
+            android:inputType="textPersonName" />
 
         <Button
             android:id="@+id/pruebaSignout"

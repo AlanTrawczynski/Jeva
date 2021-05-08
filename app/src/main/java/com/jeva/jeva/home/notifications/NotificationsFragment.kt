@@ -1,4 +1,4 @@
-package com.jeva.jeva.ui.notifications
+package com.jeva.jeva.home.notifications
 
 import android.os.Bundle
 import android.view.LayoutInflater

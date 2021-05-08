@@ -1,4 +1,4 @@
-package com.jeva.jeva.ui.notifications
+package com.jeva.jeva.home.notifications
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

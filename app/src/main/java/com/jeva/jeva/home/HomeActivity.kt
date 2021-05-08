@@ -1,48 +1,29 @@
 package com.jeva.jeva.home
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.jeva.jeva.R
-import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
 
-    private val auth = Firebase.auth
-    private val db = Firebase.firestore
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        setContentView(R.layout.activity_main)
 
-        pruebaSignout.setOnClickListener {
-            auth.signOut()
-            finish()
-        }
+        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        val navController = findNavController(R.id.nav_host_fragment)
 
-        auth.currentUser?.uid?.let {  uid ->
-            db.collection("users").document(uid).get()
-                .addOnSuccessListener  {  doc ->
-                    if (doc != null) {
-                        val user = doc.data
-                        pruebaText.text = "(uid, name, username) = (${uid}, ${user?.get("name")}, ${user?.get("username")})"
-                    }   else {
-                        pruebaText.text = "no user"
-                    }
-                }
-                .addOnFailureListener {
-                    pruebaText.text = "exc"
-                }
-        }
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        val appBarConfiguration = AppBarConfiguration(setOf(
+            R.id.navigation_maps, R.id.navigation_dashboard, R.id.navigation_notifications
+        ))
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
     }
-
-
-    override fun onBackPressed() {
-        moveTaskToBack(true)
-    }
-
-
 }

@@ -1,4 +1,4 @@
-package com.jeva.jeva.ui.maps
+package com.jeva.jeva.home.maps
 
 import android.os.Bundle
 import android.view.LayoutInflater

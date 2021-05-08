@@ -12,10 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Jeva">
-        <activity android:name=".home.HomeActivity" />
+        <activity android:name=".PruebasActivity" />
         <activity android:name=".auth.SignupActivity" />
         <activity android:name=".auth.ForgotpwdActivity" />
-        <activity android:name=".FragmentsActivity" />
+        <activity android:name=".home.HomeActivity" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
