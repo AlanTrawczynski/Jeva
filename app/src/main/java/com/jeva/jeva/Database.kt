@@ -1,9 +1,12 @@
 package com.jeva.jeva
 
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -67,6 +70,17 @@ class Database {
             .addOnFailureListener { callback(null) }
     }
 
+    fun getNearbyRoutes(position: LatLng, latRadius: Double, lngRadius: Double, callback: (List<Map<String, Any>>?) -> Unit) {
+        fs.collection("routes")
+            .whereGreaterThanOrEqualTo("position", GeoPoint(position.latitude - latRadius, position.longitude - lngRadius))
+            .whereLessThanOrEqualTo("position", GeoPoint(position.latitude + latRadius, position.longitude + lngRadius))
+            .get()
+            .addOnSuccessListener { docs ->
+                callback(docs.map { it.data })
+            }
+            .addOnFailureListener { callback(null) }
+    }
+
     fun getRouteTask(routeId: String) : Task<DocumentSnapshot> {
         return fs.collection("routes").document(routeId).get()
     }
@@ -85,9 +99,15 @@ class Database {
     }
 
 
-    fun newRoute(data: Map<String, Any>, callback: (Boolean) -> Unit) {
+    fun newRoute(markers: List<Marker>, title: String = "", description: String = "", callback: (Boolean) -> Unit) {
         val userRef = fs.collection("users").document(getCurrentUserUid())
         val routeRef = fs.collection("routes").document()
+        val data = mapOf(
+            "title" to title,
+            "description" to description,
+            "position" to GeoPoint(markers[0].position.latitude, markers[0].position.longitude),
+            "markers" to markers
+        )
 
         fs.runBatch { batch ->
             batch.update(userRef, "routes", FieldValue.arrayUnion(routeRef.id))
