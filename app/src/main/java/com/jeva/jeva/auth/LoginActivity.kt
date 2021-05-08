@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.jeva.jeva.Database
+import com.jeva.jeva.FragmentsActivity
 import com.jeva.jeva.R
 import com.jeva.jeva.home.HomeActivity
 import kotlinx.android.synthetic.main.activity_login.*
@@ -23,7 +24,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         if (Database().isUserLoggedIn()) {
-            startActivity(Intent(this, HomeActivity::class.java))
+            startActivity(Intent(this, FragmentsActivity::class.java))
         }
 
         setup()
@@ -60,7 +61,7 @@ class LoginActivity : AppCompatActivity() {
     private fun logIn(email: String, pwd: String) {
         auth.signInWithEmailAndPassword(email, pwd).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                startActivity(Intent(this, HomeActivity::class.java))
+                startActivity(Intent(this, FragmentsActivity::class.java))
             }
             else {
                 try {
