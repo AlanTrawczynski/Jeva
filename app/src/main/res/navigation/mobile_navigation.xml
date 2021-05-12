@@ -6,9 +6,9 @@
     app:startDestination="@id/navigation_dashboard">
 
     <fragment
-        android:id="@+id/navigation_maps"
+        android:id="@+id/navigation_routes"
         android:name="com.jeva.jeva.home.maps.MapFragment"
-        android:label="@string/title_home"
+        android:label="@string/title_routes"
         tools:layout="@layout/fragment_maps">
         <action
             android:id="@+id/action_navigation_maps_to_navigation_dashboard"
@@ -16,10 +16,7 @@
             app:enterAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_navigation_maps_to_navigation_notifications"
-            app:destination="@id/navigation_notifications" />
-        <action
-            android:id="@+id/action_navigation_maps_to_swipeImages"
-            app:destination="@id/swipeImages" />
+            app:destination="@id/navigation_profile" />
     </fragment>
 
     <fragment
@@ -29,20 +26,20 @@
         tools:layout="@layout/fragment_dashboard" >
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_notifications"
-            app:destination="@id/navigation_notifications" />
+            app:destination="@id/navigation_profile" />
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_maps"
-            app:destination="@id/navigation_maps" />
+            app:destination="@id/navigation_routes" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.jeva.jeva.home.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" >
+        android:id="@+id/navigation_profile"
+        android:name="com.jeva.jeva.home.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_navigation_notifications_to_navigation_maps"
-            app:destination="@id/navigation_maps"
+            app:destination="@id/navigation_routes"
             app:enterAnim="@android:anim/slide_in_left" />
         <action
             android:id="@+id/action_navigation_notifications_to_navigation_dashboard"
@@ -56,7 +53,7 @@
         android:label="swipeImages" >
         <action
             android:id="@+id/action_swipeImages_to_navigation_maps"
-            app:destination="@id/navigation_maps" />
+            app:destination="@id/navigation_routes" />
         <argument
             android:name="title"
             app:argType="string" />
