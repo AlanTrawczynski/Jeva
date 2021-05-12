@@ -1,5 +1,6 @@
 package com.jeva.jeva
 
+import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -10,13 +11,14 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 
 class Database {
 
     private val auth = Firebase.auth
     private val fs = Firebase.firestore
-    private val cs = Firebase.storage
+    private val cs = Firebase.storage.reference
 
 
 
@@ -27,10 +29,11 @@ class Database {
 
     fun getCurrentUserUid() : String {
         return auth.currentUser?.uid ?: throw Exception("Sesión no iniciada")
+        // sign-out & reload ?
     }
 
 
-//    Firestore - Users
+//    Users
     fun getUserTask(uid: String) : Task<DocumentSnapshot> {
         return fs.collection("users").document(uid).get()
     }
@@ -61,8 +64,23 @@ class Database {
     }
 
 
+    fun getUserProfilePicRef(uid: String) : StorageReference {
+        return cs.child("profilePics/${uid}")
+    }
 
-//    Firestore - Routes
+    fun getCurrentUserProfilePicRef() : StorageReference {
+        return getUserProfilePicRef(getCurrentUserUid())
+    }
+
+    fun changeProfilePic(path: String, callback: (Boolean) -> Unit) {
+        cs.child("profilePics/${getCurrentUserUid()}").putFile(Uri.parse(path))
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
+    }
+
+
+
+//    Routes
     fun getAllRoutes(callback: (List<Map<String, Any>>?) -> Unit) {
         fs.collection("routes").get()
             .addOnSuccessListener { docs ->
