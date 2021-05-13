@@ -1,14 +1,12 @@
 package com.jeva.jeva
 
 import android.net.Uri
-import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.GeoPoint
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -89,15 +87,43 @@ class Database {
             .addOnFailureListener { callback(null) }
     }
 
-    fun getNearbyRoutes(position: LatLng, latRadius: Double, lngRadius: Double, callback: (List<Map<String, Any>>?) -> Unit) {
-        fs.collection("routes")
-            .whereGreaterThanOrEqualTo("position", GeoPoint(position.latitude - latRadius, position.longitude - lngRadius))
-            .whereLessThanOrEqualTo("position", GeoPoint(position.latitude + latRadius, position.longitude + lngRadius))
-            .get()
-            .addOnSuccessListener { docs ->
-                callback(docs.map { it.data })
-            }
-            .addOnFailureListener { callback(null) }
+    fun getNearbyRoutes(bounds: LatLngBounds, callback: (List<Map<String, Any>>?) -> Unit) {
+        fun filterByLat(route: Map<String, Any>) : Boolean {
+            val lat = (route["position"] as Map<*, *>)["lat"] as Double
+            return lat >= bounds.southwest.latitude && lat <= bounds.northeast.latitude
+        }
+
+        if (bounds.southwest.longitude < bounds.northeast.longitude) {
+            fs.collection("routes")
+                .whereGreaterThanOrEqualTo("position.lng", bounds.southwest.longitude)
+                .whereLessThanOrEqualTo("position.lng", bounds.northeast.longitude)
+                .get()
+                .addOnSuccessListener { docs ->
+                    callback(docs
+                        .filter { doc -> filterByLat(doc.data) }
+                        .map { doc -> doc.data }
+                    )
+                }
+                .addOnFailureListener { callback(null) }
+        }
+        else {
+            fs.collection("routes")
+                .whereGreaterThanOrEqualTo("position.lng", bounds.southwest.longitude)
+                .get()
+                .addOnSuccessListener { docs1 ->
+                    fs.collection("routes")
+                        .whereLessThanOrEqualTo("position.lng", bounds.northeast.longitude)
+                        .get()
+                        .addOnSuccessListener { docs2 ->
+                            callback((docs1 + docs2)
+                                .filter { doc -> filterByLat(doc.data) }
+                                .map { doc -> doc.data }
+                            )
+                        }
+                        .addOnFailureListener { callback(null) }
+                }
+                .addOnFailureListener { callback(null) }
+        }
     }
 
     fun getRouteTask(routeId: String) : Task<DocumentSnapshot> {
@@ -124,7 +150,9 @@ class Database {
         val data = mapOf(
             "title" to title,
             "description" to description,
-            "position" to GeoPoint(markers[0].position.latitude, markers[0].position.longitude),
+            "position" to mapOf(
+                "lat" to markers[0].position.latitude,
+                "lng" to markers[0].position.longitude),
             "markers" to markers.map { markerToMap(it) }
         )
 
