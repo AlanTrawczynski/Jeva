@@ -82,7 +82,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         nMap = googleMap
         iconGenerator = IconGenerator(activity)
-        routesInMap()
+        if(inRoute) routesInMap()
 
         /*nMap.setOnMapClickListener { latLng ->
             index += 1
@@ -98,13 +98,16 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         }*/
 
         nMap.setOnMapLongClickListener {
-            for(m in markerRout){
-                m.remove()
+            routesInMap()
+            if(!inRoute) {
+                for (m in markerRout) {
+                    m.remove()
+                }
+                polyline.remove()
+                markerRout.clear()
+                //visibility(true)
+                inRoute = true
             }
-            polyline.remove()
-            markerRout.clear()
-            visibility(true)
-            inRoute = true
         }
 
         nMap.setOnMarkerClickListener {
@@ -113,16 +116,23 @@ class MapFragment : Fragment(),OnMapReadyCallback {
                 visibility(false)
                 showMarkersRoutes(marker.tag as Int)
                 inRoute = false
-            } else {
-                dataPointMenu.setInfo("Prueba","Esto es una prueba",arrayOf(),this)
-                dataPointMenu.showMenu()
+            }
+            else{
+                //Aquí irá que al seleccionar un punto, muestre la información.
             }
             true
         }
 
         nMap.setOnCameraIdleListener {
-            Log.i("Maps", "Se ha cancelado el movimiento 2: " + nMap.projection.visibleRegion.latLngBounds.center)
-            Log.i("Maps", "Se ha cancelado el movimiento 2: " + nMap.projection.visibleRegion.latLngBounds)
+            Log.i("Maps", "Se ha candelado el movimiento 2: " + nMap.projection.visibleRegion.latLngBounds.center)
+            Log.i("Maps", "Se ha candelado el movimiento 2: " + nMap.projection.visibleRegion.latLngBounds)
+            if (inRoute){
+                for (m in markerListShow){
+                    m.remove()
+                }
+                markerListShow.clear()
+                routesInMap()
+            }
         }
     }
 
@@ -130,7 +140,8 @@ class MapFragment : Fragment(),OnMapReadyCallback {
 
     //función para conseguir de la bd todas las rutas de la BD (se transformará a solo los vecinos
     private fun routesInMap(){
-        db.getAllRoutes { listRoutes0 ->
+        db.getNearbyRoutes(nMap.projection.visibleRegion.latLngBounds){
+                listRoutes0 ->
             if (listRoutes0 != null) {
                 listRoutes = listRoutes0
                 showRoutesInMap(listRoutes0)
@@ -149,7 +160,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
             val lat = position["lat"] as Double
             val lng = position["lng"] as Double
             val marker = nMap.addMarker(MarkerOptions().position(LatLng(lat, lng)))
-            marker.tag = i
+            marker!!.tag = i
             iconGenerator.setStyle(STYLE_RED)
             marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon(i.toString())))
             markerListShow.add(marker)
@@ -157,15 +168,15 @@ class MapFragment : Fragment(),OnMapReadyCallback {
     }
 
     //Muestra los puntos de la ruta seleccionada en el mapa
-    private fun showMarkersRoutes(i : Int) {
-        var listaLatLng = mutableListOf<LatLng>()
-        val markers : List<Map<String, Any>> = (listRoutes[i]["markers"]) as List<Map<String, Any>>
+    private fun showMarkersRoutes(ind : Int) {
+        val listaLatLng = mutableListOf<LatLng>()
+        val markers : List<Map<String, Any>> = (listRoutes[ind]["markers"]) as List<Map<String, Any>>
         for ((i,marker0) in markers.withIndex()){
             val lat = marker0["lat"] as Double
             val lng = marker0["lng"] as Double
             val marker = nMap.addMarker(MarkerOptions().position(LatLng(lat, lng)))
             if (i == 0)  iconGenerator.setStyle(STYLE_PURPLE) else iconGenerator.setStyle(STYLE_BLUE)
-            marker.tag = marker0["tag"] as MutableMap<String, Any>
+            marker!!.tag = marker0["tag"] as MutableMap<*, *>
             marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("Ha funcionado")))
             markerRout.add(marker)
             listaLatLng.add(LatLng(lat, lng))
