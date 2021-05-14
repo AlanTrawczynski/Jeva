@@ -14,6 +14,7 @@ import com.google.firebase.firestore.GeoPoint
 import com.google.maps.android.ui.IconGenerator
 import com.google.maps.android.ui.IconGenerator.*
 import com.jeva.jeva.Database
+import com.jeva.jeva.images.dataPointMenu
 import kotlinx.android.synthetic.main.fragment_maps.*
 
 
@@ -112,13 +113,16 @@ class MapFragment : Fragment(),OnMapReadyCallback {
                 visibility(false)
                 showMarkersRoutes(marker.tag as Int)
                 inRoute = false
+            } else {
+                dataPointMenu.setInfo("Prueba","Esto es una prueba",arrayOf(),this)
+                dataPointMenu.showMenu()
             }
             true
         }
 
         nMap.setOnCameraIdleListener {
-            Log.i("Maps", "Se ha candelado el movimiento 2: " + nMap.projection.visibleRegion.latLngBounds.center)
-            Log.i("Maps", "Se ha candelado el movimiento 2: " + nMap.projection.visibleRegion.latLngBounds)
+            Log.i("Maps", "Se ha cancelado el movimiento 2: " + nMap.projection.visibleRegion.latLngBounds.center)
+            Log.i("Maps", "Se ha cancelado el movimiento 2: " + nMap.projection.visibleRegion.latLngBounds)
         }
     }
 

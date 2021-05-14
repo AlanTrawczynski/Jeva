@@ -1,16 +1,18 @@
 package com.jeva.jeva.images.adapters
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.viewpager.widget.PagerAdapter
+import com.bumptech.glide.Glide
 import com.jeva.jeva.R
 import java.util.*
 
-class swipeAdapter(private val context: Context, private val fotos:ArrayList<Int>) : PagerAdapter() {
+class swipeAdapter(private val context: Context, private val dataSource:ArrayList<Uri>) : PagerAdapter() {
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
@@ -21,13 +23,15 @@ class swipeAdapter(private val context: Context, private val fotos:ArrayList<Int
     }
 
     override fun getCount(): Int {
-        return fotos.size
+        return dataSource.size
     }
 
     override fun instantiateItem(container: ViewGroup, position:  Int): View {
         var swipeView : View = inflater.inflate(R.layout.photo_item,container,false)
         var imageView : ImageView = swipeView.findViewById(R.id.swipedPhoto)
-        imageView.setImageResource(fotos[position])
+        Glide.with(context)
+            .load(dataSource[position])
+            .into(imageView)
         Objects.requireNonNull(container).addView(swipeView)
 
         return swipeView

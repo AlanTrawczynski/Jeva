@@ -21,4 +21,8 @@ class Icon(context: Context) :  ImageView(context) {
         this.setImageResource(resource)
         this.scaleType = ImageView.ScaleType.CENTER_CROP
     }
+
+    fun cutImage() {
+        this.scaleType = ImageView.ScaleType.CENTER_CROP
+    }
 }

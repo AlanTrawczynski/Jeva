@@ -56,7 +56,9 @@
         android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/puntoDescripcion" />
+        app:layout_constraintTop_toBottomOf="@+id/puntoDescripcion" >
+
+    </GridView>
 
     <Button
         android:id="@+id/cerrar"
@@ -64,7 +66,16 @@
         android:layout_height="wrap_content"
         android:text="Cerrar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/anadir" />
+
+    <Button
+        android:id="@+id/anadir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AÑADIR"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/photo_grid" />
 
