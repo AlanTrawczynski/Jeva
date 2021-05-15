@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -13,6 +14,8 @@ import com.google.android.gms.maps.model.*
 import com.google.maps.android.ui.IconGenerator
 import com.google.maps.android.ui.IconGenerator.*
 import com.jeva.jeva.Database
+import com.jeva.jeva.GestionarPermisos
+import com.jeva.jeva.ObtencionLocalizacion
 import com.jeva.jeva.R
 import kotlinx.android.synthetic.main.fragment_maps.*
 
@@ -32,6 +35,8 @@ class MapFragment : Fragment(),OnMapReadyCallback {
     private lateinit var iconGenerator: IconGenerator           //generador de iconos, se inicializa cuando se inicia el maps
     private var inRoute = false                                  //variable para ver si estamos dentro de una ruta en el mapa
     private lateinit  var polyline: Polyline
+
+    private var latlng = LatLng(0.0,0.0)        //almacenará la posición actual. Por defecto: (0.0,0.0)
 
     companion object {
         var mapView : SupportMapFragment?=null
@@ -68,6 +73,17 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         val root = inflater.inflate(R.layout.fragment_maps, container, false)
         if (savedInstanceState == null) {
             mapView = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+
+            /* DESCOMENTAR SI SE QUIERE QUE SE ABRA EL MAPA EN TU POS
+            GestionarPermisos.requestLocationPermissions(this.requireActivity())
+            ObtencionLocalizacion.localizacion(this.requireActivity())
+                .addOnSuccessListener {
+                    latlng = LatLng(it.latitude,it.longitude)
+                }
+                .addOnCompleteListener {
+                    //cuando se obtenga la localización se representa el mapa. NO antes.
+                    mapView?.getMapAsync(this)
+                } */
             mapView?.getMapAsync(this)
         }
         return root
@@ -96,6 +112,11 @@ class MapFragment : Fragment(),OnMapReadyCallback {
             )
             marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon((marker.tag as MutableMap<String, Any>)["index"].toString())))
             markerList.add(marker)
+        }*/
+
+        /* DESCOMENTAR SI SE QUIERE QUE SE ABRA EL MAPA EN TU POS
+        nMap.apply {
+            moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,10f))
         }*/
 
         nMap.setOnMapLongClickListener {
