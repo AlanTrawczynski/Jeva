@@ -32,7 +32,7 @@ class ProfileFragment : Fragment() {
                 fragmentProfileUser?.text = userData["name"] as CharSequence
                 fragmentProfileUsername?.text = userData["username"] as CharSequence
         }   else {
-                Log.e("Profile Error: ","Information user don't founded")
+                Log.e("Profile Error: ","User information not found")
                 // error toast || reload ?
             }
         }

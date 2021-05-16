@@ -1,6 +1,7 @@
 package com.jeva.jeva
 
 import android.net.Uri
+import android.util.Log
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.tasks.Task
@@ -126,6 +127,7 @@ class Database {
         }
     }
 
+
     fun getRouteTask(routeId: String) : Task<DocumentSnapshot> {
         return fs.collection("routes").document(routeId).get()
     }
@@ -169,6 +171,50 @@ class Database {
             "lng" to marker.position.longitude,
             "tag" to (marker.tag ?: emptyMap<String, Any>())
         )
+    }
+
+
+    fun deleteRoute(routeId: String, callback: (Boolean) -> Unit) {
+        deleteRoutePhotos(routeId) {
+            if (it) {
+                fs.collection("routes").document(routeId)
+                    .delete()
+                    .addOnSuccessListener { callback(true) }
+                    .addOnFailureListener { callback(false) }   // pueden haberse eliminado las fotos y no la ruta
+            }
+            else {
+                callback(false)
+            }
+        }
+    }
+
+
+    fun deleteRoutePhoto(routeId: String, photoId: String, callback: (Boolean) -> Unit) {
+        cs.child("routes/${routeId}/${photoId}")
+            .delete()
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
+    }
+
+
+    fun deleteRoutePhotos(routeId: String, callback: (Boolean) -> Unit) {
+        fun deletePhoto(photoRef: StorageReference, tries: Int) {
+            if (tries > 0) {
+                photoRef.delete()
+                    .addOnFailureListener {
+                        deletePhoto(photoRef, tries - 1)
+                    }
+            }
+        }
+
+        cs.child("routes/${routeId}").listAll()
+            .addOnSuccessListener { refs ->
+                refs?.items?.forEach { ref ->
+                    deletePhoto(ref, 3)
+                }
+                callback(true)      // no se asegura la eliminación de todas las fotos
+            }
+            .addOnFailureListener { callback(false) }
     }
 
 

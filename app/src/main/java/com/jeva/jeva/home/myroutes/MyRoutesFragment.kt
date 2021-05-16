@@ -33,7 +33,7 @@ class MyRoutesFragment : Fragment(),Serializable {
     }
 
     private fun getRouteSecure(routeId: String, tries: Int,  callback: (Map<String, Any>?) -> Unit) {
-        if (tries == 0) {
+        if (tries <= 0) {
             callback(null)
         }   else {
             db.getRouteTask(routeId)
@@ -85,7 +85,7 @@ class MyRoutesFragment : Fragment(),Serializable {
                 }
             }
             else {
-                Log.e("Profile Error: ","Information user don't founded")
+                Log.e("Myroutes Error: ","No routes found")
                 // error toast || reload ?
             }
         }
