@@ -21,9 +21,9 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.jeva.jeva.home.dashboard.DashboardFragment"
+        android:name="com.jeva.jeva.home.myroutes.MyRoutesFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" >
+        tools:layout="@layout/fragment_my_routes" >
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_notifications"
             app:destination="@id/navigation_profile" />
