@@ -1,7 +1,6 @@
 package com.jeva.jeva
 
 import android.net.Uri
-import android.util.Log
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.tasks.Task
@@ -21,10 +20,11 @@ class Database {
 
 
 
-//    Auth
+//    AUTH
     fun isUserLoggedIn() : Boolean {
         return auth.currentUser != null
     }
+
 
     fun getCurrentUserUid() : String {
         return auth.currentUser?.uid ?: throw Exception("Sesión no iniciada")
@@ -32,10 +32,14 @@ class Database {
     }
 
 
-//    Users
+
+
+//    USERS
+//    Get user data
     fun getUserTask(uid: String) : Task<DocumentSnapshot> {
         return fs.collection("users").document(uid).get()
     }
+
 
     fun getUser(uid: String, callback: (Map<String, Any>?) -> Unit) {
         getUserTask(uid)
@@ -43,33 +47,42 @@ class Database {
             .addOnFailureListener { callback(null) }
     }
 
+
     fun getCurrentUserTask() : Task<DocumentSnapshot> {
         return getUserTask(getCurrentUserUid())
     }
+
 
     fun getCurrentUser(callback: (Map<String, Any>?) -> Unit) {
         getUser(getCurrentUserUid(), callback)
     }
 
 
+
+//    Update user data
     fun updateUser(uid: String, data: Map<String, Any>, callback: (Boolean) -> Unit) {
         fs.collection("users").document(uid).update(data)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
 
+
     fun updateCurrentUser(data: Map<String, Any>, callback: (Boolean) -> Unit) {
         updateUser(getCurrentUserUid(), data, callback)
     }
 
 
+
+//    Get and update profile pic
     fun getUserProfilePicRef(uid: String) : StorageReference {
         return cs.child("profilePics/${uid}")
     }
 
+
     fun getCurrentUserProfilePicRef() : StorageReference {
         return getUserProfilePicRef(getCurrentUserUid())
     }
+
 
     fun changeProfilePic(path: String, callback: (Boolean) -> Unit) {
         cs.child("profilePics/${getCurrentUserUid()}").putFile(Uri.parse(path))
@@ -79,7 +92,9 @@ class Database {
 
 
 
-//    Routes
+
+//    ROUTES
+//    Get routes
     fun getAllRoutes(callback: (List<Map<String, Any>>?) -> Unit) {
         fs.collection("routes").get()
             .addOnSuccessListener { docs ->
@@ -87,6 +102,7 @@ class Database {
             }
             .addOnFailureListener { callback(null) }
     }
+
 
     fun getNearbyRoutes(bounds: LatLngBounds, callback: (List<Map<String, Any>>?) -> Unit) {
         fun filterByLat(route: Map<String, Any>) : Boolean {
@@ -132,6 +148,7 @@ class Database {
         return fs.collection("routes").document(routeId).get()
     }
 
+
     fun getRoute(routeId: String, callback: (Map<String, Any>?) -> Unit) {
         getRouteTask(routeId)
             .addOnSuccessListener { callback(it?.data) }
@@ -139,14 +156,18 @@ class Database {
     }
 
 
-    fun updateRoute(routeId: String, data: Map<String, Any>, callback: (Boolean) -> Unit) {
-        fs.collection("routes").document(routeId).update(data)
-            .addOnSuccessListener { callback(true) }
-            .addOnFailureListener { callback(false) }
-    }
 
-
+//    Create and update routes
     fun newRoute(markers: List<Marker>, title: String = "", description: String = "", callback: (Boolean) -> Unit) {
+
+        fun markerToMap(marker: Marker) : Map<String, Any> {
+            return mapOf(
+                "lat" to marker.position.latitude,
+                "lng" to marker.position.longitude,
+                "tag" to (marker.tag ?: emptyMap<String, Any>())
+            )
+        }
+
         val userRef = fs.collection("users").document(getCurrentUserUid())
         val routeRef = fs.collection("routes").document()
         val data = mapOf(
@@ -165,15 +186,21 @@ class Database {
             .addOnFailureListener { callback(false) }
     }
 
-    private fun markerToMap(marker: Marker) : Map<String, Any> {
-        return mapOf(
-            "lat" to marker.position.latitude,
-            "lng" to marker.position.longitude,
-            "tag" to (marker.tag ?: emptyMap<String, Any>())
-        )
+
+    fun updateRoute(routeId: String, data: Map<String, Any>, callback: (Boolean) -> Unit) {
+        fs.collection("routes").document(routeId).update(data)
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
     }
 
 
+
+//    Upload routes photos
+//    ...
+
+
+
+//    Delete routes and photos
     fun deleteRoute(routeId: String, callback: (Boolean) -> Unit) {
         deleteRoutePhotos(routeId) {
             if (it) {
@@ -189,15 +216,7 @@ class Database {
     }
 
 
-    fun deleteRoutePhoto(routeId: String, photoId: String, callback: (Boolean) -> Unit) {
-        cs.child("routes/${routeId}/${photoId}")
-            .delete()
-            .addOnSuccessListener { callback(true) }
-            .addOnFailureListener { callback(false) }
-    }
-
-
-    fun deleteRoutePhotos(routeId: String, callback: (Boolean) -> Unit) {
+    private fun deleteRoutePhotos(routeId: String, callback: (Boolean) -> Unit) {
         fun deletePhoto(photoRef: StorageReference, tries: Int) {
             if (tries > 0) {
                 photoRef.delete()
@@ -217,5 +236,12 @@ class Database {
             .addOnFailureListener { callback(false) }
     }
 
+
+    fun deleteRoutePhoto(routeId: String, photoId: String, callback: (Boolean) -> Unit) {
+        cs.child("routes/${routeId}/${photoId}")
+            .delete()
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
+    }
 
 }
