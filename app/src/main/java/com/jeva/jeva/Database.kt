@@ -84,7 +84,8 @@ class Database {
 
 
     fun changeProfilePic(path: String, callback: (Boolean) -> Unit) {
-        cs.child("profilePics/${getCurrentUserUid()}").putFile(Uri.parse(path))
+        cs.child("profilePics/${getCurrentUserUid()}")
+            .putFile(Uri.parse(path))
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
@@ -203,8 +204,13 @@ class Database {
 
 
 
-//    Upload routes photos
-//    ...
+//    Upload markers photos
+    fun uploadMarkerPhoto(path: String, routeId: String, markerId: String, callback: (Boolean) -> Unit) {
+        cs.child("routes/${routeId}/${markerId}")
+            .putFile(Uri.parse(path))
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
+    }
 
 
 
