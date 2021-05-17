@@ -6,7 +6,6 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -144,6 +143,17 @@ class Database {
     }
 
 
+    fun getCurrentUserRoutes(callback: (List<Map<String, Any>>?) -> Unit) {
+        fs.collection("routes")
+            .whereEqualTo("owner", getCurrentUserUid())
+            .get()
+            .addOnSuccessListener { docs ->
+                callback(docs.map { it.data })
+            }
+            .addOnFailureListener { callback(null) }
+    }
+
+
     fun getRouteTask(routeId: String) : Task<DocumentSnapshot> {
         return fs.collection("routes").document(routeId).get()
     }
@@ -160,7 +170,7 @@ class Database {
 //    Create and update routes
     fun newRoute(markers: List<Marker>, title: String = "", description: String = "", callback: (Boolean) -> Unit) {
 
-        fun markerToMap(marker: Marker) : Map<String, Any> {
+        fun markerToMap(marker: Marker): Map<String, Any> {
             return mapOf(
                 "lat" to marker.position.latitude,
                 "lng" to marker.position.longitude,
@@ -168,21 +178,19 @@ class Database {
             )
         }
 
-        val userRef = fs.collection("users").document(getCurrentUserUid())
-        val routeRef = fs.collection("routes").document()
         val data = mapOf(
             "title" to title,
             "description" to description,
+            "owner" to getCurrentUserUid(),
             "position" to mapOf(
                 "lat" to markers[0].position.latitude,
-                "lng" to markers[0].position.longitude),
+                "lng" to markers[0].position.longitude
+            ),
             "markers" to markers.map { markerToMap(it) }
         )
 
-        fs.runBatch { batch ->
-            batch.update(userRef, "routes", FieldValue.arrayUnion(routeRef.id))
-            batch.set(routeRef, data)
-        }   .addOnSuccessListener { callback(true) }
+        fs.collection("routes").add(data)
+            .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
 
