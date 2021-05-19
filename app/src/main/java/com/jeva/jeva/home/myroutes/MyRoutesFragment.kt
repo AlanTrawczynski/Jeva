@@ -26,6 +26,8 @@ class MyRoutesFragment : Fragment(),Serializable {
         val root : View = inflater.inflate(R.layout.fragment_my_routes, container, false)
         val buttonContainer = root.findViewById(R.id.myRoutesButtonContainer) as LinearLayout
         addRoutesButtons(buttonContainer)
+        var buttonContainer = root.findViewById(R.id.myRoutesButtonContainer) as LinearLayout
+      //  addRoutesButtons(buttonContainer)
         return root
     }
 

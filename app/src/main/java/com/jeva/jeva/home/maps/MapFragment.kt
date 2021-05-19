@@ -17,6 +17,7 @@ import com.jeva.jeva.Database
 import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.ObtencionLocalizacion
 import com.jeva.jeva.R
+import com.jeva.jeva.images.dataPointMenu
 import kotlinx.android.synthetic.main.fragment_maps.*
 
 
@@ -136,6 +137,8 @@ class MapFragment : Fragment(),OnMapReadyCallback {
             }
             else{
                 //Aquí irá que al seleccionar un punto, muestre la información.
+                dataPointMenu.setInfo("Prueba","Es una prueba", arrayOf(),this)
+                dataPointMenu.showMenu()
             }
             true
         }

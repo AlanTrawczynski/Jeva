@@ -1,6 +1,7 @@
 package com.jeva.jeva.images.adapters
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.AbsListView
 import android.widget.BaseAdapter
 import com.bumptech.glide.Glide
 import com.jeva.jeva.images.Icon
+import com.jeva.jeva.images.dataPointMenu
 
 
 // un adapter está entre medias del View y la fuente de datos. El view le pregunta al adapter qué
@@ -32,7 +34,7 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
         lateinit var IconView: Icon
         if (convertView== null) {
             IconView  = Icon(context)
-            IconView.setLayoutParams(GridView@ AbsListView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            IconView.setLayoutParams(AbsListView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
         } else {
             //por motivos de eficiencia, siempre que convertView no sea null, emplearlo.
             IconView = convertView as Icon
@@ -44,13 +46,29 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
         return IconView
     }
 
+
+
     fun addAll(resources: ArrayList<Uri>) {
-        dataSource.addAll(resources)
+        dataSource.addAll(dataSource.size-1,resources)
         notifyDataSetChanged()
+        dataPointMenu.checkSize()
     }
 
     fun add(resource: Uri) {
-        dataSource.add(resource)
+        var pos : Int = dataSource.size-1
+        dataSource.add(pos,resource)
+        Log.d("fotos",dataSource.toString())
         notifyDataSetChanged()
+        dataPointMenu.checkSize()
+    }
+
+    fun remove(pos: Int) {
+        dataSource.removeAt(pos)
+        notifyDataSetChanged()
+        dataPointMenu.checkSize()
+    }
+
+    fun getDataSource() : ArrayList<Uri> {
+        return dataSource
     }
 }
