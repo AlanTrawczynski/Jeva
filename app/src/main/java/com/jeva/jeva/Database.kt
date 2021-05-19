@@ -6,6 +6,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -26,8 +27,8 @@ class Database {
 
 
     fun getCurrentUserUid() : String {
-        return auth.currentUser?.uid ?: throw Exception("Sesión no iniciada")
-        // sign-out & reload ?
+        assert(auth.currentUser == null)
+        return auth.currentUser?.uid!!
     }
 
 
@@ -95,19 +96,16 @@ class Database {
 
 //    ROUTES
 //    Get routes
-    fun getAllRoutes(callback: (List<Map<String, Any>>?) -> Unit) {
-        fs.collection("routes").get()
-            .addOnSuccessListener { docs ->
-                callback(docs.map { it.data })
-            }
-            .addOnFailureListener { callback(null) }
-    }
-
-
-    fun getNearbyRoutes(bounds: LatLngBounds, callback: (List<Pair<String, Map<String, Any>>>?) -> Unit) {
+    fun getNearbyRoutes(bounds: LatLngBounds, callback: (List<Map<String, Any>>?) -> Unit) {
         fun filterByLat(route: Map<String, Any>) : Boolean {
             val lat = (route["position"] as Map<*, *>)["lat"] as Double
             return lat >= bounds.southwest.latitude && lat <= bounds.northeast.latitude
+        }
+
+        fun mapDoc(doc: QueryDocumentSnapshot) : Map<String, Any> {
+            val data = doc.data
+            data["id"] = doc.id
+            return data
         }
 
         if (bounds.southwest.longitude < bounds.northeast.longitude) {
@@ -117,8 +115,8 @@ class Database {
                 .get()
                 .addOnSuccessListener { docs ->
                     callback(docs
-                        .filter { doc -> filterByLat(doc.data) }
-                        .map { doc -> Pair<String,Map<String,Any>>(doc.id,doc.data) }
+                        .filter { filterByLat(it.data) }
+                        .map { mapDoc(it) }
                     )
                 }
                 .addOnFailureListener { callback(null) }
@@ -133,8 +131,8 @@ class Database {
                         .get()
                         .addOnSuccessListener { docs2 ->
                             callback((docs1 + docs2)
-                                .filter { doc -> filterByLat(doc.data) }
-                                .map { doc -> Pair<String,Map<String,Any>>(doc.id,doc.data) }
+                                .filter { filterByLat(it.data) }
+                                .map { mapDoc(it) }
                             )
                         }
                         .addOnFailureListener { callback(null) }
@@ -149,7 +147,11 @@ class Database {
             .whereEqualTo("owner", getCurrentUserUid())
             .get()
             .addOnSuccessListener { docs ->
-                callback(docs.map { it.data })
+                callback(docs.map { doc ->
+                    val data = doc.data
+                    data["id"] = doc.id
+                    return@map data
+                })
             }
             .addOnFailureListener { callback(null) }
     }
@@ -172,10 +174,11 @@ class Database {
     fun newRoute(markers: List<Marker>, title: String = "", description: String = "", callback: (Boolean) -> Unit) {
 
         fun markerToMap(marker: Marker): Map<String, Any> {
+            assert(marker.tag == null)
             return mapOf(
                 "lat" to marker.position.latitude,
                 "lng" to marker.position.longitude,
-                "tag" to (marker.tag ?: emptyMap<String, Any>())
+                "tag" to marker.tag!!
             )
         }
 
@@ -204,10 +207,20 @@ class Database {
 
 
 
-//    Upload markers photos
-    fun uploadMarkerPhoto(ruta: Uri, routeId: String, markerId: String, callback: (Boolean) -> Unit) {
+//    Get marker photos
+    fun getMarkerPhotosRefs(routeId: String, markerId: String, callback: (List<StorageReference>?) -> Unit) {
         cs.child("routes/${routeId}/${markerId}")
-            .putFile(ruta)
+            .listAll()
+            .addOnSuccessListener { callback(it?.items) }
+            .addOnFailureListener { callback(null) }
+    }
+
+
+
+//    Upload markers photos
+    fun uploadMarkerPhoto(path: Uri, routeId: String, markerId: String, callback: (Boolean) -> Unit) {
+        cs.child("routes/${routeId}/${markerId}")
+            .putFile(path)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }
@@ -241,8 +254,8 @@ class Database {
         }
 
         cs.child("routes/${routeId}").listAll()
-            .addOnSuccessListener { refs ->
-                refs?.items?.forEach { ref ->
+            .addOnSuccessListener {
+                it?.items?.forEach { ref ->
                     deletePhoto(ref, 3)
                 }
                 callback(true)      // no se asegura la eliminación de todas las fotos
