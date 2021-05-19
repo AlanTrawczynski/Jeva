@@ -27,7 +27,7 @@ class Database {
 
 
     fun getCurrentUserUid() : String {
-        assert(auth.currentUser == null)
+        assert(auth.currentUser != null)
         return auth.currentUser?.uid!!
     }
 
@@ -174,7 +174,7 @@ class Database {
     fun newRoute(markers: List<Marker>, title: String = "", description: String = "", callback: (Boolean) -> Unit) {
 
         fun markerToMap(marker: Marker): Map<String, Any> {
-            assert(marker.tag == null)
+            assert(marker.tag != null)
             return mapOf(
                 "lat" to marker.position.latitude,
                 "lng" to marker.position.longitude,

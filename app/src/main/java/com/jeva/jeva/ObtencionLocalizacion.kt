@@ -13,19 +13,18 @@ Retorna un Task<Location>
  */
 class ObtencionLocalizacion {
 
-    companion object {
-        private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-        fun localizacion(actividad: Activity): Task<Location> {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(actividad)
-            return getLastKnownLocation()
-        }
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
-        @SuppressLint("MissingPermission") //ya compruebo anteriormente que se hayan permitido los permisos (llamando a gestionarPermisos)
-        private fun getLastKnownLocation(): Task<Location> {
-            var servicioLoc = fusedLocationClient.lastLocation
-            return servicioLoc
-        }
+    fun localizacion(actividad: Activity): Task<Location> {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(actividad)
+        return getLastKnownLocation()
+    }
+
+    @SuppressLint("MissingPermission") //ya compruebo anteriormente que se hayan permitido los permisos (llamando a gestionarPermisos)
+    private fun getLastKnownLocation(): Task<Location> {
+        var servicioLoc = fusedLocationClient.lastLocation
+        return servicioLoc
     }
 
     /* EJEMPLO DE USO

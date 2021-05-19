@@ -1,5 +1,6 @@
 package com.jeva.jeva.home.maps
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,55 +18,36 @@ import com.jeva.jeva.Database
 import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.ObtencionLocalizacion
 import com.jeva.jeva.R
-import com.jeva.jeva.images.dataPointMenu
+import com.jeva.jeva.home.ShowRoute
 import kotlinx.android.synthetic.main.fragment_maps.*
+import java.io.Serializable
+import java.util.*
 
 
 class MapFragment : Fragment(),OnMapReadyCallback {
 
     private lateinit var nMap : GoogleMap
     private val db = Database()
+    val obtencionLocalizacion = ObtencionLocalizacion()
 
     private var index = 0    //usar markerIndex                                    //index para llevar cuantos marcadores hemos marcado en el mapa
     private var markerList = mutableListOf<Marker>()            // esta var irá en otro fragment, pero es para almacenar los puntos seleccionados en el mapa
+    private var indexRoute: Int? = null
 
     private var currentRoute = mutableListOf<Marker>()         // lista que almacena los marcadores de la ruta seleccionada, para así poder eliminarlos posteriormente
     private var routesFirstMarker = mutableListOf<Marker>()        // los marcadores iniciales de cada ruta, se usa para hacerlos invisibles
 
     private lateinit var routes: List<Map<String, Any>>         //es una lista que almacena lo que se devuelve de la BD
-    private lateinit var routesId: List<String>
     private lateinit var iconGenerator: IconGenerator           //generador de iconos, se inicializa cuando se inicia el maps
     private var inRoute = false                                  //variable para ver si estamos dentro de una ruta en el mapa
-    private lateinit var inRouteId: String
     private lateinit  var polyline: Polyline
 
-    private var latlng = LatLng(0.0,0.0)        //almacenará la posición actual. Por defecto: (0.0,0.0)
+    //private var latlng0 = LatLng(0.0,0.0)        //almacenará la posición actual. Por defecto: (0.0,0.0)
 
     companion object {
         var mapView : SupportMapFragment?=null
-        val TAG: String = MapFragment::class.java.simpleName
-        fun newInstance() = MapFragment()
     }
 
-
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putFloat("zoom",nMap.cameraPosition.zoom)
-        outState.putDouble("lat",nMap.cameraPosition.target.latitude)
-        outState.putDouble("lon",nMap.cameraPosition.target.longitude)
-        outState.putBundle("mapView", mapView?.arguments)
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        if(savedInstanceState != null){
-            /*val coord = LatLng(savedInstanceState.getDouble("lat"),savedInstanceState.getDouble("lon"))
-            val zoom: Float = savedInstanceState.getFloat("zoom")
-            nMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coord,zoom))*/
-            mapView?.onCreate(savedInstanceState.getBundle("mapView"))
-        }
-        super.onCreate(savedInstanceState)
-    }
 
 
     override fun onCreateView(
@@ -76,17 +58,6 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         val root = inflater.inflate(R.layout.fragment_maps, container, false)
         if (savedInstanceState == null) {
             mapView = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-
-            /* DESCOMENTAR SI SE QUIERE QUE SE ABRA EL MAPA EN TU POS
-            GestionarPermisos.requestLocationPermissions(this.requireActivity())
-            ObtencionLocalizacion.localizacion(this.requireActivity())
-                .addOnSuccessListener {
-                    latlng = LatLng(it.latitude,it.longitude)
-                }
-                .addOnCompleteListener {
-                    //cuando se obtenga la localización se representa el mapa. NO antes.
-                    mapView?.getMapAsync(this)
-                } */
             mapView?.getMapAsync(this)
         }
         return root
@@ -94,8 +65,22 @@ class MapFragment : Fragment(),OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         buttonNewRoute.setOnClickListener {
-            db.newRoute(markerList){}//temporal, por eso no hay nada en el callback
+            //db.newRoute(markerList){}//temporal, por eso no hay nada en el callback
+            posicionarMapa()
+        }
+        //boton para ir al fragment visualizador de ruta.
+        btnGoShowMap.setOnClickListener {
+            indexRoute?.let {
+                indexRoute0 ->
+                Log.i("Maps", indexRoute.toString())
+                val intent = Intent(context, ShowRoute :: class.java).apply {
+                    putExtra("routeData",  routes[indexRoute0] as Serializable)
+                    putExtra("mapZoom", nMap.cameraPosition.zoom)
+                }
+                startActivity(intent)
+            }
         }
     }
 
@@ -104,23 +89,22 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         iconGenerator = IconGenerator(activity)
         if(!inRoute) showRoutes()
 
-        /*nMap.setOnMapClickListener { latLng ->
+        nMap.setOnMapClickListener { latLng ->
             index += 1
             val marker = nMap.addMarker(MarkerOptions().position(latLng).title("Hola $index"))
-            marker.tag = mutableMapOf(
-                "index" to index,
-                "title" to "",
-                "description" to "",
-                "photo" to mutableListOf<String>()
-            )
-            marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon((marker.tag as MutableMap<String, Any>)["index"].toString())))
-            markerList.add(marker)
-        }*/
+            marker?.let{
+                marker.tag = mutableMapOf(
+                    "id" to UUID.randomUUID().toString(),
+                    "index" to index,
+                    "title" to "",
+                    "description" to ""
+                )
+                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon((marker.tag as MutableMap<String, Any>)["index"].toString())))
+                markerList.add(marker)
+            }
+        }
 
-        /* DESCOMENTAR SI SE QUIERE QUE SE ABRA EL MAPA EN TU POS
-        nMap.apply {
-            moveCamera(CameraUpdateFactory.newLatLngZoom(latlng,10f))
-        }*/
+
 
         nMap.setOnMapLongClickListener {
             if(inRoute) {
@@ -128,30 +112,29 @@ class MapFragment : Fragment(),OnMapReadyCallback {
                 currentRoute.clear()
                 inRoute = false
                 showRoutes()
+                btnGoShowMap.visibility = View.INVISIBLE //lo volvemos a poner ne invisible
             }
         }
 
         nMap.setOnMarkerClickListener {
             marker ->
-            if(!inRoute) {//variable global que nos dice si estamos viendo todas las rutas, o los puntos de una ruta
-                inRouteId = routesId[marker.tag as Int]
+            if(!inRoute) {//variable global que nos dice si estamos viendo todas las rutas, o los puntos de una
+                indexRoute = marker.tag as Int
                 showRouteMarkers(marker.tag as Int)
+                btnGoShowMap.visibility = View.VISIBLE //pongo visible el botón que me lleva al nuevo fragment
                 inRoute = true
             }
-            else {
-                //Aquí irá que al seleccionar un punto, muestre la información.
-                var tag = marker.tag as Map<String, Any>
-                var title: String = tag["title"] as String
-                var description: String = tag["description"] as String
-                dataPointMenu.setInfo(title,description, arrayOf(),this)
-                dataPointMenu.showMenu(true)
+            else{
+                val tag = marker.tag as Map<*, *>
+                val title: String = tag["title"] as String
+                val description: String = tag["description"] as String
+                //dataPointMenu.setInfo(title,description, arrayOf(),this)
+                //dataPointMenu.showMenu()
             }
             true
         }
 
         nMap.setOnCameraIdleListener {
-            Log.i("Maps", "Se ha candelado el movimiento 2: " + nMap.projection.visibleRegion.latLngBounds.center)
-            Log.i("Maps", "Se ha candelado el movimiento 2: " + nMap.projection.visibleRegion.latLngBounds)
 
             if (!inRoute){
                 for (m in routesFirstMarker){
@@ -188,8 +171,8 @@ class MapFragment : Fragment(),OnMapReadyCallback {
 
         db.getNearbyRoutes(nMap.projection.visibleRegion.latLngBounds){
             if (it != null) {
-                routes = it.map { par -> par.second }
-                routesId = it.map { par -> par.first} as List<String>
+                routes = it
+                //routesId = it.map { par -> par.first} as List<String>
                 show()
             } else {
                 Log.e("Maps", "No se ha encontrado ruta")
@@ -219,4 +202,17 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         }
         polyline = nMap.addPolyline(PolylineOptions().addAll(listaLatLng).visible(true))
     }
+
+    private fun posicionarMapa() {
+        GestionarPermisos.requestLocationPermissions(this.requireActivity())
+        obtencionLocalizacion.localizacion(this.requireActivity())
+            .addOnSuccessListener { location ->
+                location?.let {
+                    Log.i("Maps", "Esta mi posicion: $it")
+                    val zoom = 10F
+                    nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), zoom))
+                }
+            }
+    }
+
 }
