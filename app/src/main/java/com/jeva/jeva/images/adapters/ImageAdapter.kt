@@ -51,7 +51,7 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
     fun addAll(resources: ArrayList<Uri>) {
         dataSource.addAll(dataSource.size-1,resources)
         notifyDataSetChanged()
-        dataPointMenu.checkSize()
+        //dataPointMenu.checkSize()
     }
 
     fun add(resource: Uri) {
@@ -59,13 +59,13 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
         dataSource.add(pos,resource)
         Log.d("fotos",dataSource.toString())
         notifyDataSetChanged()
-        dataPointMenu.checkSize()
+        //dataPointMenu.checkSize()
     }
 
     fun remove(pos: Int) {
         dataSource.removeAt(pos)
         notifyDataSetChanged()
-        dataPointMenu.checkSize()
+        //dataPointMenu.checkSize()
     }
 
     fun getDataSource() : ArrayList<Uri> {

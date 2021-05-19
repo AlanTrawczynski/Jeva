@@ -104,7 +104,7 @@ class Database {
     }
 
 
-    fun getNearbyRoutes(bounds: LatLngBounds, callback: (List<Map<String, Any>>?) -> Unit) {
+    fun getNearbyRoutes(bounds: LatLngBounds, callback: (List<Pair<String, Map<String, Any>>>?) -> Unit) {
         fun filterByLat(route: Map<String, Any>) : Boolean {
             val lat = (route["position"] as Map<*, *>)["lat"] as Double
             return lat >= bounds.southwest.latitude && lat <= bounds.northeast.latitude
@@ -118,7 +118,7 @@ class Database {
                 .addOnSuccessListener { docs ->
                     callback(docs
                         .filter { doc -> filterByLat(doc.data) }
-                        .map { doc -> doc.data }
+                        .map { doc -> Pair<String,Map<String,Any>>(doc.id,doc.data) }
                     )
                 }
                 .addOnFailureListener { callback(null) }
@@ -134,7 +134,7 @@ class Database {
                         .addOnSuccessListener { docs2 ->
                             callback((docs1 + docs2)
                                 .filter { doc -> filterByLat(doc.data) }
-                                .map { doc -> doc.data }
+                                .map { doc -> Pair<String,Map<String,Any>>(doc.id,doc.data) }
                             )
                         }
                         .addOnFailureListener { callback(null) }
@@ -205,9 +205,9 @@ class Database {
 
 
 //    Upload markers photos
-    fun uploadMarkerPhoto(path: String, routeId: String, markerId: String, callback: (Boolean) -> Unit) {
+    fun uploadMarkerPhoto(ruta: Uri, routeId: String, markerId: String, callback: (Boolean) -> Unit) {
         cs.child("routes/${routeId}/${markerId}")
-            .putFile(Uri.parse(path))
+            .putFile(ruta)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
     }

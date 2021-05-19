@@ -38,12 +38,9 @@ class dataPointMenu {
             this.description = description
             this.fotos = fotos.toCollection(ArrayList())
             this.fragmentCaller = caller
-            // esta imagen será el botón que se empleará para añadir imágenes.
-            val uri : Uri = toUri(R.drawable.imagen_anadir)
-            this.fotos.add(uri)
         }
 
-        fun showMenu() {
+        fun showMenu(editable: Boolean) {
             dialogBuilder = AlertDialog.Builder(fragmentCaller.requireActivity())
             val popUp: View = fragmentCaller.layoutInflater.inflate(R.layout.popup,null)
             adapter = ImageAdapter(fragmentCaller.requireContext(), fotos)
@@ -53,6 +50,15 @@ class dataPointMenu {
             var puntodescripcion: EditText = popUp.findViewById(R.id.puntoDescripcion)
             (puntoname as TextView).text = title
             (puntodescripcion as TextView).text = description
+
+            editable(puntoname, editable)
+            editable(puntodescripcion, editable)
+
+            if (editable) {
+                // esta imagen será el botón que se empleará para añadir imágenes.
+                val uri : Uri = toUri(R.drawable.imagen_anadir)
+                this.fotos.add(uri)
+            }
 
             //creación de galería de imágenes
             var photogrid: GridView = popUp.findViewById(R.id.photo_grid)
@@ -65,17 +71,25 @@ class dataPointMenu {
             var cerrar: Button = popUp.findViewById(R.id.cerrar)
             cerrar.setOnClickListener { dialog.dismiss() }
             photogrid.setOnItemClickListener { parent, view, position, id ->
-                if (position+1 != adapter.getDataSource().size) {
+                if(editable) {
+                    if (position+1 != adapter.getDataSource().size) {
+                        dialog.dismiss()
+                        var img: Uri = fotos.get(position)
+                        val bundle = bundleOf("title" to title, "pos" to position)
+                        Navigation.findNavController(fragmentCaller.requireView())
+                            .navigate(R.id.swipeImages, bundle)
+                    } else {
+                        GestionarPermisos.requestStoragePermissions(fragmentCaller.requireActivity())
+                        if (GestionarPermisos.accessStorageIsGranted(fragmentCaller.requireActivity())) {
+                            pickImageFromGallery()
+                        }
+                    }
+                } else {
                     dialog.dismiss()
                     var img: Uri = fotos.get(position)
                     val bundle = bundleOf("title" to title, "pos" to position)
                     Navigation.findNavController(fragmentCaller.requireView())
                         .navigate(R.id.swipeImages, bundle)
-                } else {
-                    GestionarPermisos.requestStoragePermissions(fragmentCaller.requireActivity())
-                    if (GestionarPermisos.accessStorageIsGranted(fragmentCaller.requireActivity())) {
-                        pickImageFromGallery()
-                    }
                 }
             }
             photogrid.setOnItemLongClickListener { parent, view, position, id ->
@@ -86,7 +100,7 @@ class dataPointMenu {
             }
             //mostramos el dialogo
             dialog.show()
-            checkSize()
+            //checkSize()
         }
 
         private fun pickImageFromGallery() {
@@ -111,6 +125,13 @@ class dataPointMenu {
             return uri
         }
 
+        private fun editable(cuadroTexto: EditText, editable: Boolean) {
+            cuadroTexto.setFocusable(editable)
+            cuadroTexto.setClickable(editable)
+            cuadroTexto.setFocusableInTouchMode(editable)
+            cuadroTexto.setLongClickable(editable)
+        }
+        /*
         fun checkSize() {
             val popUp: View = fragmentCaller.layoutInflater.inflate(R.layout.popup,null)
             var photogrid: GridView = popUp.findViewById(R.id.photo_grid)
@@ -127,7 +148,7 @@ class dataPointMenu {
             val escala: Float = fragmentCaller.requireContext().resources.displayMetrics.density;
             var tam: Int = (dp * escala + 0.5f).toInt()
             return tam
-        }
+        }*/
      }
 
 }

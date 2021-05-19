@@ -33,8 +33,10 @@ class MapFragment : Fragment(),OnMapReadyCallback {
     private var routesFirstMarker = mutableListOf<Marker>()        // los marcadores iniciales de cada ruta, se usa para hacerlos invisibles
 
     private lateinit var routes: List<Map<String, Any>>         //es una lista que almacena lo que se devuelve de la BD
+    private lateinit var routesId: List<String>
     private lateinit var iconGenerator: IconGenerator           //generador de iconos, se inicializa cuando se inicia el maps
     private var inRoute = false                                  //variable para ver si estamos dentro de una ruta en el mapa
+    private lateinit var inRouteId: String
     private lateinit  var polyline: Polyline
 
     private var latlng = LatLng(0.0,0.0)        //almacenará la posición actual. Por defecto: (0.0,0.0)
@@ -132,13 +134,17 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         nMap.setOnMarkerClickListener {
             marker ->
             if(!inRoute) {//variable global que nos dice si estamos viendo todas las rutas, o los puntos de una ruta
+                inRouteId = routesId[marker.tag as Int]
                 showRouteMarkers(marker.tag as Int)
                 inRoute = true
             }
-            else{
+            else {
                 //Aquí irá que al seleccionar un punto, muestre la información.
-                dataPointMenu.setInfo("Prueba","Es una prueba", arrayOf(),this)
-                dataPointMenu.showMenu()
+                var tag = marker.tag as Map<String, Any>
+                var title: String = tag["title"] as String
+                var description: String = tag["description"] as String
+                dataPointMenu.setInfo(title,description, arrayOf(),this)
+                dataPointMenu.showMenu(true)
             }
             true
         }
@@ -182,7 +188,8 @@ class MapFragment : Fragment(),OnMapReadyCallback {
 
         db.getNearbyRoutes(nMap.projection.visibleRegion.latLngBounds){
             if (it != null) {
-                routes = it
+                routes = it.map { par -> par.second }
+                routesId = it.map { par -> par.first} as List<String>
                 show()
             } else {
                 Log.e("Maps", "No se ha encontrado ruta")
