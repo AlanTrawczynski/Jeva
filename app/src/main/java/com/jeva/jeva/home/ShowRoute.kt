@@ -14,7 +14,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
 import com.jeva.jeva.Database
 import com.jeva.jeva.R
-import com.jeva.jeva.databinding.ActivityShowRouteBinding
 import com.jeva.jeva.images.dataPointMenu
 import kotlinx.android.synthetic.main.activity_show_route.*
 
@@ -23,7 +22,6 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
     private val db = Database()
 
     private lateinit var nMap: GoogleMap
-    private lateinit var binding: ActivityShowRouteBinding
 
     private lateinit var routeData : HashMap<String, Any>
     private lateinit var iconGenerator: IconGenerator
@@ -32,8 +30,7 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityShowRouteBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_show_route)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
