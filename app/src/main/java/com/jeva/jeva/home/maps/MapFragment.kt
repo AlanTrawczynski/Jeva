@@ -210,7 +210,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
                 location?.let {
                     Log.i("Maps", "Esta mi posicion: $it")
                     val zoom = 10F
-                    nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), zoom))
+                    nMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), zoom))
                 }
             }
     }

@@ -18,7 +18,7 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_home)
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
@@ -38,4 +38,9 @@ class HomeActivity : AppCompatActivity() {
             dataPointMenu.adapter.add(data?.data!!) //returna una Uri, se la añado al adapter
         }
     }
+
+    override fun onBackPressed() {
+        moveTaskToBack(true)
+    }
+
 }

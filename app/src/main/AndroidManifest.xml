@@ -35,7 +35,6 @@
         <activity
             android:name=".home.ShowRoute"
             android:label="@string/title_activity_show_route" />
-        <activity android:name=".PruebasActivity" />
         <activity android:name=".DrawRoute" />
         <activity android:name=".auth.SignupActivity" />
         <activity android:name=".auth.ForgotpwdActivity" />

@@ -9,7 +9,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.jeva.jeva.Database
-import com.jeva.jeva.PruebasActivity
 import com.jeva.jeva.home.HomeActivity
 import com.jeva.jeva.R
 import kotlinx.android.synthetic.main.activity_login.*
@@ -23,10 +22,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        auth.signOut()
         if (Database().isUserLoggedIn()) {
-            startActivity(Intent(this, PruebasActivity::class.java))
-//            startActivity(Intent(this, HomeActivity::class.java))
+            startActivity(Intent(this, HomeActivity::class.java))
         }
 
         setup()
