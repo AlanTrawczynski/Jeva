@@ -36,13 +36,21 @@ class SignupActivity : AppCompatActivity() {
             val pwd1 = signupPassword.text.toString()
             val pwd2 = signupPasswordRepeat.text.toString()
 
-            if (!Auth.isValidEmail(email)) {
+            if (!Auth.isValidName(name)) {
+                Log.e("signupError", "Name no válido")
+                Auth.authToast("El nombre debe de tener al menos 4 caracteres", applicationContext)
+            }
+            else if (!Auth.isValidUsername(username)) {
+                Log.e("signupError", "Username no válido")
+                Auth.authToast("El nombre de usuario debe de tener al menos 4 caracteres", applicationContext)
+            }
+            else if (!Auth.isValidEmail(email)) {
                 Log.e("signupError", "Email no válido")
                 Auth.authToast("Introduce un email válido", applicationContext)
             }
             else if (!Auth.isValidPassword(pwd1)) {
                 Log.e("signupError", "Contraseña no válida")
-                Auth.authToast("Introduce una contraseña válida: 6 o más caracteres con una letra mayúscula, una minúscula y un número", applicationContext)
+                Auth.authToast("La contraseña debe de tener al menos 6 caracteres", applicationContext)
             }
             else if (pwd1 != pwd2) {
                 Log.e("signupError", "Las contraseñas no coinciden")
@@ -61,13 +69,11 @@ class SignupActivity : AppCompatActivity() {
                 val user = hashMapOf(
                     "name"      to name,
                     "username"  to username,
-                    "routes"    to listOf<String>() // read-only list
                 )
 
                 db.collection("users").document(auth.currentUser!!.uid)
                     .set(user)
                     .addOnSuccessListener {
-                        Auth.authToast("Usuario añadido a la base de datos", applicationContext)
                         startActivity(Intent(this, HomeActivity::class.java))
                         finish()
                     }

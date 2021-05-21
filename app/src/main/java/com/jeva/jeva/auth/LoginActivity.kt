@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.jeva.jeva.Database
+import com.jeva.jeva.PruebasActivity
 import com.jeva.jeva.home.HomeActivity
 import com.jeva.jeva.R
 import kotlinx.android.synthetic.main.activity_login.*
@@ -22,8 +23,10 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        auth.signOut()
         if (Database().isUserLoggedIn()) {
-            startActivity(Intent(this, HomeActivity::class.java))
+            startActivity(Intent(this, PruebasActivity::class.java))
+//            startActivity(Intent(this, HomeActivity::class.java))
         }
 
         setup()
@@ -48,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
             }
             else if (!Auth.isValidPassword(pwd)) {
                 Log.e("loginError", "Contraseña no válida")
-                Auth.authToast("Introduce una contraseña válida", applicationContext)
+                Auth.authToast("La contraseña debe de tener al menos 6 caracteres", applicationContext)
             }
             else {
                 logIn(email, pwd)
@@ -68,7 +71,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 catch (_: FirebaseAuthInvalidUserException) {
                     Log.e("loginError", "Usuario no registrado o deshabilitado")
-                    Auth.authToast("El email no se encuentra registrado o ha sido deshabilitado", applicationContext)
+                    Auth.authToast("El email no se encuentra registrado", applicationContext)
                 }
                 catch (_: FirebaseAuthInvalidCredentialsException) {
                     Log.e("loginError", "Contraseña incorrecta")

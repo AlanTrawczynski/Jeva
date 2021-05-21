@@ -24,36 +24,41 @@ class ForgotpwdActivity : AppCompatActivity() {
 
     private fun setup() {
         forgotpwdLinkGoToLogin.setOnClickListener { finish() }
-        forgotpwdBtnSubmit.setOnClickListener { forgotPwd() }
-    }
 
-
-    private fun forgotPwd() {
-        val email = forgotpwdEmail.text.toString()
-
-        if (Auth.isValidEmail(email)) {
-            auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.i("forgotPwd", "Email sent.")
-                    Auth.authToast("Se ha enviado el email", applicationContext)
-                    finish()
-                }
-                else {
-                    try {
-                        throw task.exception!!
-                    }
-                    catch (_: FirebaseAuthInvalidUserException) {
-                        Log.d("forgotpwdError", "Email no registrado")
-                        Auth.authToast("El email no se encuentra registrado", applicationContext)
-                    }
-                    catch (e: Exception) {
-                        Log.d("forgotpwdError", "Se ha producido un error: $e")
-                        Auth.authToast("Ha ocurrido un error, inténtelo de nuevo", applicationContext)
-                    }
-                }
+        forgotpwdBtnSubmit.setOnClickListener {
+            val email = forgotpwdEmail.text.toString()
+            if (Auth.isValidEmail(email)) {
+                resetPassword(email)
+            }
+            else {
+                Log.e("forgotpwdError", "Email no válido")
+                Auth.authToast("Introduce un email válido", applicationContext)
             }
         }
     }
 
+
+    private fun resetPassword(email: String) {
+        auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Log.i("forgotPwd", "Email sent.")
+                Auth.authToast("Email de recuperación enviado", applicationContext)
+                finish()
+            }
+            else {
+                try {
+                    throw task.exception!!
+                }
+                catch (_: FirebaseAuthInvalidUserException) {
+                    Log.d("forgotpwdError", "Email no registrado")
+                    Auth.authToast("El email no se encuentra registrado", applicationContext)
+                }
+                catch (e: Exception) {
+                    Log.d("forgotpwdError", "Se ha producido un error: $e")
+                    Auth.authToast("Ha ocurrido un error, inténtelo de nuevo", applicationContext)
+                }
+            }
+        }
+    }
 
 }

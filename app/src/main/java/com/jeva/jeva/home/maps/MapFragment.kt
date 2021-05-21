@@ -28,7 +28,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
 
     private lateinit var nMap : GoogleMap
     private val db = Database()
-    val obtencionLocalizacion = ObtencionLocalizacion()
+    private val obtencionLocalizacion = ObtencionLocalizacion()
 
     private var index = 0    //usar markerIndex                                    //index para llevar cuantos marcadores hemos marcado en el mapa
     private var markerList = mutableListOf<Marker>()            // esta var irá en otro fragment, pero es para almacenar los puntos seleccionados en el mapa
