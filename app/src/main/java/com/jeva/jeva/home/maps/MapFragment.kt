@@ -19,6 +19,7 @@ import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.ObtencionLocalizacion
 import com.jeva.jeva.R
 import com.jeva.jeva.home.ShowRoute
+import com.jeva.jeva.images.dataPointMenu
 import kotlinx.android.synthetic.main.fragment_maps.*
 import java.io.Serializable
 import java.util.*
@@ -133,10 +134,9 @@ class MapFragment : Fragment(),OnMapReadyCallback {
                 val title: String = tag["title"] as String
                 val description: String = tag["description"] as String
                 val idMarker = tag["id"] as String //este es el id del marcador, es local solo lo tendrás en este método.
-                //para coger el id de la route llama a idRoute, es de tipo String?
 
-                //dataPointMenu.setInfo(title,description, arrayOf(),this)
-                //dataPointMenu.showMenu()
+                dataPointMenu.setInfo(title,description, arrayOf(),this, idRoute!!, idMarker)
+                dataPointMenu.showMenu(true)
             }
             true
         }

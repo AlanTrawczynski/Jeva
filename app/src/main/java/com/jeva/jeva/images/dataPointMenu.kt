@@ -16,6 +16,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
+import com.google.android.gms.tasks.Task
+import com.jeva.jeva.Database
 import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.R
 import com.jeva.jeva.images.adapters.ImageAdapter
@@ -28,16 +30,23 @@ class dataPointMenu {
         lateinit var title:String
         lateinit var description:String
         lateinit var fotos: ArrayList<Uri>
+        var aSubir: ArrayList<Uri> = ArrayList()
         lateinit var fragmentCaller: Fragment
         lateinit var dialogBuilder: AlertDialog.Builder
         lateinit var adapter: ImageAdapter
+        lateinit var routeId: String
+        lateinit var markerId: String
+        private var db = Database()
+
         val REQUEST_CODE = 1
 
-        fun setInfo(title:String, description:String, fotos:Array<Uri>, caller: Fragment) {
+        fun setInfo(title:String, description:String, fotos:Array<Uri>, caller: Fragment, routeId: String, markerId: String) {
             this.title = title
             this.description = description
             this.fotos = fotos.toCollection(ArrayList())
             this.fragmentCaller = caller
+            this.markerId = markerId
+            this.routeId = routeId
         }
 
         fun showMenu(editable: Boolean) {
@@ -63,13 +72,18 @@ class dataPointMenu {
             //creación de galería de imágenes
             var photogrid: GridView = popUp.findViewById(R.id.photo_grid)
             photogrid.adapter = adapter
+            loadImagesFromDB(routeId, markerId, adapter)
 
             //creamos el cuadro de diálogo y añadimos listener al boton
             dialogBuilder.setView(popUp)
             var dialog = dialogBuilder.create()
 
             var cerrar: Button = popUp.findViewById(R.id.cerrar)
-            cerrar.setOnClickListener { dialog.dismiss() }
+            cerrar.setOnClickListener {
+                uploadImages(routeId, markerId)
+                dialog.dismiss()
+            }
+
             photogrid.setOnItemClickListener { parent, view, position, id ->
                 if(editable) {
                     if (position+1 != adapter.getDataSource().size) {
@@ -92,11 +106,14 @@ class dataPointMenu {
                         .navigate(R.id.swipeImages, bundle)
                 }
             }
-            photogrid.setOnItemLongClickListener { parent, view, position, id ->
-                if (position+1 != adapter.getDataSource().size) {
-                    adapter.remove(position)
+
+            if(editable) {
+                photogrid.setOnItemLongClickListener { parent, view, position, id ->
+                    if (position+1 != adapter.getDataSource().size) {
+                        adapter.remove(position)
+                    }
+                    true
                 }
-                true
             }
             //mostramos el dialogo
             dialog.show()
@@ -130,6 +147,35 @@ class dataPointMenu {
             cuadroTexto.setClickable(editable)
             cuadroTexto.setFocusableInTouchMode(editable)
             cuadroTexto.setLongClickable(editable)
+        }
+
+        private fun loadImagesFromDB(routeId: String, markerId: String, adapter: ImageAdapter) {
+            db.getMarkerPhotosRefs(routeId,markerId) {
+                if (it!=null) {
+                    Log.d("hello", it!!.toString())
+                    Log.d("hello", routeId)
+                    Log.d("hello", markerId)
+                    it.forEach { it2 ->
+                        var ref: Uri = it2.downloadUrl.result
+                        Log.d("hello", ref.toString())
+                        adapter.add(ref)
+                    }
+                } else {
+                    Log.d("hello", "it es null")
+                }
+            }
+        }
+
+        private fun uploadImages(routeId: String, markerId: String) {
+            Log.d("hello", "subida")
+            Log.d("hello", aSubir.toString())
+            aSubir.forEach {
+                db.uploadMarkerPhoto(it,routeId,markerId) {
+                    if (it!=true) {
+                        Toast.makeText(fragmentCaller.requireActivity(), "Hubo un error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
         /*
         fun checkSize() {

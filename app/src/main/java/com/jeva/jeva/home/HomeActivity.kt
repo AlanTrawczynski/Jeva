@@ -2,6 +2,7 @@ package com.jeva.jeva.home
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -35,7 +36,9 @@ class HomeActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
-            dataPointMenu.adapter.add(data?.data!!) //returna una Uri, se la añado al adapter
+            val ref: Uri = data?.data!!
+            dataPointMenu.aSubir.add(ref)
+            dataPointMenu.adapter.add(ref) //returna una Uri, se la añado al adapter
         }
     }
 
