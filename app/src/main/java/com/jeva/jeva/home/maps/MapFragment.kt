@@ -33,6 +33,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
     private var index = 0    //usar markerIndex                                    //index para llevar cuantos marcadores hemos marcado en el mapa
     private var markerList = mutableListOf<Marker>()            // esta var irá en otro fragment, pero es para almacenar los puntos seleccionados en el mapa
     private var indexRoute: Int? = null
+    private var idRoute: String? = null
 
     private var currentRoute = mutableListOf<Marker>()         // lista que almacena los marcadores de la ruta seleccionada, para así poder eliminarlos posteriormente
     private var routesFirstMarker = mutableListOf<Marker>()        // los marcadores iniciales de cada ruta, se usa para hacerlos invisibles
@@ -67,8 +68,8 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
 
         buttonNewRoute.setOnClickListener {
-            //db.newRoute(markerList){}//temporal, por eso no hay nada en el callback
-            posicionarMapa()
+            db.newRoute(markerList){}//temporal, por eso no hay nada en el callback
+            //posicionarMapa()
         }
         //boton para ir al fragment visualizador de ruta.
         btnGoShowMap.setOnClickListener {
@@ -120,14 +121,20 @@ class MapFragment : Fragment(),OnMapReadyCallback {
             marker ->
             if(!inRoute) {//variable global que nos dice si estamos viendo todas las rutas, o los puntos de una
                 indexRoute = marker.tag as Int
-                showRouteMarkers(marker.tag as Int)
                 btnGoShowMap.visibility = View.VISIBLE //pongo visible el botón que me lleva al nuevo fragment
                 inRoute = true
+                idRoute = routes[marker.tag as Int]["id"] as String
+
+
+                showRouteMarkers(marker.tag as Int) //siempre al final de cada método
             }
             else{
                 val tag = marker.tag as Map<*, *>
                 val title: String = tag["title"] as String
                 val description: String = tag["description"] as String
+                val idMarker = tag["id"] as String //este es el id del marcador, es local solo lo tendrás en este método.
+                //para coger el id de la route llama a idRoute, es de tipo String?
+
                 //dataPointMenu.setInfo(title,description, arrayOf(),this)
                 //dataPointMenu.showMenu()
             }
