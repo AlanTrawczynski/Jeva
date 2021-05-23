@@ -10,10 +10,16 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.maps.model.LatLng
 import com.jeva.jeva.R
 import com.jeva.jeva.images.dataPointMenu
 
 class HomeActivity : AppCompatActivity() {
+
+    companion object{
+        var lastMapZoom: Float = 14f
+        var lastMapPosition: LatLng = LatLng(0.0,0.0)
+    }
 
     val REQUEST_CODE: Int = 1
 

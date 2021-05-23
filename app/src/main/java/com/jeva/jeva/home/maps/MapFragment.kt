@@ -19,6 +19,7 @@ import com.jeva.jeva.Database
 import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.ObtencionLocalizacion
 import com.jeva.jeva.R
+import com.jeva.jeva.home.HomeActivity
 import com.jeva.jeva.home.ShowRoute
 import com.jeva.jeva.images.dataPointMenu
 import kotlinx.android.synthetic.main.fragment_maps.*
@@ -70,8 +71,8 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
 
         buttonNewRoute.setOnClickListener {
-            db.newRoute(markerList){}//temporal, por eso no hay nada en el callback
-            //posicionarMapa()
+            //db.newRoute(markerList){}//temporal, por eso no hay nada en el callback
+            posicionarMapa()
         }
         //boton para ir al fragment visualizador de ruta.
         btnGoShowMap.setOnClickListener {
@@ -89,6 +90,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         nMap = googleMap
+        nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HomeActivity.lastMapPosition, HomeActivity.lastMapZoom))
         iconGenerator = IconGenerator(activity)
         if(!inRoute) showRoutes()
 
@@ -222,6 +224,13 @@ class MapFragment : Fragment(),OnMapReadyCallback {
                     nMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), zoom))
                 }
             }
+    }
+
+    override fun onDestroyView() {
+        HomeActivity.lastMapPosition = nMap.cameraPosition.target
+        HomeActivity.lastMapZoom = nMap.cameraPosition.zoom
+        super.onDestroyView()
+        Log.i("Maps", HomeActivity.lastMapPosition.toString() + "---------" + HomeActivity.lastMapZoom.toString())
     }
 
 }
