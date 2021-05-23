@@ -219,7 +219,7 @@ class Database {
 
 //    Upload markers photos
     fun uploadMarkerPhoto(path: Uri, routeId: String, markerId: String, callback: (Boolean) -> Unit) {
-        cs.child("routes/${routeId}/${markerId}")
+        cs.child("routes/${routeId}/${markerId}/blabla")
             .putFile(path)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }

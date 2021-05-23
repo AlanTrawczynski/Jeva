@@ -1,6 +1,7 @@
 package com.jeva.jeva.images
 
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentResolver
 import android.content.Context
@@ -9,12 +10,14 @@ import android.content.res.Resources
 import android.net.Uri
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.google.android.gms.tasks.Task
 import com.jeva.jeva.Database
@@ -30,29 +33,33 @@ class dataPointMenu {
         lateinit var title:String
         lateinit var description:String
         lateinit var fotos: ArrayList<Uri>
-        var aSubir: ArrayList<Uri> = ArrayList()
-        lateinit var fragmentCaller: Fragment
+
         lateinit var dialogBuilder: AlertDialog.Builder
         lateinit var adapter: ImageAdapter
+        lateinit var activity: Activity
+        lateinit var context: Context
+
         lateinit var routeId: String
         lateinit var markerId: String
+        var aSubir: ArrayList<Uri> = ArrayList()
         private var db = Database()
 
         val REQUEST_CODE = 1
 
-        fun setInfo(title:String, description:String, fotos:Array<Uri>, caller: Fragment, routeId: String, markerId: String) {
+        fun setInfo(title:String, description:String, fotos:Array<Uri>, routeId: String, markerId: String, activity: Activity, context: Context) {
             this.title = title
             this.description = description
             this.fotos = fotos.toCollection(ArrayList())
-            this.fragmentCaller = caller
             this.markerId = markerId
             this.routeId = routeId
+            this.activity = activity
+            this.context = context
         }
 
-        fun showMenu(editable: Boolean) {
-            dialogBuilder = AlertDialog.Builder(fragmentCaller.requireActivity())
-            val popUp: View = fragmentCaller.layoutInflater.inflate(R.layout.popup,null)
-            adapter = ImageAdapter(fragmentCaller.requireContext(), fotos)
+        fun showMenu(layoutInflater: LayoutInflater, navigation: NavController?, editable: Boolean) {
+            dialogBuilder = AlertDialog.Builder(activity)
+            val popUp: View = layoutInflater.inflate(R.layout.popup,null)
+            adapter = ImageAdapter(context, fotos)
 
             //añadimos nombre y descripción
             var puntoname: EditText = popUp.findViewById(R.id.puntoName)
@@ -85,26 +92,36 @@ class dataPointMenu {
             }
 
             photogrid.setOnItemClickListener { parent, view, position, id ->
-                if(editable) {
-                    if (position+1 != adapter.getDataSource().size) {
+                if(navigation!=null) {
+                    if(editable) {
+                        if (position+1 != adapter.getDataSource().size) {
+                            dialog.dismiss()
+                            var img: Uri = fotos.get(position)
+                            val bundle = bundleOf("title" to title, "pos" to position, "edit" to editable)
+                            navigation.navigate(R.id.swipeImages, bundle)
+                        } else {
+                            GestionarPermisos.requestStoragePermissions(activity)
+                            if (GestionarPermisos.accessStorageIsGranted(activity)) {
+                                pickImageFromGallery()
+                            }
+                        }
+                    } else {
                         dialog.dismiss()
                         var img: Uri = fotos.get(position)
-                        val bundle = bundleOf("title" to title, "pos" to position)
-                        Navigation.findNavController(fragmentCaller.requireView())
-                            .navigate(R.id.swipeImages, bundle)
-                    } else {
-                        GestionarPermisos.requestStoragePermissions(fragmentCaller.requireActivity())
-                        if (GestionarPermisos.accessStorageIsGranted(fragmentCaller.requireActivity())) {
-                            pickImageFromGallery()
-                        }
+                        val bundle = bundleOf("title" to title, "pos" to position, "edit" to editable)
+                        navigation.navigate(R.id.swipeImages, bundle)
                     }
                 } else {
-                    dialog.dismiss()
-                    var img: Uri = fotos.get(position)
-                    val bundle = bundleOf("title" to title, "pos" to position)
-                    Navigation.findNavController(fragmentCaller.requireView())
-                        .navigate(R.id.swipeImages, bundle)
+                    if(editable) {
+                        if (position+1 == adapter.getDataSource().size) {
+                            GestionarPermisos.requestStoragePermissions(activity)
+                            if (GestionarPermisos.accessStorageIsGranted(activity)) {
+                                pickImageFromGallery()
+                            }
+                        }
+                    }
                 }
+
             }
 
             if(editable) {
@@ -117,14 +134,13 @@ class dataPointMenu {
             }
             //mostramos el dialogo
             dialog.show()
-            //checkSize()
         }
 
         private fun pickImageFromGallery() {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             ActivityCompat.startActivityForResult(
-                fragmentCaller.requireActivity(),
+                activity,
                 intent,
                 REQUEST_CODE,
                 null
@@ -132,7 +148,7 @@ class dataPointMenu {
         }
 
         private fun toUri(resource: Int) : Uri {
-            val resources: Resources = fragmentCaller.requireContext().resources
+            val resources: Resources = context.resources
             val uri = Uri.Builder()
                 .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
                 .authority(resources.getResourcePackageName(resource))
@@ -156,9 +172,10 @@ class dataPointMenu {
                     Log.d("hello", routeId)
                     Log.d("hello", markerId)
                     it.forEach { it2 ->
-                        var ref: Uri = it2.downloadUrl.result
-                        Log.d("hello", ref.toString())
-                        adapter.add(ref)
+                        it2.downloadUrl.addOnSuccessListener { Ref ->
+                            Log.d("hello", Ref.toString())
+                            adapter.add(Ref)
+                        }
                     }
                 } else {
                     Log.d("hello", "it es null")
@@ -172,7 +189,7 @@ class dataPointMenu {
             aSubir.forEach {
                 db.uploadMarkerPhoto(it,routeId,markerId) {
                     if (it!=true) {
-                        Toast.makeText(fragmentCaller.requireActivity(), "Hubo un error", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(activity, "Hubo un error", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

@@ -2,15 +2,18 @@ package com.jeva.jeva.images
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import androidx.viewpager.widget.ViewPager
-import com.jeva.jeva.images.adapters.swipeAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jeva.jeva.R
+import com.jeva.jeva.images.adapters.swipeAdapter
 
 class swipeImages : Fragment() {
 
@@ -19,6 +22,7 @@ class swipeImages : Fragment() {
         val supportActionBar =
                 (requireActivity() as AppCompatActivity).supportActionBar
         supportActionBar?.title = requireArguments().getString("title")!!
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -29,10 +33,25 @@ class swipeImages : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var pos : Int = requireArguments().getInt("pos") //pos de la imagen tocada
+        var edit: Boolean = requireArguments().getBoolean("edit")
         var swipeView: ViewPager = requireActivity().findViewById(R.id.viewSwipe)
-        var adapter: swipeAdapter = swipeAdapter(this.requireContext(), dataPointMenu.fotos)
+        var source = dataPointMenu.fotos
+        Log.d("edit", edit.toString())
+        if (edit) {
+            source = ArrayList(source.slice(IntRange(0,source.size-2)))
+        }
+        var adapter: swipeAdapter = swipeAdapter(this.requireContext(), source)
         swipeView.adapter = adapter
         swipeView.setCurrentItem(pos)
+
+        /*val view = this.requireView()
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true ) {
+                override fun handleOnBackPressed() {
+                    Navigation.findNavController(view).navigate(R.id.navigation_routes)
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(this.viewLifecycleOwner,callback)*/
     }
 
 

@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_navigation_maps_to_navigation_notifications"
             app:destination="@id/navigation_profile" />
+        <action
+            android:id="@+id/action_navigation_routes_to_swipeImages"
+            app:destination="@id/swipeImages" />
     </fragment>
 
     <fragment
@@ -60,5 +63,8 @@
         <argument
             android:name="pos"
             app:argType="integer" />
+        <argument
+            android:name="edit"
+            app:argType="boolean" />
     </fragment>
 </navigation>

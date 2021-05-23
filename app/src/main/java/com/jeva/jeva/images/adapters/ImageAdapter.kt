@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.BaseAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.jeva.jeva.R
 import com.jeva.jeva.images.Icon
 import com.jeva.jeva.images.dataPointMenu
 
@@ -41,6 +43,10 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
         }
         Glide.with(context)
             .load(dataSource[position])
+            .apply(RequestOptions()
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.error_image)
+            )
             .into(IconView)
         IconView.cutImage()
         return IconView
@@ -51,7 +57,6 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
     fun addAll(resources: ArrayList<Uri>) {
         dataSource.addAll(dataSource.size-1,resources)
         notifyDataSetChanged()
-        //dataPointMenu.checkSize()
     }
 
     fun add(resource: Uri) {
@@ -59,13 +64,11 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
         dataSource.add(pos,resource)
         Log.d("fotos",dataSource.toString())
         notifyDataSetChanged()
-        //dataPointMenu.checkSize()
     }
 
     fun remove(pos: Int) {
         dataSource.removeAt(pos)
         notifyDataSetChanged()
-        //dataPointMenu.checkSize()
     }
 
     fun getDataSource() : ArrayList<Uri> {

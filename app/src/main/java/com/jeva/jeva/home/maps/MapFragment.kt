@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -135,8 +136,9 @@ class MapFragment : Fragment(),OnMapReadyCallback {
                 val description: String = tag["description"] as String
                 val idMarker = tag["id"] as String //este es el id del marcador, es local solo lo tendrás en este método.
 
-                dataPointMenu.setInfo(title,description, arrayOf(),this, idRoute!!, idMarker)
-                dataPointMenu.showMenu(true)
+                dataPointMenu.setInfo(title,description, arrayOf(),idRoute!!, idMarker, this.requireActivity(), this.requireContext())
+                dataPointMenu.showMenu(this.layoutInflater,
+                    Navigation.findNavController(this.requireView()),true)
             }
             true
         }
