@@ -11,6 +11,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import java.util.UUID
 
 class Database {
 
@@ -219,7 +220,7 @@ class Database {
 
 //    Upload markers photos
     fun uploadMarkerPhoto(path: Uri, routeId: String, markerId: String, callback: (Boolean) -> Unit) {
-        cs.child("routes/${routeId}/${markerId}/blabla")
+        cs.child("routes/${routeId}/${markerId}/${UUID.randomUUID()}")
             .putFile(path)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
