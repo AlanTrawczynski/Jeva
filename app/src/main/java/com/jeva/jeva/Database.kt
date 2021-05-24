@@ -1,6 +1,9 @@
 package com.jeva.jeva
 
+import android.content.Context
 import android.net.Uri
+import android.util.Log
+import androidx.core.net.toUri
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.tasks.Task
@@ -11,7 +14,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import java.util.UUID
+import id.zelory.compressor.Compressor
+import java.util.*
 
 class Database {
 
@@ -219,11 +223,20 @@ class Database {
 
 
 //    Upload markers photos
-    fun uploadMarkerPhoto(path: Uri, routeId: String, markerId: String, callback: (Boolean) -> Unit) {
-        cs.child("routes/${routeId}/${markerId}/${UUID.randomUUID()}")
-            .putFile(path)
-            .addOnSuccessListener { callback(true) }
-            .addOnFailureListener { callback(false) }
+    fun uploadMarkerPhoto(uri: Uri, routeId: String, markerId: String, context: Context, callback: (Boolean) -> Unit) {
+        try {
+            val img = Compressor(context)
+                .setQuality(20)
+                .compressToFile(FileUtil.from(context, uri))
+
+            cs.child("routes/${routeId}/${markerId}/${UUID.randomUUID()}")
+                .putFile(img.toUri())
+                .addOnSuccessListener { callback(true) }
+                .addOnFailureListener { callback(false) }
+        }
+        catch (_: Exception) {
+            callback(false)
+        }
     }
 
 

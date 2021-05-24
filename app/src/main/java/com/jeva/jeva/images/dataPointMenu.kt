@@ -168,7 +168,7 @@ class dataPointMenu {
         private fun loadImagesFromDB(routeId: String, markerId: String, adapter: ImageAdapter) {
             db.getMarkerPhotosRefs(routeId,markerId) {
                 if (it!=null) {
-                    Log.d("hello", it!!.toString())
+                    Log.d("hello", it.toString())
                     Log.d("hello", routeId)
                     Log.d("hello", markerId)
                     it.forEach { it2 ->
@@ -187,8 +187,8 @@ class dataPointMenu {
             Log.d("hello", "subida")
             Log.d("hello", aSubir.toString())
             aSubir.forEach {
-                db.uploadMarkerPhoto(it,routeId,markerId) {
-                    if (it!=true) {
+                db.uploadMarkerPhoto(it, routeId, markerId, context) {
+                    if (!it) {
                         Toast.makeText(activity, "Hubo un error", Toast.LENGTH_SHORT).show()
                     }
                 }
