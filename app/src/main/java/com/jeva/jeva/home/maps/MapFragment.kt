@@ -138,9 +138,8 @@ class MapFragment : Fragment(),OnMapReadyCallback {
                 val description: String = tag["description"] as String
                 val idMarker = tag["id"] as String //este es el id del marcador, es local solo lo tendrás en este método.
 
-                dataPointMenu.setInfo(title,description, arrayOf(),idRoute!!, idMarker, this.requireActivity(), this.requireContext())
-                dataPointMenu.showMenu(this.layoutInflater,
-                    Navigation.findNavController(this.requireView()),true)
+                dataPointMenu.setInfo(title,description, arrayOf(),idRoute!!, idMarker, this.requireActivity(), this.requireContext(), this.layoutInflater)
+                dataPointMenu.showMenu(Navigation.findNavController(this.requireView()),true)
             }
             true
         }

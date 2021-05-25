@@ -29,6 +29,7 @@ class dataPointMenu {
         lateinit var fotos: ArrayList<Uri>
 
         lateinit var dialogBuilder: AlertDialog.Builder
+        lateinit var popUp: View
         lateinit var adapter: ImageAdapter
         lateinit var activity: Activity
         lateinit var context: Context
@@ -39,7 +40,7 @@ class dataPointMenu {
 
         val REQUEST_CODE = 1
 
-        fun setInfo(title:String, description:String, fotos:Array<Uri>, routeId: String, markerId: String, activity: Activity, context: Context) {
+        fun setInfo(title:String, description:String, fotos:Array<Uri>, routeId: String, markerId: String, activity: Activity, context: Context, layoutInflater: LayoutInflater) {
             this.title = title
             this.description = description
             this.fotos = fotos.toCollection(ArrayList())
@@ -47,11 +48,11 @@ class dataPointMenu {
             this.routeId = routeId
             this.activity = activity
             this.context = context
+            this.popUp = layoutInflater.inflate(R.layout.popup,null)
         }
 
-        fun showMenu(layoutInflater: LayoutInflater, navigation: NavController?, editable: Boolean) {
+        fun showMenu(navigation: NavController?, editable: Boolean) {
             dialogBuilder = AlertDialog.Builder(activity)
-            val popUp: View = layoutInflater.inflate(R.layout.popup,null)
             adapter = ImageAdapter(context, fotos, editable)
 
             //añadimos nombre y descripción
@@ -149,7 +150,6 @@ class dataPointMenu {
                 if (!it) {
                     Toast.makeText(activity, "Hubo un error", Toast.LENGTH_SHORT).show()
                 }
-
                 callback(it)
             }
         }
@@ -167,6 +167,17 @@ class dataPointMenu {
                 REQUEST_CODE,
                 null
             )
+        }
+
+        //CAMBIA TAMAÑO GRID EN FUNCIÓN NUM FOTOS
+        fun refreshTam() {
+            var photogrid: GridView = popUp.findViewById(R.id.photo_grid)
+            var tam: Int = DpToPixels(160)
+            if (adapter.getDataSource().size>2) {
+                tam = DpToPixels(300)
+            }
+            photogrid.layoutParams.height = tam
+            photogrid.requestLayout()
         }
 
         //DADO UN INT RETORNA Uri
@@ -189,27 +200,11 @@ class dataPointMenu {
             cuadroTexto.setLongClickable(editable)
         }
 
-
-
-
-        /*
-        fun checkSize() {
-            val popUp: View = fragmentCaller.layoutInflater.inflate(R.layout.popup,null)
-            var photogrid: GridView = popUp.findViewById(R.id.photo_grid)
-            var params: ViewGroup.LayoutParams = photogrid.layoutParams
-            var tam: Int = 175
-            if (adapter.getDataSource().size>2) {
-                tam = DpToPixels(350)
-            }
-            photogrid.layoutParams.height = tam
-            photogrid.requestLayout()
-        }
-
         private fun DpToPixels(dp: Int) : Int {
-            val escala: Float = fragmentCaller.requireContext().resources.displayMetrics.density;
+            val escala: Float = context.resources.displayMetrics.density;
             var tam: Int = (dp * escala + 0.5f).toInt()
             return tam
-        }*/
+        }
      }
 
 }

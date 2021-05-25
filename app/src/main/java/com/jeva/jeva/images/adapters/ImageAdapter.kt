@@ -59,6 +59,7 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
         if (editable) {
             pos -= 1
         }
+        dataPointMenu.refreshTam()
         notifyDataSetChanged()
     }
 
@@ -68,12 +69,13 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
             pos -= 1
         }
         dataSource.add(pos,resource)
-        Log.d("fotos",dataSource.toString())
+        dataPointMenu.refreshTam()
         notifyDataSetChanged()
     }
 
     fun remove(pos: Int) {
         dataSource.removeAt(pos)
+        dataPointMenu.refreshTam()
         notifyDataSetChanged()
     }
 
