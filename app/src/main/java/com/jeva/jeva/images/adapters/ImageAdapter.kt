@@ -16,7 +16,7 @@ import com.jeva.jeva.images.dataPointMenu
 
 // un adapter está entre medias del View y la fuente de datos. El view le pregunta al adapter qué
 // debe mostrar y el adapter responde, transformando uno de los elementos del dataSource a View.
-class ImageAdapter(private val context: Context, private val dataSource: ArrayList<Uri>) : BaseAdapter() {
+class ImageAdapter(private val context: Context, private val dataSource: ArrayList<Uri>, private val editable: Boolean) : BaseAdapter() {
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
@@ -55,12 +55,18 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
 
 
     fun addAll(resources: ArrayList<Uri>) {
-        dataSource.addAll(dataSource.size-1,resources)
+        var pos : Int = dataSource.size
+        if (editable) {
+            pos -= 1
+        }
         notifyDataSetChanged()
     }
 
     fun add(resource: Uri) {
-        var pos : Int = dataSource.size-1
+        var pos : Int = dataSource.size
+        if (editable) {
+            pos -= 1
+        }
         dataSource.add(pos,resource)
         Log.d("fotos",dataSource.toString())
         notifyDataSetChanged()

@@ -65,9 +65,10 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
             val tag = marker.tag as Map<*, *>
             val title: String = tag["title"] as String
             val description: String = tag["description"] as String
+            val idMarker = tag["id"] as String
 
-            //dataPointMenu.setInfo(title,description, arrayOf(),)
-            //dataPointMenu.showMenu()
+            //dataPointMenu.setInfo(title,description, arrayOf(),idRoute,idMarker,this,this.applicationContext)
+            //dataPointMenu.showMenu(this.layoutInflater,null,false)
             true
         }
     }

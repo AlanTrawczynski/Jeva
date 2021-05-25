@@ -43,8 +43,7 @@ class HomeActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             val ref: Uri = data?.data!!
-            dataPointMenu.aSubir.add(ref)
-            dataPointMenu.adapter.add(ref) //returna una Uri, se la añado al adapter
+            dataPointMenu.uploadImageShow(ref)
         }
     }
 
