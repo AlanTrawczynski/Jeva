@@ -56,7 +56,8 @@
         android:label="swipeImages" >
         <action
             android:id="@+id/action_swipeImages_to_navigation_maps"
-            app:destination="@id/navigation_routes" />
+            app:destination="@id/navigation_routes"
+            app:popUpTo="@id/navigation_routes" />
         <argument
             android:name="title"
             app:argType="string" />

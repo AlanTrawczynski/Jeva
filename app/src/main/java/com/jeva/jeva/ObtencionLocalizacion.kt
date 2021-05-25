@@ -13,7 +13,6 @@ Retorna un Task<Location>
  */
 class ObtencionLocalizacion {
 
-
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     fun localizacion(actividad: Activity): Task<Location> {
@@ -27,16 +26,4 @@ class ObtencionLocalizacion {
         return servicioLoc
     }
 
-    /* EJEMPLO DE USO
-           ObtencionLocalizacion.localizacion(this@MapActivity)
-            .addOnSuccessListener {
-                latlng = LatLng(it.latitude,it.longitude)
-            }
-            .addOnCompleteListener {
-                //cuando se obtenga la localización se representa el mapa. NO antes.
-                val mapFragment = supportFragmentManager
-                        .findFragmentById(R.id.map) as SupportMapFragment
-                mapFragment.getMapAsync(this)
-            }
-     */
 }

@@ -32,26 +32,19 @@ class swipeImages : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         var pos : Int = requireArguments().getInt("pos") //pos de la imagen tocada
         var edit: Boolean = requireArguments().getBoolean("edit")
         var swipeView: ViewPager = requireActivity().findViewById(R.id.viewSwipe)
         var source = dataPointMenu.fotos
-        Log.d("edit", edit.toString())
+
         if (edit) {
             source = ArrayList(source.slice(IntRange(0,source.size-2)))
         }
+
         var adapter: swipeAdapter = swipeAdapter(this.requireContext(), source)
         swipeView.adapter = adapter
         swipeView.setCurrentItem(pos)
-
-        /*val view = this.requireView()
-        val callback: OnBackPressedCallback =
-            object : OnBackPressedCallback(true ) {
-                override fun handleOnBackPressed() {
-                    Navigation.findNavController(view).navigate(R.id.navigation_routes)
-                }
-            }
-        requireActivity().onBackPressedDispatcher.addCallback(this.viewLifecycleOwner,callback)*/
     }
 
 

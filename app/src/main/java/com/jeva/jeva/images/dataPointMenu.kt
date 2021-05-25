@@ -127,7 +127,7 @@ class dataPointMenu {
                         }
                     }
                 } else {
-                    Log.d("hello", "it es null")
+                    Toast.makeText(activity, "Compruebe la conexión a internet", Toast.LENGTH_SHORT).show()
                 }
             }
         }
