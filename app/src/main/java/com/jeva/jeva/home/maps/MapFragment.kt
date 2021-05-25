@@ -33,8 +33,8 @@ class MapFragment : Fragment(),OnMapReadyCallback {
     private val db = Database()
     private val obtencionLocalizacion = ObtencionLocalizacion()
 
-    private var index = 0    //usar markerIndex                                    //index para llevar cuantos marcadores hemos marcado en el mapa
-    private var markerList = mutableListOf<Marker>()            // esta var irá en otro fragment, pero es para almacenar los puntos seleccionados en el mapa
+        //usar markerIndex                                    //index para llevar cuantos marcadores hemos marcado en el mapa
+               // esta var irá en otro fragment, pero es para almacenar los puntos seleccionados en el mapa
     private var indexRoute: Int? = null
     private var idRoute: String? = null
 
@@ -92,23 +92,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         nMap = googleMap
         nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HomeActivity.lastMapPosition, HomeActivity.lastMapZoom))
         iconGenerator = IconGenerator(activity)
-        if(!inRoute) showRoutes()
-
-        nMap.setOnMapClickListener { latLng ->
-            index += 1
-            val marker = nMap.addMarker(MarkerOptions().position(latLng).title("Hola $index"))
-            marker?.let{
-                marker.tag = mutableMapOf(
-                    "id" to UUID.randomUUID().toString(),
-                    "index" to index,
-                    "title" to "",
-                    "description" to ""
-                )
-                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon((marker.tag as MutableMap<String, Any>)["index"].toString())))
-                markerList.add(marker)
-            }
-        }
-
+        if(!inRoute) { showRoutes() }
 
 
         nMap.setOnMapLongClickListener {
@@ -116,6 +100,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
                 nMap.clear()
                 currentRoute.clear()
                 inRoute = false
+
                 showRoutes()
                 btnGoShowMap.visibility = View.INVISIBLE //lo volvemos a poner ne invisible
             }
@@ -129,17 +114,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
                 inRoute = true
                 idRoute = routes[marker.tag as Int]["id"] as String
 
-
                 showRouteMarkers(marker.tag as Int) //siempre al final de cada método
-            }
-            else{
-                val tag = marker.tag as Map<*, *>
-                val title: String = tag["title"] as String
-                val description: String = tag["description"] as String
-                val idMarker = tag["id"] as String //este es el id del marcador, es local solo lo tendrás en este método.
-
-                dataPointMenu.setInfo(title,description, arrayOf(),idRoute!!, idMarker, this.requireActivity(), this.requireContext(), this.layoutInflater)
-                dataPointMenu.showMenu(Navigation.findNavController(this.requireView()),true)
             }
             true
         }
@@ -166,14 +141,13 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         fun show(){
             iconGenerator.setStyle(STYLE_RED)
             for ((i,m) in routes.withIndex()){
-                Log.i("Maps", m["position"].toString())
                 val position = m["position"] as Map<String, Any>
                 val latLang =  positionToLatLng(position)
                 val marker = nMap.addMarker(MarkerOptions().position(latLang))
 
                 marker?.let {
                     it.tag = i
-                    it.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon(i.toString())))
+                    it.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                     routesFirstMarker.add(it)
                 }
             }
@@ -204,7 +178,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
             else { iconGenerator.setStyle(STYLE_BLUE) }
             marker?.let {
                 marker.tag = marker0["tag"] as MutableMap<*, *>
-                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("Ha funcionado")))
+                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                 currentRoute.add(marker)
                 listaLatLng.add(latLng)
             }
@@ -218,7 +192,6 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         obtencionLocalizacion.localizacion(this.requireActivity())
             .addOnSuccessListener { location ->
                 location?.let {
-                    Log.i("Maps", "Esta mi posicion: $it")
                     val zoom = 10F
                     nMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), zoom))
                 }
@@ -229,7 +202,6 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         HomeActivity.lastMapPosition = nMap.cameraPosition.target
         HomeActivity.lastMapZoom = nMap.cameraPosition.zoom
         super.onDestroyView()
-        Log.i("Maps", HomeActivity.lastMapPosition.toString() + "---------" + HomeActivity.lastMapZoom.toString())
     }
 
 }

@@ -11,7 +11,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -33,6 +32,9 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".home.EditRoute"
+            android:label="@string/title_activity_edit_route" />
+        <activity
             android:name=".home.ShowRoute"
             android:label="@string/title_activity_show_route" />
         <activity android:name=".DrawRoute" />
@@ -44,9 +46,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
         <activity android:name=".auth.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,5 +1,6 @@
 package com.jeva.jeva.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -16,6 +17,7 @@ import com.jeva.jeva.Database
 import com.jeva.jeva.R
 import com.jeva.jeva.images.dataPointMenu
 import kotlinx.android.synthetic.main.activity_show_route.*
+import java.io.Serializable
 
 class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
 
@@ -44,8 +46,17 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
         val ownerId= routeData["owner"] as String
 
         if (idUser == ownerId){
-            btnEditMode.visibility = View.VISIBLE
+            showRouteBtnGoEdit.visibility = View.VISIBLE
         }
+        showRouteBtnGoEdit.setOnClickListener {
+            val intent = Intent(this, EditRoute :: class.java).apply {
+                putExtra("routeData",  routeData as Serializable)
+                putExtra("mapZoom", nMap.cameraPosition.zoom)
+                putExtra("newRoute", false)
+            }
+            startActivity(intent)
+        }
+        this.title = "Ruta"
     }
 
     private fun positionToLatLng(position: Map<String, Any>) : LatLng {
@@ -56,9 +67,7 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
         nMap = googleMap
         iconGenerator = IconGenerator(this)
         showRoute()
-        nMap.apply {
-            moveCamera(CameraUpdateFactory.newLatLngZoom(positionToLatLng(routeData["position"] as Map<String, Any>), initialZoom))
-        }
+        nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(positionToLatLng(routeData["position"] as Map<String, Any>), initialZoom))
 
         nMap.setOnMarkerClickListener {
             marker ->
@@ -66,8 +75,9 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
             val title: String = tag["title"] as String
             val description: String = tag["description"] as String
             val idMarker = tag["id"] as String
+            val idRoute = routeData["id"] as String
 
-            dataPointMenu.setInfo(title,description, arrayOf(),routeData["id"] as String,idMarker,this,this.applicationContext,this.layoutInflater)
+            dataPointMenu.setInfo(title,description, arrayOf(),idRoute,idMarker,this,this.applicationContext,this.layoutInflater)
             dataPointMenu.showMenu(null,false)
             true
         }
@@ -85,9 +95,7 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
             else { iconGenerator.setStyle(IconGenerator.STYLE_BLUE) }
             marker?.let {
                 marker.tag = marker0["tag"] as MutableMap<*, *>
-                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("Ha funcionado")))
-                //currentRoute.add(marker)
-                //listaLatLng.add(latLng)
+                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
             }
         }
     }
