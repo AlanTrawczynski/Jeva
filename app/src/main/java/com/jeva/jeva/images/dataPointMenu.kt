@@ -31,6 +31,7 @@ class dataPointMenu {
         lateinit var dialogBuilder: AlertDialog.Builder
         lateinit var popUp: View
         lateinit var adapter: ImageAdapter
+        private var photoId: ArrayList<String> = ArrayList()
         lateinit var activity: Activity
         lateinit var context: Context
 
@@ -71,9 +72,18 @@ class dataPointMenu {
             if(editable) {
                 val uri : Uri = toUri(R.drawable.imagen_anadir)
                 this.fotos.add(uri)
+                this.photoId.add("editable")
                 photogrid.setOnItemLongClickListener { parent, view, position, id ->
                     if (position+1 != adapter.getDataSource().size) {
-                        adapter.remove(position)
+                        val photoToDelete: String = photoId.get(position)
+                        db.deleteRoutePhoto(routeId,photoToDelete) {
+                            if(it) {
+                                adapter.remove(position)
+                                photoId.removeAt(position)
+                            } else {
+                                Toast.makeText(activity, "No se pudo eliminar la foto", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
                     true
                 }
@@ -125,6 +135,7 @@ class dataPointMenu {
                     it.forEach { it2 ->
                         it2.downloadUrl.addOnSuccessListener { Ref ->
                             adapter.add(Ref)
+                            photoId.add(it2.name)
                         }
                     }
                 } else {
@@ -136,21 +147,23 @@ class dataPointMenu {
         //SUBIDA DE IMÁGENES
         fun uploadImageShow(imageRef: Uri) {
             uploadImage(routeId, markerId, imageRef) {
-                if(it) {
+                if(it!=null) {
                     //Sólo si se ha subido a la BD, se muestra al usuario la imagen
                     adapter.add(imageRef)
+                    photoId.add(it)
+                    //hay q añadir el id a photoId
                 } else {
                     Toast.makeText(activity, "Hubo un error al subir la imagen", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        private fun uploadImage(routeId: String, markerId: String, imageRef: Uri, callback: (Boolean) -> Unit) {
+        private fun uploadImage(routeId: String, markerId: String, imageRef: Uri, callback: (String) -> Unit) {
             db.uploadMarkerPhoto(imageRef, routeId, markerId, context) {
-                if (!it) {
+                if (it!! == null) {
                     Toast.makeText(activity, "Hubo un error", Toast.LENGTH_SHORT).show()
                 }
-                callback(it)
+                callback(it!!)
             }
         }
 

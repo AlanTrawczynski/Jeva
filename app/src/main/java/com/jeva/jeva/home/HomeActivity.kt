@@ -50,9 +50,10 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    /*
    override fun onBackPressed() {
         moveTaskToBack(true)
-   }
+   }*/
 
     private fun posicionarMapa() {
         GestionarPermisos.requestLocationPermissions(this)
