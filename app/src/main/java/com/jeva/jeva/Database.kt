@@ -223,7 +223,7 @@ class Database {
 
 
 //    Upload markers photos
-    fun uploadMarkerPhoto(uri: Uri, routeId: String, markerId: String, context: Context, callback: (Boolean) -> Unit) {
+    fun uploadMarkerPhoto(uri: Uri, routeId: String, markerId: String, context: Context, callback: (String?) -> Unit) {
         try {
             val img = Compressor(context)
                 .setQuality(20)
@@ -231,11 +231,12 @@ class Database {
 
             cs.child("routes/${routeId}/${markerId}/${UUID.randomUUID()}")
                 .putFile(img.toUri())
-                .addOnSuccessListener { callback(true) }
-                .addOnFailureListener { callback(false) }
+                .addOnSuccessListener {
+                    callback(it.metadata?.name.toString()) }
+                .addOnFailureListener { callback(null) }
         }
         catch (_: Exception) {
-            callback(false)
+            callback(null)
         }
     }
 

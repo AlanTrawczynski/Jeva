@@ -47,8 +47,9 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    /*
    override fun onBackPressed() {
         moveTaskToBack(true)
-   }
+   }*/
 
 }
