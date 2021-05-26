@@ -26,7 +26,7 @@ class dataPointMenu {
     companion object {
         lateinit var title:String
         lateinit var description:String
-        lateinit var fotos: ArrayList<Uri>
+        lateinit var fotos: ArrayList<Pair<String,Uri>>
 
         lateinit var dialogBuilder: AlertDialog.Builder
         lateinit var popUp: View
@@ -41,10 +41,10 @@ class dataPointMenu {
 
         val REQUEST_CODE = 1
 
-        fun setInfo(title:String, description:String, fotos:Array<Uri>, routeId: String, markerId: String, activity: Activity, context: Context, layoutInflater: LayoutInflater) {
+        fun setInfo(title:String, description:String, routeId: String, markerId: String, activity: Activity, context: Context, layoutInflater: LayoutInflater) {
             this.title = title
             this.description = description
-            this.fotos = fotos.toCollection(ArrayList())
+            this.fotos = ArrayList()
             this.markerId = markerId
             this.routeId = routeId
             this.activity = activity
@@ -71,11 +71,11 @@ class dataPointMenu {
 
             if(editable) {
                 val uri : Uri = toUri(R.drawable.imagen_anadir)
-                this.fotos.add(uri)
+                this.fotos.add(Pair("anadir",uri))
                 this.photoId.add("editable")
                 photogrid.setOnItemLongClickListener { parent, view, position, id ->
                     if (position+1 != adapter.getDataSource().size) {
-                        val photoToDelete: String = photoId.get(position)
+                        val photoToDelete: String = adapter.getDataSource().get(position).first
                         deleteImage(photoToDelete,position)
                     }
                     true
@@ -96,13 +96,11 @@ class dataPointMenu {
                     if(editable) {
                         if (position+1 != adapter.getDataSource().size) {
                             dialog.dismiss()
-                            var img: Uri = fotos.get(position)
                             val bundle = bundleOf("title" to title, "pos" to position, "edit" to editable)
                             navigation.navigate(R.id.swipeImages, bundle)
                         }
                     } else {
                         dialog.dismiss()
-                        var img: Uri = fotos.get(position)
                         val bundle = bundleOf("title" to title, "pos" to position, "edit" to editable)
                         navigation.navigate(R.id.swipeImages, bundle)
                     }
@@ -127,8 +125,7 @@ class dataPointMenu {
                 if (it!=null) {
                     it.forEach { it2 ->
                         it2.downloadUrl.addOnSuccessListener { Ref ->
-                            adapter.add(Ref)
-                            photoId.add(it2.name)
+                            adapter.add(it2.name, Ref)
                         }
                     }
                 } else {
@@ -139,23 +136,15 @@ class dataPointMenu {
 
         //SUBIDA DE IMÁGENES
         fun uploadImageShow(imageRef: Uri) {
+            Log.d("ref", imageRef.toString())
             uploadImage(routeId, markerId, imageRef) {
-                if(it!=null) {
-                    //Sólo si se ha subido a la BD, se muestra al usuario la imagen
-                    adapter.add(imageRef)
-                    photoId.add(it)
-                    //hay q añadir el id a photoId
-                } else {
-                    Toast.makeText(activity, "Hubo un error al subir la imagen", Toast.LENGTH_SHORT).show()
-                }
+                Log.d("ref", imageRef.toString())
+                adapter.add(it,imageRef)
             }
         }
 
         private fun uploadImage(routeId: String, markerId: String, imageRef: Uri, callback: (String) -> Unit) {
             db.uploadMarkerPhoto(imageRef, routeId, markerId, context) {
-                if (it!! == null) {
-                    Toast.makeText(activity, "Hubo un error", Toast.LENGTH_SHORT).show()
-                }
                 callback(it!!)
             }
         }
@@ -180,7 +169,6 @@ class dataPointMenu {
             db.deleteRoutePhoto(routeId,markerId,photoId) {
                 if(it) {
                     adapter.remove(position)
-                    Companion.photoId.removeAt(position)
                 } else {
                     Toast.makeText(activity, "No se pudo eliminar la foto", Toast.LENGTH_SHORT).show()
                 }

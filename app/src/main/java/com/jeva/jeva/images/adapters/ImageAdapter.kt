@@ -16,7 +16,7 @@ import com.jeva.jeva.images.dataPointMenu
 
 // un adapter está entre medias del View y la fuente de datos. El view le pregunta al adapter qué
 // debe mostrar y el adapter responde, transformando uno de los elementos del dataSource a View.
-class ImageAdapter(private val context: Context, private val dataSource: ArrayList<Uri>, private val editable: Boolean) : BaseAdapter() {
+class ImageAdapter(private val context: Context, private val dataSource: ArrayList<Pair<String,Uri>>, private val editable: Boolean) : BaseAdapter() {
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
@@ -42,7 +42,7 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
             IconView = convertView as Icon
         }
         Glide.with(context)
-            .load(dataSource[position])
+            .load(dataSource[position].second)
             .apply(RequestOptions()
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.error_image)
@@ -52,23 +52,13 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
         return IconView
     }
 
-
-
-    fun addAll(resources: ArrayList<Uri>) {
+    fun add(photoId: String, resource: Uri) {
         var pos : Int = dataSource.size
         if (editable) {
             pos -= 1
         }
-        dataPointMenu.refreshTam()
-        notifyDataSetChanged()
-    }
-
-    fun add(resource: Uri) {
-        var pos : Int = dataSource.size
-        if (editable) {
-            pos -= 1
-        }
-        dataSource.add(pos,resource)
+        var par : Pair<String, Uri> = Pair(photoId, resource)
+        dataSource.add(pos,par)
         dataPointMenu.refreshTam()
         notifyDataSetChanged()
     }
@@ -79,7 +69,7 @@ class ImageAdapter(private val context: Context, private val dataSource: ArrayLi
         notifyDataSetChanged()
     }
 
-    fun getDataSource() : ArrayList<Uri> {
+    fun getDataSource() : ArrayList<Pair<String,Uri>> {
         return dataSource
     }
 }

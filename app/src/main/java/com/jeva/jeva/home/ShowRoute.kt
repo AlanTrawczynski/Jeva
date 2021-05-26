@@ -1,6 +1,8 @@
 package com.jeva.jeva.home
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -28,6 +30,8 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var routeData : HashMap<String, Any>
     private lateinit var iconGenerator: IconGenerator
     private var initialZoom: Float = 14f
+
+    private val REQUEST_CODE: Int = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,9 +81,17 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
             val idMarker = tag["id"] as String
             val idRoute = routeData["id"] as String
 
-            dataPointMenu.setInfo(title,description, arrayOf(),idRoute,idMarker,this,this.applicationContext,this.layoutInflater)
+            dataPointMenu.setInfo(title,description, idRoute,idMarker,this,this.applicationContext,this.layoutInflater)
             dataPointMenu.showMenu(null,true)
             true
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+            val ref: Uri = data?.data!!
+            dataPointMenu.uploadImageShow(ref)
         }
     }
 

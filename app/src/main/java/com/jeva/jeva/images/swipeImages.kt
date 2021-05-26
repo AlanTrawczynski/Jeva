@@ -1,15 +1,11 @@
 package com.jeva.jeva.images
 
-
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jeva.jeva.R
@@ -36,7 +32,7 @@ class swipeImages : Fragment() {
         var pos : Int = requireArguments().getInt("pos") //pos de la imagen tocada
         var edit: Boolean = requireArguments().getBoolean("edit")
         var swipeView: ViewPager = requireActivity().findViewById(R.id.viewSwipe)
-        var source = dataPointMenu.fotos
+        var source = dataPointMenu.fotos.map { par -> par.second }.toCollection(ArrayList())
 
         if (edit) {
             source = ArrayList(source.slice(IntRange(0,source.size-2)))
