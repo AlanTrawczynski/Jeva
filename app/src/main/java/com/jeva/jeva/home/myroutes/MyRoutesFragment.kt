@@ -77,6 +77,7 @@ class MyRoutesFragment : Fragment(),Serializable {
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.settings_menu,menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
