@@ -76,14 +76,7 @@ class dataPointMenu {
                 photogrid.setOnItemLongClickListener { parent, view, position, id ->
                     if (position+1 != adapter.getDataSource().size) {
                         val photoToDelete: String = photoId.get(position)
-                        db.deleteRoutePhoto(routeId,photoToDelete) {
-                            if(it) {
-                                adapter.remove(position)
-                                photoId.removeAt(position)
-                            } else {
-                                Toast.makeText(activity, "No se pudo eliminar la foto", Toast.LENGTH_SHORT).show()
-                            }
-                        }
+                        deleteImage(photoToDelete,position)
                     }
                     true
                 }
@@ -180,6 +173,18 @@ class dataPointMenu {
                 REQUEST_CODE,
                 null
             )
+        }
+
+        //BORRAR IMAGEN
+        private fun deleteImage(photoId: String, position: Int) {
+            db.deleteRoutePhoto(routeId,markerId,photoId) {
+                if(it) {
+                    adapter.remove(position)
+                    Companion.photoId.removeAt(position)
+                } else {
+                    Toast.makeText(activity, "No se pudo eliminar la foto", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         //CAMBIA TAMAÑO GRID EN FUNCIÓN NUM FOTOS

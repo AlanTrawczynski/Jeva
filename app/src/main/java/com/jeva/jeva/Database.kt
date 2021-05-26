@@ -279,8 +279,8 @@ class Database {
     }
 
 
-    fun deleteRoutePhoto(routeId: String, photoId: String, callback: (Boolean) -> Unit) {
-        cs.child("routes/${routeId}/${photoId}")
+    fun deleteRoutePhoto(routeId: String, markerId: String, photoId: String, callback: (Boolean) -> Unit) {
+        cs.child("routes/${routeId}/${markerId}/${photoId}")
             .delete()
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
