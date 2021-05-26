@@ -49,16 +49,40 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/puntoDescripcion" />
+        app:layout_constraintTop_toBottomOf="@+id/puntoDescripcion" >
+
+    </GridView>
 
 
-    <Button
-        android:id="@+id/cerrar"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cerrar"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/photo_grid" />
+        app:layout_constraintTop_toBottomOf="@+id/photo_grid">
+
+        <Button
+            android:id="@+id/cerrar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="Cerrar" />
+
+        <Button
+            android:id="@+id/borrar_marcador"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:text="BORRAR MARCADOR" />/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
