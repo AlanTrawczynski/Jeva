@@ -6,29 +6,38 @@ import android.view.*
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import com.google.android.gms.maps.model.LatLng
-import com.jeva.jeva.*
+import com.jeva.jeva.Database
+import com.jeva.jeva.R
 import com.jeva.jeva.home.EditRoute
-import com.jeva.jeva.home.HomeActivity
 import com.jeva.jeva.home.ShowRoute
+import kotlinx.android.synthetic.main.fragment_my_routes.*
 import java.io.Serializable
 
 class MyRoutesFragment : Fragment(),Serializable {
 
     private val db : Database = Database()
-    private val obtencionLocalizacion = ObtencionLocalizacion()
 
 
-    override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root : View = inflater.inflate(R.layout.fragment_my_routes, container, false)
         val buttonContainer = root.findViewById(R.id.myRoutesButtonContainer) as LinearLayout
+
         addRoutesButtons(buttonContainer)
         setHasOptionsMenu(true)
+
         return root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        myRoutesBtnNewRoute.setOnClickListener {
+            val intent = Intent(context, EditRoute :: class.java).apply {
+                putExtra("newRoute", true)
+            }
+            startActivity(intent)
+        }
     }
 
 
@@ -49,30 +58,7 @@ class MyRoutesFragment : Fragment(),Serializable {
 
                 bttnContainer.addView(routeBtn)
             }
-            val btnNewRoute = Button(context)
-            btnNewRoute.text = "Nueva ruta"
-            btnNewRoute.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-            btnNewRoute.setOnClickListener {
-                val intent = Intent(context, EditRoute :: class.java).apply {
-                    posicionarMapa()
-                    putExtra("newRoute", true)
-                }
-                startActivity(intent)
-            }
-            bttnContainer.addView(btnNewRoute)
         }
-    }
-
-
-    private fun posicionarMapa() {
-        GestionarPermisos.requestLocationPermissions(this.requireActivity())
-        obtencionLocalizacion.localizacion(this.requireActivity())
-            .addOnSuccessListener { location ->
-                location?.let {
-                        loc->
-                    HomeActivity.lastMapPosition = LatLng(loc.latitude, loc.longitude)
-                }
-            }
     }
 
 
@@ -80,6 +66,7 @@ class MyRoutesFragment : Fragment(),Serializable {
         inflater.inflate(R.menu.settings_menu,menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return super.onOptionsItemSelected(item)

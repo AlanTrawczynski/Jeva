@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.Navigation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -21,10 +20,8 @@ import com.jeva.jeva.ObtencionLocalizacion
 import com.jeva.jeva.R
 import com.jeva.jeva.home.HomeActivity
 import com.jeva.jeva.home.ShowRoute
-import com.jeva.jeva.images.dataPointMenu
 import kotlinx.android.synthetic.main.fragment_maps.*
 import java.io.Serializable
-import java.util.*
 
 
 class MapFragment : Fragment(),OnMapReadyCallback {
@@ -70,7 +67,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        buttonNewRoute.setOnClickListener {
+        mapsBtnLocate.setOnClickListener {
             //db.newRoute(markerList){}//temporal, por eso no hay nada en el callback
             posicionarMapa()
         }

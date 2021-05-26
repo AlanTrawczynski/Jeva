@@ -7,14 +7,17 @@
     tools:context=".home.myroutes.MyRoutesFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/myRoutesFloatingBttnAddNewRoutes"
+        android:id="@+id/myRoutesBtnNewRoute"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:backgroundTint="@color/primary_blue"
         android:clickable="true"
         android:src="@android:drawable/ic_input_add"
+        app:tint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="35dp" />
 
     <ScrollView
         android:id="@+id/myRoutesScrollView"
