@@ -67,10 +67,4 @@ class MyRoutesFragment : Fragment(),Serializable {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
-    }
-
-
 }

@@ -107,12 +107,6 @@ class Database {
             return lat >= bounds.southwest.latitude && lat <= bounds.northeast.latitude
         }
 
-        fun mapDoc(doc: QueryDocumentSnapshot) : Map<String, Any> {
-            val data = doc.data
-            data["id"] = doc.id
-            return data
-        }
-
         if (bounds.southwest.longitude < bounds.northeast.longitude) {
             fs.collection("routes")
                 .whereGreaterThanOrEqualTo("position.lng", bounds.southwest.longitude)
@@ -120,8 +114,8 @@ class Database {
                 .get()
                 .addOnSuccessListener { docs ->
                     callback(docs
-                        .filter { filterByLat(it.data) }
-                        .map { mapDoc(it) }
+                        .map { qdsToRoute(it) }
+                        .filter { filterByLat(it) }
                     )
                 }
                 .addOnFailureListener { callback(null) }
@@ -136,8 +130,8 @@ class Database {
                         .get()
                         .addOnSuccessListener { docs2 ->
                             callback((docs1 + docs2)
-                                .filter { filterByLat(it.data) }
-                                .map { mapDoc(it) }
+                                .map { qdsToRoute(it) }
+                                .filter { filterByLat(it) }
                             )
                         }
                         .addOnFailureListener { callback(null) }
@@ -152,24 +146,48 @@ class Database {
             .whereEqualTo("owner", getCurrentUserUid())
             .get()
             .addOnSuccessListener { docs ->
-                callback(docs.map { doc ->
-                    val data = doc.data
-                    data["id"] = doc.id
-                    return@map data
-                })
+                callback(docs.map { qdsToRoute(it) }
+                )
             }
             .addOnFailureListener { callback(null) }
     }
 
 
-    fun getRouteTask(routeId: String) : Task<DocumentSnapshot> {
-        return fs.collection("routes").document(routeId).get()
+    private fun qdsToRoute(doc: QueryDocumentSnapshot) : Map<String, Any> {
+        val route = doc.data
+        val markers = route["markers"] as List<*>
+
+        route["id"] = doc.id
+        if (markers.isNotEmpty()) {
+            val firstMarker = markers[0] as Map<*, *>
+            route["position"] = mapOf(
+                "lat" to firstMarker["lat"] as Double,
+                "lng" to firstMarker["lng"] as Double
+            )
+        }
+
+        return route
     }
 
 
     fun getRoute(routeId: String, callback: (Map<String, Any>?) -> Unit) {
-        getRouteTask(routeId)
-            .addOnSuccessListener { callback(it?.data) }
+        fs.collection("routes").document(routeId)
+            .get()
+            .addOnSuccessListener {
+                callback(it?.data?.let { route ->
+                    val markers = route["markers"] as List<*>
+
+                    route["id"] = routeId
+                    if (markers.isNotEmpty()) {
+                        val firstMarker = markers[0] as Map<*, *>
+                        route["position"] = mapOf(
+                            "lat" to firstMarker["lat"] as Double,
+                            "lng" to firstMarker["lng"] as Double
+                        )
+                    }
+                    return@let route
+                })
+            }
             .addOnFailureListener { callback(null) }
     }
 
@@ -177,16 +195,6 @@ class Database {
 
 //    Create and update routes
     fun newRoute(markers: List<Marker>, title: String = "", description: String = "", callback: (Boolean) -> Unit) {
-
-        fun markerToMap(marker: Marker): Map<String, Any> {
-            assert(marker.tag != null)
-            return mapOf(
-                "lat" to marker.position.latitude,
-                "lng" to marker.position.longitude,
-                "tag" to marker.tag!!
-            )
-        }
-
         val data = mapOf(
             "title" to title,
             "description" to description,
@@ -204,10 +212,27 @@ class Database {
     }
 
 
-    fun updateRoute(routeId: String, data: Map<String, Any>, callback: (Boolean) -> Unit) {
+    fun updateRoute(routeId: String, markers: List<Marker>? = null, title: String? = null, description: String? = null, callback: (Boolean) -> Unit) {
+        val data = mutableMapOf<String, Any>()
+        title?.let { data["title"] = title }
+        description?.let { data["description"] = description }
+        markers?.let {
+            data["markers"] = it.map { marker -> markerToMap(marker) }
+        }
+
         fs.collection("routes").document(routeId).update(data)
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
+    }
+
+
+    private fun markerToMap(marker: Marker): Map<String, Any> {
+        assert(marker.tag != null)
+        return mapOf(
+            "lat" to marker.position.latitude,
+            "lng" to marker.position.longitude,
+            "tag" to marker.tag!!
+        )
     }
 
 
@@ -259,7 +284,6 @@ class Database {
 
 
     private fun deleteRoutePhotos(routeId: String, callback: (Boolean) -> Unit) {
-
         fun deletePhoto(photoRef: StorageReference, tries: Int) {
             if (tries > 0) {
                 photoRef.delete()
