@@ -2,7 +2,6 @@ package com.jeva.jeva
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.core.net.toUri
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
@@ -274,7 +273,7 @@ class Database {
                 fs.collection("routes").document(routeId)
                     .delete()
                     .addOnSuccessListener { callback(true) }
-                    .addOnFailureListener { callback(false) }   // pueden haberse eliminado las fotos y no la ruta
+                    .addOnFailureListener { callback(false) }
             }
             else {
                 callback(false)
@@ -284,19 +283,27 @@ class Database {
 
 
     private fun deleteRoutePhotos(routeId: String, callback: (Boolean) -> Unit) {
-        fun deletePhoto(photoRef: StorageReference, tries: Int) {
-            if (tries > 0) {
-                photoRef.delete()
-                    .addOnFailureListener {
-                        deletePhoto(photoRef, tries - 1)
-                    }
-            }
-        }
-
         cs.child("routes/${routeId}").listAll()
-            .addOnSuccessListener {
-                it?.items?.forEach { ref ->
-                    deletePhoto(ref, 3)
+            .addOnSuccessListener { folders ->      // list folders
+                folders?.prefixes?.forEach { folderRef ->
+                    folderRef.listAll()         // list photos
+                        .addOnSuccessListener { photos ->
+                            photos?.items?.forEach { photoRef ->
+                                photoRef.delete()
+                            }
+                        }
+                }
+                callback(true)      // no se asegura la eliminación de todas las fotos
+            }
+            .addOnFailureListener { callback(false) }
+    }
+
+
+    fun deleteMarkerPhotos(routeId: String, markerId: String, callback: (Boolean) -> Unit) {
+        cs.child("routes/${routeId}/${markerId}").listAll()
+            .addOnSuccessListener { photos ->
+                photos?.items?.forEach { photoRef ->
+                    photoRef.delete()
                 }
                 callback(true)      // no se asegura la eliminación de todas las fotos
             }

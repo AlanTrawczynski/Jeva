@@ -41,7 +41,7 @@ class MyRoutesFragment : Fragment(),Serializable {
     }
 
 
-    private fun addRoutesButtons(bttnContainer: LinearLayout) {
+    private fun addRoutesButtons(btnContainer: LinearLayout) {
         db.getCurrentUserRoutes { routes ->
             routes?.forEach { route ->
                 val routeBtn = Button(context)
@@ -56,7 +56,7 @@ class MyRoutesFragment : Fragment(),Serializable {
                     startActivity(intent)
                 }
 
-                bttnContainer.addView(routeBtn)
+                btnContainer.addView(routeBtn)
             }
         }
     }
