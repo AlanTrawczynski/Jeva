@@ -2,9 +2,7 @@ package com.jeva.jeva.home.myroutes
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
@@ -20,6 +18,7 @@ class MyRoutesFragment : Fragment(),Serializable {
     private val db : Database = Database()
     private val obtencionLocalizacion = ObtencionLocalizacion()
 
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -28,6 +27,7 @@ class MyRoutesFragment : Fragment(),Serializable {
         val root : View = inflater.inflate(R.layout.fragment_my_routes, container, false)
         val buttonContainer = root.findViewById(R.id.myRoutesButtonContainer) as LinearLayout
         addRoutesButtons(buttonContainer)
+        setHasOptionsMenu(true)
         return root
     }
 
@@ -62,6 +62,8 @@ class MyRoutesFragment : Fragment(),Serializable {
             bttnContainer.addView(btnNewRoute)
         }
     }
+
+
     private fun posicionarMapa() {
         GestionarPermisos.requestLocationPermissions(this.requireActivity())
         obtencionLocalizacion.localizacion(this.requireActivity())
@@ -72,4 +74,16 @@ class MyRoutesFragment : Fragment(),Serializable {
                 }
             }
     }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.settings_menu,menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return super.onOptionsItemSelected(item)
+    }
+
+
 }

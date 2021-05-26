@@ -15,9 +15,6 @@
             app:destination="@id/navigation_dashboard"
             app:enterAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/action_navigation_maps_to_navigation_notifications"
-            app:destination="@id/navigation_profile" />
-        <action
             android:id="@+id/action_navigation_routes_to_swipeImages"
             app:destination="@id/swipeImages" />
     </fragment>
@@ -28,27 +25,8 @@
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_my_routes" >
         <action
-            android:id="@+id/action_navigation_dashboard_to_navigation_notifications"
-            app:destination="@id/navigation_profile" />
-        <action
             android:id="@+id/action_navigation_dashboard_to_navigation_maps"
             app:destination="@id/navigation_routes" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.jeva.jeva.home.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile">
-        <action
-            android:id="@+id/action_navigation_notifications_to_navigation_maps"
-            app:destination="@id/navigation_routes"
-            app:enterAnim="@android:anim/slide_in_left" />
-        <action
-            android:id="@+id/action_navigation_notifications_to_navigation_dashboard"
-            app:destination="@id/navigation_dashboard"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/swipeImages"

@@ -1,8 +1,7 @@
 <resources>
     <string name="app_name">Jeva</string>
     <string name="title_routes">Routes</string>
-    <string name="title_dashboard">Map</string>
-    <string name="title_profile">Profile</string>
+    <string name="title_dashboard">My routes</string>
     <string name="title_activity_show_route">Map</string>
     <string name="title_activity_edit_route">Edit route</string>
 </resources>
