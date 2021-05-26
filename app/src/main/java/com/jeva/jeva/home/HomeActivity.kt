@@ -38,9 +38,10 @@ class HomeActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(setOf(
             R.id.navigation_routes, R.id.navigation_dashboard
         ))
-        posicionarMapa()
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        saveMyLocation()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -52,20 +53,19 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    /*
-   override fun onBackPressed() {
-        moveTaskToBack(true)
-   }*/
-
-    private fun posicionarMapa() {
+    private fun saveMyLocation() {
         GestionarPermisos.requestLocationPermissions(this)
         obtencionLocalizacion.localizacion(this)
             .addOnSuccessListener { location ->
-                location?.let {
-                    loc->
+                location?.let { loc ->
                     lastMapPosition = LatLng(loc.latitude, loc.longitude)
                 }
             }
     }
+
+    /*
+    override fun onBackPressed() {
+        moveTaskToBack(true)
+    }*/
 
 }

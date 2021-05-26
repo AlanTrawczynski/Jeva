@@ -226,7 +226,7 @@ class Database {
     fun uploadMarkerPhoto(uri: Uri, routeId: String, markerId: String, context: Context, callback: (String?) -> Unit) {
         try {
             val img = Compressor(context)
-                .setQuality(20)
+                .setQuality(30)
                 .compressToFile(FileUtil.from(context, uri))
 
             cs.child("routes/${routeId}/${markerId}/${UUID.randomUUID()}")
@@ -259,6 +259,7 @@ class Database {
 
 
     private fun deleteRoutePhotos(routeId: String, callback: (Boolean) -> Unit) {
+
         fun deletePhoto(photoRef: StorageReference, tries: Int) {
             if (tries > 0) {
                 photoRef.delete()
