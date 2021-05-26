@@ -136,16 +136,13 @@ class dataPointMenu {
 
         //SUBIDA DE IMÁGENES
         fun uploadImageShow(imageRef: Uri) {
-            Log.d("ref", imageRef.toString())
-            uploadImage(routeId, markerId, imageRef) {
-                Log.d("ref", imageRef.toString())
-                adapter.add(it,imageRef)
-            }
-        }
-
-        private fun uploadImage(routeId: String, markerId: String, imageRef: Uri, callback: (String) -> Unit) {
             db.uploadMarkerPhoto(imageRef, routeId, markerId, context) {
-                callback(it!!)
+                if(it != null) {
+                    Log.d("ref", imageRef.toString())
+                    adapter.add(it,imageRef)
+                } else {
+                    Toast.makeText(activity, "Hubo un error al subir la imagen", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
