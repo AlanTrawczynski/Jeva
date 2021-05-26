@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.core.app.ActivityCompat
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import com.jeva.jeva.Database
 import com.jeva.jeva.GestionarPermisos
@@ -52,7 +51,7 @@ class dataPointMenu {
             this.popUp = layoutInflater.inflate(R.layout.popup,null)
         }
 
-        fun showMenu(navigation: NavController?, editable: Boolean) {
+        fun showMenu(editable: Boolean) {
             dialogBuilder = AlertDialog.Builder(activity)
             adapter = ImageAdapter(context, fotos, editable)
 
@@ -92,31 +91,32 @@ class dataPointMenu {
             cerrar.setOnClickListener { dialog.dismiss() }
 
             photogrid.setOnItemClickListener { parent, view, position, id ->
-                if(navigation!=null) {
-                    if(editable) {
-                        if (position+1 != adapter.getDataSource().size) {
-                            dialog.dismiss()
-                            val bundle = bundleOf("title" to title, "pos" to position, "edit" to editable)
-                            navigation.navigate(R.id.swipeImages, bundle)
-                        }
-                    } else {
-                        dialog.dismiss()
-                        val bundle = bundleOf("title" to title, "pos" to position, "edit" to editable)
-                        navigation.navigate(R.id.swipeImages, bundle)
-                    }
-                }
                 if(editable) {
-                    if (position+1 == adapter.getDataSource().size) {
+                    if (position+1 != adapter.getDataSource().size) {
+                        dialog.dismiss()
+                        showImages(position,editable)
+                    } else {
                         GestionarPermisos.requestStoragePermissions(activity)
                         if (GestionarPermisos.accessStorageIsGranted(activity)) {
                             pickImageFromGallery()
                         }
                     }
+                } else {
+                    dialog.dismiss()
+                    showImages(position, editable)
                 }
             }
-
             //mostramos el dialogo
             dialog.show()
+        }
+
+        private fun showImages(position: Int, editable: Boolean) {
+            val intent = Intent(this.context,swipeImages :: class.java).apply {
+                putExtra("pos", position)
+                putExtra("edit", editable)
+                putExtra("title", title)
+            }
+            this.activity.startActivity(intent)
         }
 
         //CARGAR IMÁGENES DE DB

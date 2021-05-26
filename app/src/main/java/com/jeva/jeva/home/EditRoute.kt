@@ -79,7 +79,7 @@ class EditRoute : AppCompatActivity(), OnMapReadyCallback {
             val idRoute = routeData["id"] as String
 
             dataPointMenu.setInfo(title,description, idRoute, idMarker, this, this.applicationContext,this.layoutInflater)
-            dataPointMenu.showMenu(null,true)
+            dataPointMenu.showMenu(true)
             true
         }
 
