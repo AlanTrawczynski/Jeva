@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="Datos del marcador"
+        android:text="Datos de la ruta"
         android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -28,7 +28,7 @@
         app:layout_constraintTop_toBottomOf="@+id/popupTitle" />
 
     <EditText
-        android:id="@+id/puntoName"
+        android:id="@+id/routeName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -38,12 +38,11 @@
         android:hint="Título"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spaceBar" />
 
     <EditText
-        android:id="@+id/puntoDescripcion"
+        android:id="@+id/routeDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -52,28 +51,18 @@
         android:hint="Descripción"
         android:maxHeight="100dp"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/puntoName" />
+        app:layout_constraintTop_toBottomOf="@+id/routeName" />
 
-
-    <GridView
-        android:id="@+id/photo_grid"
+    <com.jeva.jeva.images.Icon
+        android:id="@+id/icon2"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:gravity="center"
-        android:horizontalSpacing="6dp"
-        android:numColumns="2"
-        android:verticalSpacing="5dp"
+        android:maxHeight="300dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/puntoDescripcion" >
-
-    </GridView>
-
+        app:layout_constraintTop_toBottomOf="@+id/routeDescription" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -85,7 +74,7 @@
         android:showDividers="middle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/photo_grid"
+        app:layout_constraintTop_toBottomOf="@+id/icon2"
         tools:ignore="ExtraText">
 
         <Button
@@ -102,12 +91,14 @@
             android:layout_weight="0" />
 
         <Button
-            android:id="@+id/borrar_marcador"
+            android:id="@+id/borrar_ruta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Borrar"
             android:visibility="visible" />
+
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

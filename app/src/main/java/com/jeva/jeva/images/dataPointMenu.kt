@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.core.app.ActivityCompat
-import androidx.navigation.NavController
 import com.jeva.jeva.Database
 import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.R
@@ -48,7 +47,7 @@ class dataPointMenu {
             this.routeId = routeId
             this.activity = activity
             this.context = context
-            this.popUp = layoutInflater.inflate(R.layout.popup,null)
+            this.popUp = layoutInflater.inflate(R.layout.popup_marker,null)
         }
 
         fun showMenu(editable: Boolean) {
@@ -57,7 +56,7 @@ class dataPointMenu {
 
             //añadimos nombre y descripción
             var puntoname: EditText = popUp.findViewById(R.id.puntoName)
-            var puntodescripcion: EditText = popUp.findViewById(R.id.puntoDescripcion)
+            var puntodescripcion: EditText = popUp.findViewById(R.id.puntoDescription)
             (puntoname as TextView).text = title
             (puntodescripcion as TextView).text = description
 
@@ -88,7 +87,10 @@ class dataPointMenu {
             var dialog = dialogBuilder.create()
 
             var cerrar: Button = popUp.findViewById(R.id.cerrar)
-            cerrar.setOnClickListener { dialog.dismiss() }
+            cerrar.setOnClickListener {
+                //AQUÍ IRIA LO DE ACTUALIZAR NOMBRE Y DESCRIPCIÓN
+                dialog.dismiss()
+            }
 
             photogrid.setOnItemClickListener { parent, view, position, id ->
                 if(editable) {
