@@ -10,7 +10,8 @@
         android:id="@+id/mapsBtnLocate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
         android:backgroundTint="@color/primary_blue"
         android:clickable="true"
         android:src="@drawable/icon_mylocation"
@@ -30,12 +31,12 @@
     <Button
         android:id="@+id/btnGoShowMap"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Show Route"
+        android:layout_height="55dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
+        android:text="Ver en detalle"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.042" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

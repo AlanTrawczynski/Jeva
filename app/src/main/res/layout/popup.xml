@@ -58,31 +58,35 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:orientation="horizontal"
+        android:showDividers="middle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/photo_grid">
+        app:layout_constraintTop_toBottomOf="@+id/photo_grid"
+        tools:ignore="ExtraText">
 
         <Button
             android:id="@+id/cerrar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
             android:text="Cerrar" />
+
+        <Space
+            android:id="@+id/spaceBetweenBtns"
+            android:layout_width="8dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0" />
 
         <Button
             android:id="@+id/borrar_marcador"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
             android:layout_weight="1"
-            android:text="BORRAR MARCADOR" />/>
+            android:text="Borrar"
+            android:visibility="visible" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
