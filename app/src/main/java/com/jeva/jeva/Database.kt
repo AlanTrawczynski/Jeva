@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import id.zelory.compressor.Compressor
+import java.io.File
 import java.util.*
 
 class Database {
@@ -236,7 +237,7 @@ class Database {
 
 
 
-//    Get marker photos
+//    Get marker and route photos
     fun getMarkerPhotosRefs(routeId: String, markerId: String, callback: (List<StorageReference>?) -> Unit) {
         cs.child("routes/${routeId}/${markerId}")
             .listAll()
@@ -245,13 +246,16 @@ class Database {
     }
 
 
+    fun getRoutePhotoRef(routeId: String) : StorageReference {
+        return cs.child("routes/${routeId}/route-pic")
+    }
 
-//    Upload markers photos
+
+
+//    Upload markers and route photos
     fun uploadMarkerPhoto(uri: Uri, routeId: String, markerId: String, context: Context, callback: (String?) -> Unit) {
         try {
-            val img = Compressor(context)
-                .setQuality(30)
-                .compressToFile(FileUtil.from(context, uri))
+            val img = compressPhoto(uri, context)
 
             cs.child("routes/${routeId}/${markerId}/${UUID.randomUUID()}")
                 .putFile(img.toUri())
@@ -265,10 +269,33 @@ class Database {
     }
 
 
+    fun uploadRoutePhoto(uri: Uri, routeId: String, context: Context, callback: (String?) -> Unit) {
+        try {
+            val img = compressPhoto(uri, context)
+
+            cs.child("routes/${routeId}/route-pic")
+                .putFile(img.toUri())
+                .addOnSuccessListener {
+                    callback(it.metadata?.name.toString()) }
+                .addOnFailureListener { callback(null) }
+        }
+        catch (_: Exception) {
+            callback(null)
+        }
+    }
+
+
+    private fun compressPhoto(uri: Uri, context: Context) : File {
+        return Compressor(context)
+                .setQuality(30)
+                .compressToFile(FileUtil.from(context, uri))
+    }
+
+
 
 //    Delete routes and photos
     fun deleteRoute(routeId: String, callback: (Boolean) -> Unit) {
-        deleteRoutePhotos(routeId) {
+        deleteAllRoutePhotos(routeId) {
             if (it) {
                 fs.collection("routes").document(routeId)
                     .delete()
@@ -282,7 +309,7 @@ class Database {
     }
 
 
-    private fun deleteRoutePhotos(routeId: String, callback: (Boolean) -> Unit) {
+    private fun deleteAllRoutePhotos(routeId: String, callback: (Boolean) -> Unit) {
         cs.child("routes/${routeId}").listAll()
             .addOnSuccessListener { folders ->      // list folders
                 folders?.prefixes?.forEach { folderRef ->
@@ -311,7 +338,7 @@ class Database {
     }
 
 
-    fun deleteRoutePhoto(routeId: String, markerId: String, photoId: String, callback: (Boolean) -> Unit) {
+    fun deleteMarkerPhoto(routeId: String, markerId: String, photoId: String, callback: (Boolean) -> Unit) {
         cs.child("routes/${routeId}/${markerId}/${photoId}")
             .delete()
             .addOnSuccessListener { callback(true) }

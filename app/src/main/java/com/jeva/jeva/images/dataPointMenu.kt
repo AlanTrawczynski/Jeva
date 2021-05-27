@@ -165,7 +165,7 @@ class dataPointMenu {
 
         //BORRAR IMAGEN
         private fun deleteImage(photoId: String, position: Int) {
-            db.deleteRoutePhoto(routeId,markerId,photoId) {
+            db.deleteMarkerPhoto(routeId,markerId,photoId) {
                 if(it) {
                     adapter.remove(position)
                 } else {
