@@ -30,8 +30,6 @@ class MapFragment : Fragment(),OnMapReadyCallback {
     private val db = Database()
     private val obtencionLocalizacion = ObtencionLocalizacion()
 
-        //usar markerIndex                                    //index para llevar cuantos marcadores hemos marcado en el mapa
-               // esta var irá en otro fragment, pero es para almacenar los puntos seleccionados en el mapa
     private var indexRoute: Int? = null
     private var idRoute: String? = null
 
@@ -41,9 +39,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
     private lateinit var routes: List<Map<String, Any>>         //es una lista que almacena lo que se devuelve de la BD
     private lateinit var iconGenerator: IconGenerator           //generador de iconos, se inicializa cuando se inicia el maps
     private var inRoute = false                                  //variable para ver si estamos dentro de una ruta en el mapa
-    private lateinit  var polyline: Polyline
 
-    //private var latlng0 = LatLng(0.0,0.0)        //almacenará la posición actual. Por defecto: (0.0,0.0)
 
     companion object {
         var mapView : SupportMapFragment?=null
@@ -166,22 +162,26 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         nMap.clear()
         val listaLatLng = mutableListOf<LatLng>()
         val markers = (routes[ind]["markers"] as List<Map<String, Any>>)
+        Log.i("Maps", markers.toString())
 
         for ((i,marker0) in markers.withIndex()){
             val latLng: LatLng = positionToLatLng(marker0)
             val marker = nMap.addMarker(MarkerOptions().position(latLng))
+            listaLatLng.add(latLng)
 
-            if (i == 0) { iconGenerator.setStyle(STYLE_PURPLE) }
+            if (i == 0) {
+                iconGenerator.setStyle(STYLE_PURPLE)
+                Log.i("Maps", "He entrado")
+            }
             else { iconGenerator.setStyle(STYLE_BLUE) }
             marker?.let {
                 marker.tag = marker0["tag"] as MutableMap<*, *>
                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                 currentRoute.add(marker)
-                listaLatLng.add(latLng)
             }
 
         }
-        polyline = nMap.addPolyline(PolylineOptions().addAll(listaLatLng).visible(true))
+        nMap.addPolyline(PolylineOptions().addAll(listaLatLng).visible(true))
     }
 
     private fun posicionarMapa() {

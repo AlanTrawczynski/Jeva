@@ -11,9 +11,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.maps.android.ui.IconGenerator
 import com.jeva.jeva.Database
 import com.jeva.jeva.R
@@ -31,6 +29,8 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var routeData : HashMap<String, Any>
     private lateinit var iconGenerator: IconGenerator
     private var initialZoom: Float = 14f
+
+    private var ready = false
 
     private val REQUEST_CODE: Int = 1
 
@@ -74,6 +74,7 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        ready = true
         nMap = googleMap
         iconGenerator = IconGenerator(this)
         showRoute()
@@ -88,12 +89,11 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
             val idRoute = routeData["id"] as String
 
             dataPointMenu.setInfo(title,description, idRoute,idMarker,this,this.applicationContext,this.layoutInflater)
-            dataPointMenu.showMenu(true)
+            dataPointMenu.showMenu(false)
             true
         }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             val ref: Uri = data?.data!!
@@ -103,9 +103,12 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
 
     private fun showRoute(){
         Log.i("Maps", routeData.toString())
+        val listLatLng = mutableListOf<LatLng>()
         for((i,marker0) in (routeData["markers"] as List<*>).withIndex()){
             val latLng: LatLng = positionToLatLng(marker0 as Map<String, Any>)
             val marker = nMap.addMarker(MarkerOptions().position(latLng))
+
+            listLatLng.add(latLng)
 
             if (i == 0) { iconGenerator.setStyle(IconGenerator.STYLE_PURPLE)
                 //iconGenerator.setBackground(resources.getDrawable(R.drawable.ey))
@@ -116,5 +119,9 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
             }
         }
+        val polyline = nMap.addPolyline(PolylineOptions().addAll(listLatLng).visible(true))
+
     }
+
+
 }

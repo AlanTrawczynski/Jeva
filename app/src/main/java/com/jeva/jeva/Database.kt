@@ -195,28 +195,24 @@ class Database {
 
 
 //    Create and update routes
-    fun newRoute(markers: List<Marker>, title: String = "", description: String = "", callback: (Boolean) -> Unit) {
+    fun newRoute(markers: List<Marker> = listOf(), title: String = "", description: String = "", callback: (String?) -> Unit) {
         val data = mapOf(
             "title" to title,
             "description" to description,
             "owner" to getCurrentUserUid(),
-            "position" to mapOf(
-                "lat" to markers[0].position.latitude,
-                "lng" to markers[0].position.longitude
-            ),
             "markers" to markers.map { markerToMap(it) }
         )
 
         fs.collection("routes").add(data)
-            .addOnSuccessListener { callback(true) }
-            .addOnFailureListener { callback(false) }
+            .addOnSuccessListener { callback(it?.id) }
+            .addOnFailureListener { callback(null) }
     }
 
 
     fun updateRoute(routeId: String, markers: List<Marker>? = null, title: String? = null, description: String? = null, callback: (Boolean) -> Unit) {
         val data = mutableMapOf<String, Any>()
-        title?.let { data["title"] = title }
-        description?.let { data["description"] = description }
+        title?.let { data["title"] = it }
+        description?.let { data["description"] = it }
         markers?.let {
             data["markers"] = it.map { marker -> markerToMap(marker) }
         }

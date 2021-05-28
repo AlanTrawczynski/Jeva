@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="24dp"
-        android:backgroundTint="@color/primary_blue"
+        android:backgroundTint="@color/jeva_blue"
         android:clickable="true"
         android:src="@drawable/icon_menu"
         app:layout_constraintBottom_toBottomOf="parent"
