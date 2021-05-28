@@ -28,7 +28,7 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var routeData : HashMap<String, Any>
     private lateinit var iconGenerator: IconGenerator
-    private var initialZoom: Float = 14f
+    private var initialZoom: Float = 4f
 
     private var ready = false
 
@@ -44,7 +44,7 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.showMap) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        initialZoom = intent.getFloatExtra("mapZoom", 14f)
+        initialZoom = intent.getFloatExtra("mapZoom", 4f)
         routeData = intent.getSerializableExtra("routeData") as HashMap<String, Any>
 
         val idUser:String = db.getCurrentUserUid()
@@ -62,7 +62,7 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             startActivity(intent)
         }
         showRouteBtnShowData.setOnClickListener {
-            var popup: routesPopUp = routesPopUp(routeData["title"] as String, routeData["description"] as String,
+            val popup: routesPopUp = routesPopUp(routeData["title"] as String, routeData["description"] as String,
                     routeData["id"] as String, this, this.applicationContext, this.layoutInflater)
             popup.show(false)
         }
@@ -78,7 +78,14 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         nMap = googleMap
         iconGenerator = IconGenerator(this)
         showRoute()
-        nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(positionToLatLng(routeData["position"] as Map<String, Any>), initialZoom))
+        Log.i("Pruebas", routeData.toString())
+        if (!(routeData["markers"] as List<*>).isEmpty()){
+            nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(positionToLatLng(routeData["position"] as Map<String, Any>), initialZoom))
+        }
+        else{
+            nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HomeActivity.lastMapPosition, initialZoom))
+            Log.i("Pruebas", HomeActivity.lastMapPosition.toString() + " ---- " + initialZoom.toString())
+        }
 
         nMap.setOnMarkerClickListener {
             marker ->
@@ -102,7 +109,6 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showRoute(){
-        Log.i("Maps", routeData.toString())
         val listLatLng = mutableListOf<LatLng>()
         for((i,marker0) in (routeData["markers"] as List<*>).withIndex()){
             val latLng: LatLng = positionToLatLng(marker0 as Map<String, Any>)

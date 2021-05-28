@@ -79,6 +79,19 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }
 
+        fun updateRoute(desc: String? = null, tit: String? = null){
+
+            db.updateRoute(idRoute, title = tit, description = desc){
+                if (it){
+                    Log.i("Maps", "Todo ok")
+                }
+                else{
+                    Log.i("Maps", "Algo ha fallado, quizás lanzar fallo")
+                }
+            }
+
+        }
+
         // hacer para actualizar los datos de las rutas, necesitaré de los tres puntitos para desplegar el popup quizás
     }
 
@@ -91,14 +104,14 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private var newRoute: Boolean = false
 
-    private var initialZoom: Float = 14f
+    private var initialZoom: Float = 10f
     private lateinit var initialPosition: LatLng
 
 
-    lateinit var routepopup: routesPopUp
+    private lateinit var routepopup: routesPopUp
 
-    val REQUEST_CODE_MARKERMENU = 1
-    val REQUEST_CODE_ROUTEMENU = 2
+    private val REQUEST_CODE_MARKERMENU = 1
+    private val REQUEST_CODE_ROUTEMENU = 2
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,11 +127,19 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         Log.i("Maps", "Esto es una nueva ruta?: $newRoute")
         if(!newRoute){
             Log.i("Maps", "He entrado debería de estar cargando todas las mierdas")
-            initialZoom = intent.getFloatExtra("mapZoom", 14f)
+
             routeData = intent.getSerializableExtra("routeData") as HashMap<String, Any>
-            initialPosition = positionToLatLng(routeData["position"] as HashMap<String,Any>)
             idRoute = routeData["id"] as String
+
             Log.i("Maps", "Esta es mi ruta: $routeData")
+            if ((routeData["markers"] as List<*>).isEmpty()){
+                initialPosition = HomeActivity.lastMapPosition
+                initialZoom = HomeActivity.lastMapZoom
+            }
+            else{
+                initialZoom = intent.getFloatExtra("mapZoom", 10f)
+                initialPosition = positionToLatLng(routeData["position"] as HashMap<String,Any>)
+            }
 
         }
         else{
