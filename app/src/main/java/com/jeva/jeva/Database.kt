@@ -11,7 +11,6 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import id.zelory.compressor.Compressor
@@ -195,15 +194,11 @@ class Database {
 
 
 //    Create and update routes
-    fun newRoute(markers: List<Marker>, title: String = "", description: String = "", callback: (Boolean) -> Unit) {
+    fun newRoute(markers: List<Marker> = listOf(), title: String = "", description: String = "", callback: (Boolean) -> Unit) {
         val data = mapOf(
             "title" to title,
             "description" to description,
             "owner" to getCurrentUserUid(),
-            "position" to mapOf(
-                "lat" to markers[0].position.latitude,
-                "lng" to markers[0].position.longitude
-            ),
             "markers" to markers.map { markerToMap(it) }
         )
 
@@ -215,8 +210,8 @@ class Database {
 
     fun updateRoute(routeId: String, markers: List<Marker>? = null, title: String? = null, description: String? = null, callback: (Boolean) -> Unit) {
         val data = mutableMapOf<String, Any>()
-        title?.let { data["title"] = title }
-        description?.let { data["description"] = description }
+        title?.let { data["title"] = it }
+        description?.let { data["description"] = it }
         markers?.let {
             data["markers"] = it.map { marker -> markerToMap(marker) }
         }
