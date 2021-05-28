@@ -32,7 +32,11 @@ object LocaleHelper {
 
     fun setLocale(context: Context?, language: String?): Context? {
         persist(context, language)
-        return updateResources(context, language)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return updateResources(context, language);
+        }
+        return updateResourcesLegacy(context, language);
     }
 
     private fun getPersistedData(context: Context, defaultLanguage: String): String? {
@@ -59,17 +63,17 @@ object LocaleHelper {
         return context?.createConfigurationContext(configuration)
     }
 
-
-    /*private fun updateResourcesLegacy(context: Context, language: String?): Context {
+    private fun updateResourcesLegacy(context: Context?, language: String?): Context? {
         val locale = Locale(language)
         Locale.setDefault(locale)
-        val resources = context.resources
-        val configuration = resources.configuration
-        configuration.setLocale(locale)
+        val resources = context?.resources
+        val configuration = resources?.configuration
+        configuration?.setLocale(locale)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(locale)
+            configuration?.setLayoutDirection(locale)
         }
-        resources.updateConfiguration(configuration, resources.displayMetrics)
+        context?.applicationContext?.createConfigurationContext(configuration!!)
+        context?.resources?.displayMetrics?.setTo(resources?.displayMetrics)
         return context
-    }*/
+    }
 }
