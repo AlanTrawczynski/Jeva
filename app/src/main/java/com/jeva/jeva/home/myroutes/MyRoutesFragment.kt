@@ -2,13 +2,15 @@ package com.jeva.jeva.home.myroutes
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import com.jeva.jeva.Database
-import com.jeva.jeva.R
+import com.google.android.gms.maps.model.LatLng
+import com.jeva.jeva.*
 import com.jeva.jeva.home.EditRoute
+import com.jeva.jeva.home.HomeActivity
 import com.jeva.jeva.home.ShowRoute
 import kotlinx.android.synthetic.main.fragment_my_routes.*
 import java.io.Serializable
@@ -33,10 +35,19 @@ class MyRoutesFragment : Fragment(),Serializable {
         super.onViewCreated(view, savedInstanceState)
 
         myRoutesBtnNewRoute.setOnClickListener {
-            val intent = Intent(context, EditRoute :: class.java).apply {
-                putExtra("newRoute", true)
+            db.newRoute(listOf()){
+                id ->
+                if (id != null){
+                    val intent = Intent(context, EditRoute :: class.java).apply {
+                        putExtra("newRoute", true)
+                        putExtra("idRoute", id)
+                    }
+                    startActivity(intent)
+                }
+                else{
+                    Log.e("ErrorDB", "Ha habido error en la subida")
+                }
             }
-            startActivity(intent)
         }
     }
 

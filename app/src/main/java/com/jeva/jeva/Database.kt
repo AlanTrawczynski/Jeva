@@ -11,6 +11,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import id.zelory.compressor.Compressor
@@ -194,7 +195,7 @@ class Database {
 
 
 //    Create and update routes
-    fun newRoute(markers: List<Marker> = listOf(), title: String = "", description: String = "", callback: (Boolean) -> Unit) {
+    fun newRoute(markers: List<Marker> = listOf(), title: String = "", description: String = "", callback: (String?) -> Unit) {
         val data = mapOf(
             "title" to title,
             "description" to description,
@@ -203,8 +204,8 @@ class Database {
         )
 
         fs.collection("routes").add(data)
-            .addOnSuccessListener { callback(true) }
-            .addOnFailureListener { callback(false) }
+            .addOnSuccessListener { callback(it?.id) }
+            .addOnFailureListener { callback(null) }
     }
 
 
