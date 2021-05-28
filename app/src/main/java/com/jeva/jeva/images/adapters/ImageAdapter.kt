@@ -1,6 +1,7 @@
 package com.jeva.jeva.images.adapters
 import android.content.Context
 import android.net.Uri
+import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View

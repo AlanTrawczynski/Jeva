@@ -53,16 +53,15 @@
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/routeName" />
 
-    <com.jeva.jeva.images.Icon
-        android:id="@+id/icon2"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:maxHeight="300dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/routeDescription" />
+        android:id="@+id/photoContainer"
+        app:layout_constraintTop_toBottomOf="@+id/routeDescription"
+        android:orientation="horizontal"
+        android:gravity="center">
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -74,7 +73,7 @@
         android:showDividers="middle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/icon2"
+        app:layout_constraintTop_toBottomOf="@+id/photoContainer"
         tools:ignore="ExtraText">
 
         <Button

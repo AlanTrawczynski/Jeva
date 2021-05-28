@@ -1,5 +1,8 @@
 package com.jeva.jeva.home
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +17,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
 import com.jeva.jeva.R
 import com.jeva.jeva.images.dataPointMenu
+import com.jeva.jeva.images.routesPopUp
+import kotlinx.android.synthetic.main.activity_edit_route.*
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -29,6 +34,11 @@ class EditRoute : AppCompatActivity(), OnMapReadyCallback {
 
     private var markerIndex = 0
     private var markerList = mutableListOf<Marker>()
+
+    lateinit var routepopup: routesPopUp
+
+    val REQUEST_CODE_MARKERMENU = 1
+    val REQUEST_CODE_ROUTEMENU = 2
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,6 +63,13 @@ class EditRoute : AppCompatActivity(), OnMapReadyCallback {
         else{
             initialPosition = HomeActivity.lastMapPosition
             initialZoom = HomeActivity.lastMapZoom
+        }
+
+        editRouteBtnShowData.setOnClickListener {
+            routepopup = routesPopUp(routeData["title"] as String, routeData["description"] as String,
+                routeData["id"] as String, this, this.applicationContext, this.layoutInflater)
+
+            routepopup.show(true)
         }
 
         this.title = "Editar"
@@ -98,6 +115,16 @@ class EditRoute : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_MARKERMENU) {
+            val ref: Uri = data?.data!!
+            dataPointMenu.uploadImageShow(ref)
+        } else if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE_ROUTEMENU) {
+            routepopup.uploadPhotoDBShow(data?.data!!)
+        }
     }
 
     private fun showRoute(){

@@ -2,10 +2,14 @@ package com.jeva.jeva.images
 
 
 import android.content.Context
+import android.util.AttributeSet
 import android.widget.ImageView
 
 //la clase Icon genera un ImageView de dimensiones cuadradas.
 class Icon(context: Context) :  ImageView(context) {
+    constructor(context: Context, attributeSet: AttributeSet) : this(context)
+
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         var measuredWidth: Int = measuredWidth

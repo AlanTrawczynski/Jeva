@@ -46,7 +46,6 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d("hello","hola")
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             val ref: Uri = data?.data!!
             dataPointMenu.uploadImageShow(ref)

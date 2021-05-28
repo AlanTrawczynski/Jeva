@@ -18,6 +18,7 @@ import com.google.maps.android.ui.IconGenerator
 import com.jeva.jeva.Database
 import com.jeva.jeva.R
 import com.jeva.jeva.images.dataPointMenu
+import com.jeva.jeva.images.routesPopUp
 import kotlinx.android.synthetic.main.activity_show_route.*
 import java.io.Serializable
 
@@ -59,6 +60,11 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
                 putExtra("newRoute", false)
             }
             startActivity(intent)
+        }
+        showRouteBtnShowData.setOnClickListener {
+            var popup: routesPopUp = routesPopUp(routeData["title"] as String, routeData["description"] as String,
+                    routeData["id"] as String, this, this.applicationContext, this.layoutInflater)
+            popup.show(false)
         }
         this.title = "Ruta"
     }
