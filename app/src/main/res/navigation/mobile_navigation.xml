@@ -7,9 +7,9 @@
 
     <fragment
         android:id="@+id/navigation_routes"
-        android:name="com.jeva.jeva.home.maps.MapFragment"
+        android:name="com.jeva.jeva.home.tabs.ExploreFragment"
         android:label="@string/title_routes"
-        tools:layout="@layout/fragment_maps">
+        tools:layout="@layout/fragment_explore">
         <action
             android:id="@+id/action_navigation_maps_to_navigation_dashboard"
             app:destination="@id/navigation_dashboard"
@@ -21,7 +21,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.jeva.jeva.home.myroutes.MyRoutesFragment"
+        android:name="com.jeva.jeva.home.tabs.MyRoutesFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_my_routes" >
         <action

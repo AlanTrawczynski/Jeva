@@ -31,10 +31,10 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".home.EditRoute"
+            android:name=".home.EditRouteActivity"
             android:label="@string/title_activity_edit_route" />
         <activity
-            android:name=".home.ShowRoute"
+            android:name=".home.ShowRouteActivity"
             android:label="@string/title_activity_show_route" />
         <activity android:name=".auth.SignupActivity" />
         <activity android:name=".auth.ForgotpwdActivity" />

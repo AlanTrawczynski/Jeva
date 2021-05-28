@@ -1,4 +1,4 @@
-package com.jeva.jeva.home.maps
+package com.jeva.jeva.home.tabs
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,17 +14,17 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.ui.IconGenerator
 import com.google.maps.android.ui.IconGenerator.*
-import com.jeva.jeva.Database
+import com.jeva.jeva.database.Database
 import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.ObtencionLocalizacion
 import com.jeva.jeva.R
 import com.jeva.jeva.home.HomeActivity
-import com.jeva.jeva.home.ShowRoute
-import kotlinx.android.synthetic.main.fragment_maps.*
+import com.jeva.jeva.home.ShowRouteActivity
+import kotlinx.android.synthetic.main.fragment_explore.*
 import java.io.Serializable
 
 
-class MapFragment : Fragment(),OnMapReadyCallback {
+class ExploreFragment : Fragment(),OnMapReadyCallback {
 
     private lateinit var nMap : GoogleMap
     private val db = Database()
@@ -52,7 +52,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_maps, container, false)
+        val root = inflater.inflate(R.layout.fragment_explore, container, false)
         if (savedInstanceState == null) {
             mapView = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
             mapView?.getMapAsync(this)
@@ -72,7 +72,7 @@ class MapFragment : Fragment(),OnMapReadyCallback {
             indexRoute?.let {
                 indexRoute0 ->
                 Log.i("Maps", indexRoute.toString())
-                val intent = Intent(context, ShowRoute :: class.java).apply {
+                val intent = Intent(context, ShowRouteActivity :: class.java).apply {
                     putExtra("routeData",  routes[indexRoute0] as Serializable)
                     putExtra("mapZoom", nMap.cameraPosition.zoom)
                 }

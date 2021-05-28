@@ -36,25 +36,25 @@ class SignupActivity : AppCompatActivity() {
             val pwd1 = signupPassword.text.toString()
             val pwd2 = signupPasswordRepeat.text.toString()
 
-            if (!Auth.isValidName(name)) {
+            if (!AuthUtils.isValidName(name)) {
                 Log.e("signupError", "Name no válido")
-                Auth.authToast("El nombre debe de tener al menos 4 caracteres", applicationContext)
+                AuthUtils.authToast("El nombre debe de tener al menos 4 caracteres", applicationContext)
             }
-            else if (!Auth.isValidUsername(username)) {
+            else if (!AuthUtils.isValidUsername(username)) {
                 Log.e("signupError", "Username no válido")
-                Auth.authToast("El nombre de usuario debe de tener al menos 4 caracteres", applicationContext)
+                AuthUtils.authToast("El nombre de usuario debe de tener al menos 4 caracteres", applicationContext)
             }
-            else if (!Auth.isValidEmail(email)) {
+            else if (!AuthUtils.isValidEmail(email)) {
                 Log.e("signupError", "Email no válido")
-                Auth.authToast("Introduce un email válido", applicationContext)
+                AuthUtils.authToast("Introduce un email válido", applicationContext)
             }
-            else if (!Auth.isValidPassword(pwd1)) {
+            else if (!AuthUtils.isValidPassword(pwd1)) {
                 Log.e("signupError", "Contraseña no válida")
-                Auth.authToast("La contraseña debe de tener al menos 6 caracteres", applicationContext)
+                AuthUtils.authToast("La contraseña debe de tener al menos 6 caracteres", applicationContext)
             }
             else if (pwd1 != pwd2) {
                 Log.e("signupError", "Las contraseñas no coinciden")
-                Auth.authToast("Las contraseñas no coinciden", applicationContext)
+                AuthUtils.authToast("Las contraseñas no coinciden", applicationContext)
             }
             else {
                 signUp(email, pwd1, username, name)
@@ -79,7 +79,7 @@ class SignupActivity : AppCompatActivity() {
                     }
                     .addOnFailureListener {
                         e -> Log.e("signupError", "Error writing document", e)
-                        Auth.authToast("Error al crear el documento de usuario", applicationContext)
+                        AuthUtils.authToast("Error al crear el documento de usuario", applicationContext)
                     }
             }
             else {
@@ -88,11 +88,11 @@ class SignupActivity : AppCompatActivity() {
                 }
                 catch (_: FirebaseAuthUserCollisionException) {
                     Log.d("signupError", "Email en uso")
-                    Auth.authToast("El email ya se encuentra en uso", applicationContext)
+                    AuthUtils.authToast("El email ya se encuentra en uso", applicationContext)
                 }
                 catch (e: Exception) {
                     Log.d("signupError", "Se ha producido un error: $e")
-                    Auth.authToast("Ha ocurrido un error, inténtelo de nuevo", applicationContext)
+                    AuthUtils.authToast("Ha ocurrido un error, inténtelo de nuevo", applicationContext)
                 }
             }
         }

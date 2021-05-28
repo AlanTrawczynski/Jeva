@@ -4,7 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import java.util.regex.Pattern
 
-class Auth {
+class AuthUtils {
     companion object {
 
         fun isValidEmail(email: String) : Boolean {

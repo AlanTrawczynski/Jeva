@@ -27,12 +27,12 @@ class ForgotpwdActivity : AppCompatActivity() {
 
         forgotpwdBtnSubmit.setOnClickListener {
             val email = forgotpwdEmail.text.toString()
-            if (Auth.isValidEmail(email)) {
+            if (AuthUtils.isValidEmail(email)) {
                 resetPassword(email)
             }
             else {
                 Log.e("forgotpwdError", "Email no válido")
-                Auth.authToast("Introduce un email válido", applicationContext)
+                AuthUtils.authToast("Introduce un email válido", applicationContext)
             }
         }
     }
@@ -42,7 +42,7 @@ class ForgotpwdActivity : AppCompatActivity() {
         auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Log.i("forgotPwd", "Email sent.")
-                Auth.authToast("Email de recuperación enviado", applicationContext)
+                AuthUtils.authToast("Email de recuperación enviado", applicationContext)
                 finish()
             }
             else {
@@ -51,11 +51,11 @@ class ForgotpwdActivity : AppCompatActivity() {
                 }
                 catch (_: FirebaseAuthInvalidUserException) {
                     Log.d("forgotpwdError", "Email no registrado")
-                    Auth.authToast("El email no se encuentra registrado", applicationContext)
+                    AuthUtils.authToast("El email no se encuentra registrado", applicationContext)
                 }
                 catch (e: Exception) {
                     Log.d("forgotpwdError", "Se ha producido un error: $e")
-                    Auth.authToast("Ha ocurrido un error, inténtelo de nuevo", applicationContext)
+                    AuthUtils.authToast("Ha ocurrido un error, inténtelo de nuevo", applicationContext)
                 }
             }
         }

@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -15,10 +14,9 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
-import com.jeva.jeva.Database
 import com.jeva.jeva.R
+import com.jeva.jeva.database.Database
 
 // AÚN NO FUNCIONAL
 class routesPopUp(title: String, description: String, routeId: String, activity: Activity, context: Context, layoutInflater: LayoutInflater) {

@@ -13,12 +13,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.core.app.ActivityCompat
-import androidx.navigation.NavController
-import com.google.android.gms.maps.model.Marker
-import com.jeva.jeva.Database
+import com.jeva.jeva.database.Database
 import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.R
-import com.jeva.jeva.home.EditRoute
+import com.jeva.jeva.home.EditRouteActivity
 import com.jeva.jeva.images.adapters.ImageAdapter
 
 
@@ -98,7 +96,7 @@ class dataPointMenu {
             val deleteMarker: Button = popUp.findViewById(R.id.borrar_marcador)
             if(!editable){ deleteMarker.visibility = View.INVISIBLE }
             deleteMarker.setOnClickListener {
-                EditRoute.deleteMarker()
+                EditRouteActivity.deleteMarker()
                 dialog.dismiss()
             }
 
@@ -220,8 +218,6 @@ class dataPointMenu {
             var tam: Int = (dp * escala + 0.5f).toInt()
             return tam
         }
-
      }
-
 
 }

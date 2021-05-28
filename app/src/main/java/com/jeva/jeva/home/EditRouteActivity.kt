@@ -15,15 +15,15 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.ui.IconGenerator
-import com.jeva.jeva.Database
 import com.jeva.jeva.R
+import com.jeva.jeva.database.Database
 import com.jeva.jeva.images.dataPointMenu
 import com.jeva.jeva.images.routesPopUp
 import kotlinx.android.synthetic.main.activity_edit_route.*
 import java.util.*
 import kotlin.collections.HashMap
 
-class EditRoute : AppCompatActivity(), OnMapReadyCallback {
+class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     companion object{
         lateinit var currentMarker: Marker

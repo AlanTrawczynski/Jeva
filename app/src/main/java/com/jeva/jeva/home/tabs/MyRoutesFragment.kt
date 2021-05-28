@@ -1,4 +1,4 @@
-package com.jeva.jeva.home.myroutes
+package com.jeva.jeva.home.tabs
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,11 +7,10 @@ import android.view.*
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
-import com.google.android.gms.maps.model.LatLng
 import com.jeva.jeva.*
-import com.jeva.jeva.home.EditRoute
-import com.jeva.jeva.home.HomeActivity
-import com.jeva.jeva.home.ShowRoute
+import com.jeva.jeva.database.Database
+import com.jeva.jeva.home.EditRouteActivity
+import com.jeva.jeva.home.ShowRouteActivity
 import kotlinx.android.synthetic.main.fragment_my_routes.*
 import java.io.Serializable
 
@@ -38,7 +37,7 @@ class MyRoutesFragment : Fragment(),Serializable {
             db.newRoute(listOf()){
                 id ->
                 if (id != null){
-                    val intent = Intent(context, EditRoute :: class.java).apply {
+                    val intent = Intent(context, EditRouteActivity :: class.java).apply {
                         putExtra("newRoute", true)
                         putExtra("idRoute", id)
                     }
@@ -61,7 +60,7 @@ class MyRoutesFragment : Fragment(),Serializable {
                 routeBtn.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 
                 routeBtn.setOnClickListener{
-                    val intent = Intent(context, ShowRoute :: class.java).apply {
+                    val intent = Intent(context, ShowRouteActivity :: class.java).apply {
                         putExtra("routeData",  route as Serializable)
                     }
                     startActivity(intent)

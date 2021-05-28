@@ -13,14 +13,14 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.ui.IconGenerator
-import com.jeva.jeva.Database
+import com.jeva.jeva.database.Database
 import com.jeva.jeva.R
 import com.jeva.jeva.images.dataPointMenu
 import com.jeva.jeva.images.routesPopUp
 import kotlinx.android.synthetic.main.activity_show_route.*
 import java.io.Serializable
 
-class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
+class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val db = Database()
 
@@ -54,7 +54,7 @@ class ShowRoute : AppCompatActivity(), OnMapReadyCallback {
             showRouteBtnGoEdit.visibility = View.VISIBLE
         }
         showRouteBtnGoEdit.setOnClickListener {
-            val intent = Intent(this, EditRoute :: class.java).apply {
+            val intent = Intent(this, EditRouteActivity :: class.java).apply {
                 putExtra("routeData",  routeData as Serializable)
                 putExtra("mapZoom", nMap.cameraPosition.zoom)
                 putExtra("newRoute", false)

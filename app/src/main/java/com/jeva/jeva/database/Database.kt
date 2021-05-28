@@ -1,4 +1,4 @@
-package com.jeva.jeva
+package com.jeva.jeva.database
 
 import android.content.Context
 import android.net.Uri
