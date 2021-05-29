@@ -146,6 +146,12 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             initialPosition = HomeActivity.lastMapPosition
             initialZoom = HomeActivity.lastMapZoom
             idRoute = intent.getStringExtra("idRoute").toString()
+            routeData = mutableMapOf<String, Any>(
+                "id" to idRoute,
+                "title" to "",
+                "description" to "",
+                "owner" to db.getCurrentUserUid()
+            ) as HashMap<String, Any>
         }
 
         editRouteBtnShowData.setOnClickListener {
@@ -204,6 +210,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                         markerList.remove(marker)
                     }
                     else{
+                        currentMarker = marker
                         dataPointMenu.setInfo("","", idRoute,uidRandom,this,this.applicationContext,this.layoutInflater)
                         dataPointMenu.showMenu(true)
                     }

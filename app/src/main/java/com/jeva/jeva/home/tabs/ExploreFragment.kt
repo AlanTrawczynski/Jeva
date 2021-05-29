@@ -134,14 +134,16 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
         fun show(){
             iconGenerator.setStyle(STYLE_RED)
             for ((i,m) in routes.withIndex()){
-                val position = m["position"] as Map<String, Any>
-                val latLang =  positionToLatLng(position)
-                val marker = nMap.addMarker(MarkerOptions().position(latLang))
+                val position = m["position"] as Map<String, Any>?
+                position?.let { position0 ->
+                    val latLang =  positionToLatLng(position0)
+                    val marker = nMap.addMarker(MarkerOptions().position(latLang))
 
-                marker?.let {
-                    it.tag = i
-                    it.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                    routesFirstMarker.add(it)
+                    marker?.let {
+                        it.tag = i
+                        it.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+                        routesFirstMarker.add(it)
+                    }
                 }
             }
         }
@@ -185,6 +187,7 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
     }
 
     private fun posicionarMapa() {
+        Log.i("Pruebas", "HOLAAA?!!??!?!")
         GestionarPermisos.requestLocationPermissions(this.requireActivity())
         obtencionLocalizacion.localizacion(this.requireActivity())
             .addOnSuccessListener { location ->
@@ -192,6 +195,7 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
                     val zoom = 10F
                     nMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), zoom))
                 }
+                Log.i("Pruebas", location?.toString() + "No entendi")
             }
     }
 

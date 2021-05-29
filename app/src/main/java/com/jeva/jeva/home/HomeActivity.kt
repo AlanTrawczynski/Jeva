@@ -40,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
         ))
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
+        Log.i("Pruebas", "He entrado en HomeActivity")
         saveMyLocation()
     }
 
@@ -53,12 +53,17 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun saveMyLocation() {
+        Log.i("Pruebas", "He entrado ")
         GestionarPermisos.requestLocationPermissions(this)
         obtencionLocalizacion.localizacion(this)
             .addOnSuccessListener { location ->
                 location?.let { loc ->
+                    Log.i("Pruebas", "He entrado en saveMyLocation")
                     lastMapPosition = LatLng(loc.latitude, loc.longitude)
                 }
+            }
+            .addOnCanceledListener {
+                Log.i("Pruebas", "No he entrado en saveMyLocation")
             }
     }
 
