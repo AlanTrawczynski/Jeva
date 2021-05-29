@@ -2,17 +2,22 @@ package com.jeva.jeva.home.tabs
 
 import android.app.Activity
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.*
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
 import com.jeva.jeva.*
 import com.jeva.jeva.database.Database
 import com.jeva.jeva.home.EditRouteActivity
@@ -75,19 +80,45 @@ class MyRoutesFragment : Fragment(),Serializable {
     private fun addRoutesButtons(btnContainer: LinearLayout) {
         db.getCurrentUserRoutes { routes ->
             routes?.forEach { route ->
-                val routeBtn = Button(context)
-                val nameRoute = route["title"] as String
-                routeBtn.text = "Este es el titulo: $nameRoute"//routeData["description"] as String
-                routeBtn.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
 
-                routeBtn.setOnClickListener{
+                val nameRoute = route["title"] as String
+                val cosaQueSeVe = LinearLayout(context)
+                val cardView = CardView(requireContext())
+                val textito = TextView(context)
+
+                
+                cosaQueSeVe.orientation = LinearLayout.VERTICAL
+                cosaQueSeVe.addView(loadRouteImageFromDB(R.drawable.error_image, route["id"] as String, ImageView(context)))
+
+
+                val radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, context?.resources?.displayMetrics)
+                cardView.layoutParams =LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 300)
+                cardView.radius = radius
+
+
+                textito.text = "Este es el titulo: $nameRoute"//routeData["description"] as String
+                textito.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5f, context?.resources?.displayMetrics)
+
+                cosaQueSeVe.addView(textito)
+                cosaQueSeVe.addView(loadRouteImageFromDB(R.drawable.error_image, route["id"] as String, ImageView(context)))
+
+                cardView.addView(cosaQueSeVe)
+
+                cardView.setOnClickListener{
                     val intent = Intent(context, ShowRouteActivity :: class.java).apply {
                         putExtra("routeData",  route as Serializable)
                     }
                     startActivity(intent)
                 }
+                /*routeBtn.setOnClickListener{
+                    val intent = Intent(context, ShowRouteActivity :: class.java).apply {
+                        putExtra("routeData",  route as Serializable)
+                    }
+                    startActivity(intent)
+                }*/
 
-                btnContainer.addView(routeBtn)
+                btnContainer.addView(cardView)
+                //btnContainer.addView(routeBtn)
             }
         }
     }
@@ -105,17 +136,18 @@ class MyRoutesFragment : Fragment(),Serializable {
             R.id.set_Spanish -> {
                 if(!item.isChecked){
                     item.isChecked = true
-                    LocaleHelper.setLocale(context, "es");
-                    //activity?.recreate()
+                    GestionarPermisos.requestRWStoragePermissions(activity as Activity)
+                    LocaleHelper.setLocale(context,"es")
+                    activity?.recreate()
                 }
             }
 
             R.id.set_English -> {
                 if (!item.isChecked) {
                     item.isChecked = true
-                    LocaleHelper.setLocale(context, "en");
-                    //activity?.recreate()
-
+                    GestionarPermisos.requestRWStoragePermissions(activity as Activity)
+                    LocaleHelper.setLocale(context,"en")
+                    activity?.recreate()
                 }
             }
 
@@ -126,11 +158,11 @@ class MyRoutesFragment : Fragment(),Serializable {
             }
 
             R.id.change_email -> {
-                popup.showPopupWindow(view, R.layout.popup_change_email, R.id.popUpChangeEmailButton)
+                popup.showPopupWindow(view, R.layout.popup_change_email, R.id.popUpChangeEmailButton, context)
             }
 
             R.id.change_pwd -> {
-                popup.showPopupWindow(view, R.layout.popup_change_pwd,  R.id.popUpChangePwdButton)
+                popup.showPopupWindow(view, R.layout.popup_change_pwd,  R.id.popUpChangePwdButton, context)
             }
 
 
@@ -138,6 +170,34 @@ class MyRoutesFragment : Fragment(),Serializable {
 
         return super.onOptionsItemSelected(item)
     }
+
+
+
+    private fun loadRouteImageFromDB(placeholder: Int, routeId : String, view : ImageView) : ImageView {
+        val ref: StorageReference = db.getRoutePhotoRef(routeId)
+
+        ref.downloadUrl.addOnSuccessListener {
+            Glide.with(requireContext())
+                .load(it)
+                .apply(
+                    RequestOptions()
+                        .placeholder(R.drawable.loading)
+                        .error(placeholder)
+                )
+                .into(view)
+            view.scaleType = ImageView.ScaleType.CENTER_CROP
+            view.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,250)
+        }
+            .addOnFailureListener {
+                Glide.with(requireContext())
+                    .load(placeholder)
+                    .into(view)
+                view.scaleType = ImageView.ScaleType.CENTER_CROP
+                view.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,250)
+            }
+        return view
+    }
+
 
 
 }
