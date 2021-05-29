@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Jeva</string>
-    <string name="title_routes">Routes</string>
+    <string name="title_routes">Explore</string>
     <string name="title_dashboard">My routes</string>
-    <string name="title_activity_show_route">Map</string>
-    <string name="title_activity_edit_route">Edit route</string>
+    <string name="title_activity_show_route">Route details</string>
+    <string name="title_activity_edit_route">Route edition</string>
 </resources>

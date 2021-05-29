@@ -156,16 +156,16 @@ class Database {
 
     private fun qdsToRoute(doc: QueryDocumentSnapshot) : Map<String, Any> {
         val route = doc.data
-        val markers = route["markers"] as List<*>
+//        val markers = route["markers"] as List<*>
 
         route["id"] = doc.id
-        if (markers.isNotEmpty()) {
-            val firstMarker = markers[0] as Map<*, *>
-            route["position"] = mapOf(
-                "lat" to firstMarker["lat"] as Double,
-                "lng" to firstMarker["lng"] as Double
-            )
-        }
+//        if (markers.isNotEmpty()) {
+//            val firstMarker = markers[0] as Map<*, *>
+//            route["position"] = mapOf(
+//                "lat" to firstMarker["lat"] as Double,
+//                "lng" to firstMarker["lng"] as Double
+//            )
+//        }
 
         return route
     }
@@ -176,16 +176,16 @@ class Database {
             .get()
             .addOnSuccessListener {
                 callback(it?.data?.let { route ->
-                    val markers = route["markers"] as List<*>
+//                    val markers = route["markers"] as List<*>
 
                     route["id"] = routeId
-                    if (markers.isNotEmpty()) {
-                        val firstMarker = markers[0] as Map<*, *>
-                        route["position"] = mapOf(
-                            "lat" to firstMarker["lat"] as Double,
-                            "lng" to firstMarker["lng"] as Double
-                        )
-                    }
+//                    if (markers.isNotEmpty()) {
+//                        val firstMarker = markers[0] as Map<*, *>
+//                        route["position"] = mapOf(
+//                            "lat" to firstMarker["lat"] as Double,
+//                            "lng" to firstMarker["lng"] as Double
+//                        )
+//                    }
                     return@let route
                 })
             }
@@ -196,11 +196,11 @@ class Database {
 
 //    Create and update routes
     fun newRoute(markers: List<Marker> = listOf(), title: String = "", description: String = "", callback: (String?) -> Unit) {
-        val data = mapOf(
+        val data = mutableMapOf(
             "title" to title,
             "description" to description,
             "owner" to getCurrentUserUid(),
-            "markers" to markers.map { markerToMap(it) }
+            "markers" to markers.map { markerToMap(it) },
         )
 
         fs.collection("routes").add(data)
@@ -215,6 +215,7 @@ class Database {
         description?.let { data["description"] = it }
         markers?.let {
             data["markers"] = it.map { marker -> markerToMap(marker) }
+            data["position"] = mapOf("lat" to markers[0].position.latitude, "lng" to markers[0].position.longitude)
         }
 
         fs.collection("routes").document(routeId).update(data)

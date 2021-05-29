@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name">Jeva</string>
-    <string name="title_routes">Rutas</string>
+    <string name="title_routes">Explorar</string>
     <string name="title_dashboard">Mis Rutas</string>
-    <string name="title_activity_show_route">Mapa</string>
-    <string name="title_activity_edit_route">Editar Ruta</string>
+    <string name="title_activity_show_route">Ruta en detalle</string>
+    <string name="title_activity_edit_route">Edición de ruta</string>
 
 </resources>
