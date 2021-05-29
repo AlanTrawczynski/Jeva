@@ -14,6 +14,7 @@ class GestionarPermisos {
         val REQUEST_PERMISSIONS_OK = 0
         val FINE_LOCATION_PERMISSION = android.Manifest.permission.ACCESS_FINE_LOCATION
         val READ_EXTERNAL_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
+        val WRITE_EXTERNAL_STORAGE = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 
         fun requestLocationPermissions(contexto: Activity) {
             //Si el permiso de ubicación no está habilitado
@@ -42,6 +43,19 @@ class GestionarPermisos {
             }
         }
 
+        fun requestRWStoragePermissions(actividad:Activity) {
+            if(!accessStorageIsGranted(actividad) || !writeStorageIsGranted(actividad)) {
+                val permisos = arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE)
+                if(shouldShowRequestPermissionRationale(actividad, READ_EXTERNAL_STORAGE)
+                    ||shouldShowRequestPermissionRationale(actividad, WRITE_EXTERNAL_STORAGE)) {
+                    // recibe un título y una explicación. Tras presionar vale, llama a la función que se le pasa como parámetro.
+                    cuadroExplicativo("Acepte los permisos","Accedemos al almacenamiento para almacenar preferencias de idiomas",
+                                            actividad, permisos,::askPermission)
+                } else {
+                    askPermission(actividad,permisos)
+                }
+            }
+        }
 
         private fun cuadroExplicativo(titulo: String, mensaje: String, contexto: Activity, permisos:Array<String>, funcionAlAceptar: (cont: Activity,perm: Array<String>) -> Unit) {
             var dialogo = AlertDialog.Builder(contexto)
@@ -65,6 +79,10 @@ class GestionarPermisos {
 
         fun accessStorageIsGranted(actividad:Activity): Boolean {
             return ActivityCompat.checkSelfPermission(actividad, READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        }
+
+        fun writeStorageIsGranted(actividad:Activity): Boolean {
+            return ActivityCompat.checkSelfPermission(actividad, WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
         }
     }
 }
