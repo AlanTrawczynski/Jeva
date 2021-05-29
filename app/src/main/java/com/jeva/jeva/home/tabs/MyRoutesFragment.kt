@@ -6,12 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.*
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
+import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -85,6 +83,7 @@ class MyRoutesFragment : Fragment(),Serializable {
                 val cosaQueSeVe = LinearLayout(context)
                 val cardView = CardView(requireContext())
                 val textito = TextView(context)
+                val espacio = Space(context)
 
                 
                 cosaQueSeVe.orientation = LinearLayout.VERTICAL
@@ -92,12 +91,12 @@ class MyRoutesFragment : Fragment(),Serializable {
 
 
                 val radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, context?.resources?.displayMetrics)
-                cardView.layoutParams =LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 300)
+                cardView.layoutParams =LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 410)
                 cardView.radius = radius
 
 
                 textito.text = "Este es el titulo: $nameRoute"//routeData["description"] as String
-                textito.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5f, context?.resources?.displayMetrics)
+                textito.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7f, context?.resources?.displayMetrics)
 
                 cosaQueSeVe.addView(textito)
                 cosaQueSeVe.addView(loadRouteImageFromDB(R.drawable.error_image, route["id"] as String, ImageView(context)))
@@ -110,15 +109,12 @@ class MyRoutesFragment : Fragment(),Serializable {
                     }
                     startActivity(intent)
                 }
-                /*routeBtn.setOnClickListener{
-                    val intent = Intent(context, ShowRouteActivity :: class.java).apply {
-                        putExtra("routeData",  route as Serializable)
-                    }
-                    startActivity(intent)
-                }*/
+
+                espacio.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 60)
 
                 btnContainer.addView(cardView)
-                //btnContainer.addView(routeBtn)
+                btnContainer.addView(espacio)
+
             }
         }
     }
@@ -186,14 +182,14 @@ class MyRoutesFragment : Fragment(),Serializable {
                 )
                 .into(view)
             view.scaleType = ImageView.ScaleType.CENTER_CROP
-            view.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,250)
+            view.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,350)
         }
             .addOnFailureListener {
                 Glide.with(requireContext())
                     .load(placeholder)
                     .into(view)
                 view.scaleType = ImageView.ScaleType.CENTER_CROP
-                view.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,250)
+                view.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,350)
             }
         return view
     }
