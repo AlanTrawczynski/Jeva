@@ -56,6 +56,7 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
         dialogBuilder.setView(popUp)
         var dialog = dialogBuilder.create()
         val deleteRoute: Button = popUp.findViewById(R.id.borrar_ruta)
+        val spacebar: View = popUp.findViewById(R.id.spaceBetweenBtns)
         deleteRoute.setOnClickListener {
             //Añadir el método que elimina
             isUpdate = false
@@ -76,9 +77,14 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
         photoContainer.addView(imagen)
 
         var notImageCase = R.drawable.imagen_anadir
-        if (!editable) {
+
+
+        if(!editable){
+            deleteRoute.visibility = View.GONE
+            spacebar.visibility = View.GONE
             notImageCase = R.drawable.error_image
         }
+
         loadRouteImageFromDB(notImageCase)
 
         if (editable) {

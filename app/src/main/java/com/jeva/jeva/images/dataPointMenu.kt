@@ -94,7 +94,11 @@ class dataPointMenu {
             }
 
             val deleteMarker: Button = popUp.findViewById(R.id.borrar_marcador)
-            if(!editable){ deleteMarker.visibility = View.INVISIBLE }
+            val spacebar: View = popUp.findViewById(R.id.spaceBar)
+            if(!editable){
+                deleteMarker.visibility = View.GONE
+                spacebar.visibility = View.GONE
+            }
             deleteMarker.setOnClickListener {
                 isUpdate = false
                 EditRouteActivity.deleteMarker()
