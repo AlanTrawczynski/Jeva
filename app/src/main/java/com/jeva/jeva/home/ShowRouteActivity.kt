@@ -2,6 +2,7 @@ package com.jeva.jeva.home
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -11,10 +12,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.maps.android.ui.IconGenerator
-import com.jeva.jeva.database.Database
 import com.jeva.jeva.R
+import com.jeva.jeva.database.Database
 import com.jeva.jeva.images.dataPointMenu
 import com.jeva.jeva.images.routesPopUp
 import kotlinx.android.synthetic.main.activity_show_route.*
@@ -69,18 +73,15 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         this.title = "Ruta"
     }
 
-    private fun positionToLatLng(position: Map<String, Any>) : LatLng {
-        return LatLng(position["lat"] as Double, position["lng"]  as Double)
-    }
-
     override fun onMapReady(googleMap: GoogleMap) {
         ready = true
         nMap = googleMap
         iconGenerator = IconGenerator(this)
+        iconGenerator.setStyle(IconGenerator.STYLE_BLUE)
         showRoute()
         Log.i("Pruebas", routeData.toString())
         if (!(routeData["markers"] as List<*>).isEmpty()){
-            nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(positionToLatLng(routeData["position"] as Map<String, Any>), initialZoom))
+            nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapToLatLng(routeData["position"] as Map<String, Any>), initialZoom))
         }
         else{
             nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HomeActivity.lastMapPosition, initialZoom))
@@ -100,6 +101,7 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             true
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
@@ -110,23 +112,26 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun showRoute(){
         val listLatLng = mutableListOf<LatLng>()
-        for((i,marker0) in (routeData["markers"] as List<*>).withIndex()){
-            val latLng: LatLng = positionToLatLng(marker0 as Map<String, Any>)
-            val marker = nMap.addMarker(MarkerOptions().position(latLng))
+
+        for((i, routeMarker) in (routeData["markers"] as List<*>).withIndex()) {
+            val latLng: LatLng = mapToLatLng(routeMarker as Map<String, Any>)
+            val mapMarker = nMap.addMarker(MarkerOptions().position(latLng))
 
             listLatLng.add(latLng)
-
-            if (i == 0) { iconGenerator.setStyle(IconGenerator.STYLE_PURPLE)
-                //iconGenerator.setBackground(resources.getDrawable(R.drawable.ey))
-            }
-            else { iconGenerator.setStyle(IconGenerator.STYLE_BLUE) }
-            marker?.let {
-                marker.tag = marker0["tag"] as MutableMap<*, *>
-                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+            mapMarker?.let {
+                it.tag = routeMarker["tag"] as MutableMap<*, *>
+                iconGenerator.setColor(if (i == 0) Color.parseColor("#FF03A9F5") else Color.parseColor("#FFc2c3c9"))
+                it.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("${i+1}")))
             }
         }
-        val polyline = nMap.addPolyline(PolylineOptions().addAll(listLatLng).visible(true))
+        nMap.addPolyline(PolylineOptions()
+            .addAll(listLatLng)
+            .color(Color.parseColor("#AAc2c3c9"))
+            .visible(true))
+    }
 
+    private fun mapToLatLng(position: Map<String, Any>) : LatLng {
+        return LatLng(position["lat"] as Double, position["lng"] as Double)
     }
 
 

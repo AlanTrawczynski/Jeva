@@ -1,6 +1,7 @@
 package com.jeva.jeva.home.tabs
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,11 +14,12 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.ui.IconGenerator
-import com.google.maps.android.ui.IconGenerator.*
-import com.jeva.jeva.database.Database
+import com.google.maps.android.ui.IconGenerator.STYLE_BLUE
+import com.google.maps.android.ui.IconGenerator.STYLE_RED
 import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.ObtencionLocalizacion
 import com.jeva.jeva.R
+import com.jeva.jeva.database.Database
 import com.jeva.jeva.home.HomeActivity
 import com.jeva.jeva.home.ShowRouteActivity
 import kotlinx.android.synthetic.main.fragment_explore.*
@@ -85,6 +87,7 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
         nMap = googleMap
         nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HomeActivity.lastMapPosition, HomeActivity.lastMapZoom))
         iconGenerator = IconGenerator(activity)
+        iconGenerator.setStyle(STYLE_BLUE)
         if(!inRoute) { showRoutes() }
 
 
@@ -103,11 +106,19 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
             marker ->
             if(!inRoute) {//variable global que nos dice si estamos viendo todas las rutas, o los puntos de una
                 indexRoute = marker.tag as Int
-                btnGoShowMap.visibility = View.VISIBLE //pongo visible el botón que me lleva al nuevo fragment
+                val route = routes[indexRoute!!]
+                idRoute = route["id"] as String
                 inRoute = true
-                idRoute = routes[marker.tag as Int]["id"] as String
 
-                showRouteMarkers(marker.tag as Int) //siempre al final de cada método
+                showRouteMarkers(indexRoute!!) //siempre al final de cada método
+                btnGoShowMap.visibility = View.VISIBLE //pongo visible el botón que me lleva al nuevo fragment
+
+                val routePosition = route["position"] as Map<String, Double>
+                routePosition["lat"]?.let { lat ->
+                    routePosition["lng"]?.let { lng ->
+                        nMap.animateCamera(CameraUpdateFactory.newLatLng(LatLng(lat, lng)))
+                    }
+                }
             }
             true
         }
@@ -124,31 +135,34 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
         }
     }
 
-    private fun positionToLatLng(position: Map<String, Any>) : LatLng {
-        return LatLng(position["lat"] as Double, position["lng"]  as Double)
-    }
-
     //función para conseguir de la bd todas las rutas de la BD (se transformará a solo los vecinos
-    private fun showRoutes(){
+    private fun showRoutes() {
+        fun getMarkerIcon(color: String): BitmapDescriptor {
+            val hsv = FloatArray(3)
+            Color.colorToHSV(Color.parseColor(color), hsv)
+            return BitmapDescriptorFactory.defaultMarker(hsv[0])
+        }
 
-        fun show(){
+        fun show() {
             iconGenerator.setStyle(STYLE_RED)
             for ((i,m) in routes.withIndex()){
                 val position = m["position"] as Map<String, Any>?
-                position?.let { position0 ->
-                    val latLang =  positionToLatLng(position0)
-                    val marker = nMap.addMarker(MarkerOptions().position(latLang))
+
+                position?.let { pos ->
+                    val latLang =  mapToLatLng(pos)
+                    val marker = nMap.addMarker(MarkerOptions()
+                        .position(latLang)
+                        .icon(getMarkerIcon(resources.getString(R.color.jeva_blue))))
 
                     marker?.let {
                         it.tag = i
-                        it.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
                         routesFirstMarker.add(it)
                     }
                 }
             }
         }
 
-        db.getNearbyRoutes(nMap.projection.visibleRegion.latLngBounds){
+        db.getNearbyRoutes(nMap.projection.visibleRegion.latLngBounds) {
             if (it != null) {
                 routes = it
                 //routesId = it.map { par -> par.first} as List<String>
@@ -160,34 +174,31 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
     }
 
     //Muestra los puntos de la ruta seleccionada en el mapa
-    private fun showRouteMarkers(ind : Int) {
-        nMap.clear()
+    private fun showRouteMarkers(i : Int) {
         val listaLatLng = mutableListOf<LatLng>()
-        val markers = (routes[ind]["markers"] as List<Map<String, Any>>)
-        Log.i("Maps", markers.toString())
+        val routeMarkers = (routes[i]["markers"] as List<Map<String, Any>>)
 
-        for ((i,marker0) in markers.withIndex()){
-            val latLng: LatLng = positionToLatLng(marker0)
-            val marker = nMap.addMarker(MarkerOptions().position(latLng))
+        nMap.clear()
+
+        for ((j, routeMarker) in routeMarkers.withIndex()) {
+            val latLng: LatLng = mapToLatLng(routeMarker)
+            val mapMarker = nMap.addMarker(MarkerOptions().position(latLng))
+
             listaLatLng.add(latLng)
-
-            if (i == 0) {
-                iconGenerator.setStyle(STYLE_PURPLE)
-                Log.i("Maps", "He entrado")
+            mapMarker?.let {
+                it.tag = routeMarker["tag"] as MutableMap<*, *>
+                iconGenerator.setColor(if (j == 0) Color.parseColor("#FF03A9F5") else Color.parseColor("#FFc2c3c9"))
+                it.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon((j+1).toString())))
+                currentRoute.add(it)
             }
-            else { iconGenerator.setStyle(STYLE_BLUE) }
-            marker?.let {
-                marker.tag = marker0["tag"] as MutableMap<*, *>
-                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                currentRoute.add(marker)
-            }
-
         }
-        nMap.addPolyline(PolylineOptions().addAll(listaLatLng).visible(true))
+    }
+
+    private fun mapToLatLng(position: Map<String, Any>) : LatLng {
+        return LatLng(position["lat"] as Double, position["lng"] as Double)
     }
 
     private fun posicionarMapa() {
-        Log.i("Pruebas", "HOLAAA?!!??!?!")
         GestionarPermisos.requestLocationPermissions(this.requireActivity())
         obtencionLocalizacion.localizacion(this.requireActivity())
             .addOnSuccessListener { location ->
@@ -195,7 +206,6 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
                     val zoom = 10F
                     nMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), zoom))
                 }
-                Log.i("Pruebas", location?.toString() + "No entendi")
             }
     }
 

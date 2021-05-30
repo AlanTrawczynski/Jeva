@@ -2,6 +2,7 @@ package com.jeva.jeva.home
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -10,10 +11,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.maps.android.ui.IconGenerator
 import com.jeva.jeva.R
 import com.jeva.jeva.database.Database
@@ -25,26 +23,27 @@ import kotlin.collections.HashMap
 
 class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    companion object{
-        lateinit var currentMarker: Marker
+    companion object {
         private val db = Database()
-        private var markerList = mutableListOf<Marker>()
+        lateinit var currentMarker: Marker
+        private var markers = mutableListOf<Marker>()
         private lateinit var idRoute: String
+        lateinit var polyline : Polyline
 
         //private var markerIndex = 0
 
         fun deleteMarker(){
             val copyMarkerList = mutableListOf<Marker>()
-            copyMarkerList.addAll(markerList)
+            copyMarkerList.addAll(markers)
             Log.i("Maps", "todo ok y el marcador es: $currentMarker")
-            Log.i("Maps", "La lista es: $markerList")
+            Log.i("Maps", "La lista es: $markers")
             copyMarkerList.remove(currentMarker)
             db.updateRoute(idRoute, copyMarkerList){
                 if(!it){
                     Log.i("Maps", "ERROR")
                 }
                 else{
-                    markerList.remove(currentMarker)
+                    markers.remove(currentMarker)
                     currentMarker.remove()
                     Log.i("Maps", "Todo ok")
                 }
@@ -57,7 +56,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
         fun updateMarkersRoute(desc: String? = null, tit: String? = null){
             val copyMarkerList = mutableListOf<Marker>()
-            copyMarkerList.addAll(markerList)
+            copyMarkerList.addAll(markers)
             val tag = mutableMapOf<String, Any>()
             tag.putAll(currentMarker.tag as MutableMap<String, Any>)
             desc.let {
@@ -138,7 +137,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             else{
                 initialZoom = intent.getFloatExtra("mapZoom", 10f)
-                initialPosition = positionToLatLng(routeData["position"] as HashMap<String,Any>)
+                initialPosition = mapToLatLng(routeData["position"] as HashMap<String,Any>)
             }
 
         }
@@ -168,6 +167,8 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         nMap = googleMap
         iconGenerator = IconGenerator(this)
+        iconGenerator.setStyle(IconGenerator.STYLE_BLUE)
+
         if(!newRoute){
             Log.i("Maps", "He entrado, creame la nueva ruta")
             showRoute()
@@ -193,25 +194,35 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
         nMap.setOnMapClickListener { latLng ->
             val marker = nMap.addMarker(MarkerOptions().position(latLng))
+
+            if(markers.isNotEmpty()) {
+                setMarkerColorDefault()
+                markers.last().setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("${markers.size}")))
+            }
+
             marker?.let{
-                val uidRandom = UUID.randomUUID().toString()
+                val markerId = UUID.randomUUID().toString()
+                val markerNumber = markers.size + 1
+
+                setMarkerColorHighlight()
+                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon(markerNumber.toString())))
                 marker.tag = mutableMapOf(
-                    "id" to uidRandom,
+                    "id" to markerId,
                     "title" to "",
                     "description" to ""
                 )
-                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                markerList.add(marker)
+                markers.add(marker)
+                refreshPolyline()
 
-                db.updateRoute(idRoute, markerList){
+                db.updateRoute(idRoute, markers){
                     if (!it){
                         Log.i("Maps", "Error en la subida")
                         marker.remove()
-                        markerList.remove(marker)
+                        markers.remove(marker)
                     }
                     else{
                         currentMarker = marker
-                        dataPointMenu.setInfo("","", idRoute,uidRandom,this,this.applicationContext,this.layoutInflater)
+                        dataPointMenu.setInfo("","", idRoute, markerId,this,this.applicationContext,this.layoutInflater)
                         dataPointMenu.showMenu(true)
                     }
                 }
@@ -230,25 +241,45 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun showRoute(){
-        markerList.clear()
-        Log.i("Maps", routeData.toString())
-        for((i,marker0) in (routeData["markers"] as List<*>).withIndex()){
-            val latLng: LatLng = positionToLatLng(marker0 as Map<String, Any>)
-            val marker = nMap.addMarker(MarkerOptions().position(latLng))
+    private fun showRoute() {
+        val routeMarkers = routeData["markers"] as List<Map<String, Any>>
+        setMarkerColorDefault()
+        markers.clear()
 
-            if (i == 0) { iconGenerator.setStyle(IconGenerator.STYLE_PURPLE) }
-            marker?.let {
-                marker.tag = marker0["tag"]
-                marker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
-                markerList.add(marker)
+        for((i, routeMarker) in routeMarkers.withIndex()) {
+            val latLng: LatLng = mapToLatLng(routeMarker)
+            val mapMarker = nMap.addMarker(MarkerOptions().position(latLng))
+
+            mapMarker?.let {
+                mapMarker.tag = routeMarker["tag"]
+                if (i == routeMarkers.size-1) {
+                    setMarkerColorHighlight()
+                }
+                mapMarker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("${i+1}")))
+                markers.add(mapMarker)
             }
-            iconGenerator.setStyle(IconGenerator.STYLE_BLUE)
         }
+        polyline = nMap.addPolyline(
+            PolylineOptions()
+            .addAll(markers.map { it.position })
+            .color(Color.parseColor("#AAc2c3c9"))
+            .visible(true))
     }
 
-    private fun positionToLatLng(position: Map<String, Any>) : LatLng {
-        return LatLng(position["lat"] as Double, position["lng"]  as Double)
+    private fun refreshPolyline() {
+        polyline.points = markers.map { it.position }
+    }
+
+    private fun mapToLatLng(position: Map<String, Any>) : LatLng {
+        return LatLng(position["lat"] as Double, position["lng"] as Double)
+    }
+
+    private fun setMarkerColorHighlight() {
+        iconGenerator.setColor(Color.parseColor("#FF03A9F5"))
+    }
+
+    private fun setMarkerColorDefault() {
+        iconGenerator.setColor(Color.parseColor("#FFc2c3c9"))
     }
 
 }
