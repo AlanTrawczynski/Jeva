@@ -4,9 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -59,6 +57,7 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
             mapView = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
             mapView?.getMapAsync(this)
         }
+        setHasOptionsMenu(true)
         return root
     }
 
@@ -207,6 +206,22 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
                     nMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), zoom))
                 }
             }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        SettingsMenu.onCreateOptionsMenu(menu, inflater)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        view?.let { v ->
+            activity?.let { a ->
+                context?.let { c ->
+                    SettingsMenu.onOptionsItemSelected(item, v, a, c)
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onDestroyView() {

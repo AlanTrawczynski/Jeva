@@ -4,4 +4,8 @@
     <string name="title_dashboard">Mis rutas</string>
     <string name="title_activity_show_route">Ver ruta</string>
     <string name="title_activity_edit_route">Editar ruta</string>
+    <string name="change_email">Cambiar email</string>
+    <string name="change_password">Cambiar contraseña</string>
+    <string name="sign_out">Cerrar sesión</string>
+    <string name="change_language">Cambiar idioma</string>
 </resources>

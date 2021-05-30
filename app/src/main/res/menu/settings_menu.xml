@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/change_language"
-        android:title="Change Language">
+        android:title="@string/change_language">
 
         <menu>
             <group android:checkableBehavior="single">
@@ -15,13 +15,13 @@
 
     </item>
 
-    <item android:id="@+id/sign_out"
-        android:title="Sign Out" />
-
     <item android:id="@+id/change_email"
-        android:title="Change Email" />
+        android:title="@string/change_email" />
 
     <item android:id="@+id/change_pwd"
-        android:title="Change Password" />
+        android:title="@string/change_password" />
+
+    <item android:id="@+id/sign_out"
+        android:title="@string/sign_out" />
 
 </menu>

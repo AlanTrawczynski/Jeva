@@ -1,33 +1,29 @@
 package com.jeva.jeva.home.tabs
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
 import android.view.*
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Space
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
-import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
-import com.jeva.jeva.*
+import com.jeva.jeva.R
 import com.jeva.jeva.database.Database
 import com.jeva.jeva.home.EditRouteActivity
-import com.jeva.jeva.home.LocaleHelper
-import com.jeva.jeva.home.PopUpActivity
 import com.jeva.jeva.home.ShowRouteActivity
 import kotlinx.android.synthetic.main.fragment_my_routes.*
 import java.io.Serializable
-import java.util.*
 
 
-class MyRoutesFragment : Fragment(),Serializable {
+class MyRoutesFragment : Fragment(), Serializable {
 
     private val db : Database = Database()
 
@@ -120,55 +116,6 @@ class MyRoutesFragment : Fragment(),Serializable {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.settings_menu,menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val popup = PopUpActivity()
-        when(item.itemId){
-
-            R.id.set_Spanish -> {
-                if(!item.isChecked){
-                    item.isChecked = true
-                    GestionarPermisos.requestRWStoragePermissions(activity as Activity)
-                    LocaleHelper.setLocale(context,"es")
-                    activity?.recreate()
-                }
-            }
-
-            R.id.set_English -> {
-                if (!item.isChecked) {
-                    item.isChecked = true
-                    GestionarPermisos.requestRWStoragePermissions(activity as Activity)
-                    LocaleHelper.setLocale(context,"en")
-                    activity?.recreate()
-                }
-            }
-
-            R.id.sign_out ->{
-                val auth = Firebase.auth
-                auth.signOut()
-                activity?.finish()
-            }
-
-            R.id.change_email -> {
-                popup.showPopupWindow(view, R.layout.popup_change_email, R.id.popUpChangeEmailButton, context)
-            }
-
-            R.id.change_pwd -> {
-                popup.showPopupWindow(view, R.layout.popup_change_pwd,  R.id.popUpChangePwdButton, context)
-            }
-
-
-        }
-
-        return super.onOptionsItemSelected(item)
-    }
-
-
-
     private fun loadRouteImageFromDB(placeholder: Int, routeId : String, view : ImageView) : ImageView {
         val ref: StorageReference = db.getRoutePhotoRef(routeId)
 
@@ -194,6 +141,22 @@ class MyRoutesFragment : Fragment(),Serializable {
         return view
     }
 
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        SettingsMenu.onCreateOptionsMenu(menu, inflater)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        view?.let { v ->
+            activity?.let { a ->
+                context?.let { c ->
+                    SettingsMenu.onOptionsItemSelected(item, v, a, c)
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
 
 }

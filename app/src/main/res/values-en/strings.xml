@@ -5,4 +5,8 @@
     <string name="title_dashboard">My routes</string>
     <string name="title_activity_show_route">Route details</string>
     <string name="title_activity_edit_route">Route edition</string>
+    <string name="change_email">Change Email</string>
+    <string name="change_password">Change Password</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="change_language">Change Language</string>
 </resources>
