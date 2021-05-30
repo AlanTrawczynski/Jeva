@@ -5,13 +5,11 @@ import android.net.Uri
 import androidx.core.net.toUri
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.StorageException
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import id.zelory.compressor.Compressor
@@ -31,70 +29,60 @@ class Database {
         return auth.currentUser != null
     }
 
+    fun getCurrentUser() : FirebaseUser {
+        assert(auth.currentUser != null)
+        return auth.currentUser!!
+    }
+
 
     fun getCurrentUserUid() : String {
-        assert(auth.currentUser != null)
-        return auth.currentUser?.uid!!
+        return getCurrentUser().uid
     }
 
 
 
 
 //    USERS
-//    Get user data
-    fun getUserTask(uid: String) : Task<DocumentSnapshot> {
-        return fs.collection("users").document(uid).get()
-    }
-
-
-    fun getUser(uid: String, callback: (Map<String, Any>?) -> Unit) {
-        getUserTask(uid)
-            .addOnSuccessListener { callback(it?.data) }
-            .addOnFailureListener { callback(null) }
-    }
-
-
-    fun getCurrentUserTask() : Task<DocumentSnapshot> {
-        return getUserTask(getCurrentUserUid())
-    }
-
-
-    fun getCurrentUser(callback: (Map<String, Any>?) -> Unit) {
-        getUser(getCurrentUserUid(), callback)
-    }
-
-
-
 //    Update user data
-    fun updateUser(uid: String, data: Map<String, Any>, callback: (Boolean) -> Unit) {
-        fs.collection("users").document(uid).update(data)
-            .addOnSuccessListener { callback(true) }
-            .addOnFailureListener { callback(false) }
-    }
+    enum class UpdateUserEmailStatus { SERVER_FAIL, INVALID_CREDENTIALS, ACCOUNT_DISABLED_OR_DELETED, EMAIL_MALFORMED, EMAIL_ALREADY_IN_USE, OK }
+    fun updateUserEmail(newEmail: String, oldEmail: String, password: String, callback: (UpdateUserEmailStatus) -> Unit) {
+        val user = getCurrentUser()
 
-
-    fun updateCurrentUser(data: Map<String, Any>, callback: (Boolean) -> Unit) {
-        updateUser(getCurrentUserUid(), data, callback)
-    }
-
-
-
-//    Get and update profile pic
-    fun getUserProfilePicRef(uid: String) : StorageReference {
-        return cs.child("profilePics/${uid}")
-    }
-
-
-    fun getCurrentUserProfilePicRef() : StorageReference {
-        return getUserProfilePicRef(getCurrentUserUid())
-    }
-
-
-    fun changeProfilePic(path: String, callback: (Boolean) -> Unit) {
-        cs.child("profilePics/${getCurrentUserUid()}")
-            .putFile(Uri.parse(path))
-            .addOnSuccessListener { callback(true) }
-            .addOnFailureListener { callback(false) }
+        user.reauthenticate(EmailAuthProvider.getCredential(oldEmail, password))
+            .addOnCompleteListener { reauthTask ->
+                if (reauthTask.isSuccessful) {
+                    user.updateEmail(newEmail)
+                        .addOnCompleteListener { emailTask ->
+                            if (emailTask.isSuccessful) {
+                                callback(UpdateUserEmailStatus.OK)
+                            }
+                            else {
+                                try {
+                                    throw emailTask.exception!!
+                                }
+                                catch (_: FirebaseAuthInvalidCredentialsException) {
+                                    callback(UpdateUserEmailStatus.EMAIL_MALFORMED)
+                                }
+                                catch (_: FirebaseAuthUserCollisionException) {
+                                    callback(UpdateUserEmailStatus.EMAIL_ALREADY_IN_USE)
+                                }
+                            }
+                        }
+                        .addOnFailureListener { callback(UpdateUserEmailStatus.SERVER_FAIL) }
+                }
+                else {
+                    try {
+                        throw reauthTask.exception!!
+                    }
+                    catch (_: FirebaseAuthInvalidCredentialsException) {
+                        callback(UpdateUserEmailStatus.INVALID_CREDENTIALS)
+                    }
+                    catch (_: FirebaseAuthInvalidUserException) {
+                        callback(UpdateUserEmailStatus.ACCOUNT_DISABLED_OR_DELETED)
+                    }
+                }
+            }
+            .addOnFailureListener { callback(UpdateUserEmailStatus.SERVER_FAIL) }
     }
 
 
@@ -156,17 +144,7 @@ class Database {
 
     private fun qdsToRoute(doc: QueryDocumentSnapshot) : Map<String, Any> {
         val route = doc.data
-//        val markers = route["markers"] as List<*>
-
         route["id"] = doc.id
-//        if (markers.isNotEmpty()) {
-//            val firstMarker = markers[0] as Map<*, *>
-//            route["position"] = mapOf(
-//                "lat" to firstMarker["lat"] as Double,
-//                "lng" to firstMarker["lng"] as Double
-//            )
-//        }
-
         return route
     }
 
@@ -176,16 +154,7 @@ class Database {
             .get()
             .addOnSuccessListener {
                 callback(it?.data?.let { route ->
-//                    val markers = route["markers"] as List<*>
-
                     route["id"] = routeId
-//                    if (markers.isNotEmpty()) {
-//                        val firstMarker = markers[0] as Map<*, *>
-//                        route["position"] = mapOf(
-//                            "lat" to firstMarker["lat"] as Double,
-//                            "lng" to firstMarker["lng"] as Double
-//                        )
-//                    }
                     return@let route
                 })
             }
@@ -196,11 +165,11 @@ class Database {
 
 //    Create and update routes
     fun newRoute(markers: List<Marker> = listOf(), title: String = "", description: String = "", callback: (String?) -> Unit) {
-        val data = mutableMapOf(
+        val data = mapOf(
             "title" to title,
             "description" to description,
             "owner" to getCurrentUserUid(),
-            "markers" to markers.map { markerToMap(it) },
+            "markers" to markers.map { markerToMap(it) }
         )
 
         fs.collection("routes").add(data)
@@ -215,7 +184,9 @@ class Database {
         description?.let { data["description"] = it }
         markers?.let {
             data["markers"] = it.map { marker -> markerToMap(marker) }
-            data["position"] = mapOf("lat" to markers[0].position.latitude, "lng" to markers[0].position.longitude)
+            if (markers.isNotEmpty()) {
+                data["position"] = mapOf("lat" to markers[0].position.latitude, "lng" to markers[0].position.longitude)
+            }
         }
 
         fs.collection("routes").document(routeId).update(data)
