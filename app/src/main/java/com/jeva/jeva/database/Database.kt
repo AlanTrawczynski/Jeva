@@ -86,6 +86,45 @@ class Database {
     }
 
 
+    enum class UpdateUserPasswordStatus { SERVER_FAIL, INVALID_CREDENTIALS, ACCOUNT_DISABLED_OR_DELETED, PASSWORD_WEAK, OK }
+    fun updateUserPassword(newPassword: String, email: String, oldPassword: String, callback: (UpdateUserPasswordStatus) -> Unit) {
+        val user = getCurrentUser()
+
+        user.reauthenticate(EmailAuthProvider.getCredential(email, oldPassword))
+            .addOnCompleteListener { reauthTask ->
+                if (reauthTask.isSuccessful) {
+                    user.updatePassword(newPassword)
+                        .addOnCompleteListener { pwdTask ->
+                            if (pwdTask.isSuccessful) {
+                                callback(UpdateUserPasswordStatus.OK)
+                            }
+                            else {
+                                try {
+                                    throw pwdTask.exception!!
+                                }
+                                catch (_: FirebaseAuthWeakPasswordException) {
+                                    callback(UpdateUserPasswordStatus.PASSWORD_WEAK)
+                                }
+                            }
+                        }
+                        .addOnFailureListener { callback(UpdateUserPasswordStatus.SERVER_FAIL) }
+                }
+                else {
+                    try {
+                        throw reauthTask.exception!!
+                    }
+                    catch (_: FirebaseAuthInvalidCredentialsException) {
+                        callback(UpdateUserPasswordStatus.INVALID_CREDENTIALS)
+                    }
+                    catch (_: FirebaseAuthInvalidUserException) {
+                        callback(UpdateUserPasswordStatus.ACCOUNT_DISABLED_OR_DELETED)
+                    }
+                }
+            }
+            .addOnFailureListener { callback(UpdateUserPasswordStatus.SERVER_FAIL) }
+    }
+
+
 
 
 //    ROUTES
