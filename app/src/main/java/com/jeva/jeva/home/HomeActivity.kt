@@ -67,5 +67,11 @@ class HomeActivity : AppCompatActivity() {
             }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        finish()
+        startActivity(intent)
+        Log.i("Prueba", "Ha entrado en el restart")
+    }
 
 }

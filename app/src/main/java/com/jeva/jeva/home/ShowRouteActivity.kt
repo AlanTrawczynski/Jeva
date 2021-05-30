@@ -30,7 +30,7 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var nMap: GoogleMap
 
-    private lateinit var routeData : HashMap<String, Any>
+    private lateinit var routeData: HashMap<String, Any>
     private lateinit var iconGenerator: IconGenerator
     private var initialZoom: Float = 4f
 
@@ -51,23 +51,26 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         initialZoom = intent.getFloatExtra("mapZoom", 4f)
         routeData = intent.getSerializableExtra("routeData") as HashMap<String, Any>
 
-        val idUser:String = db.getCurrentUserUid()
-        val ownerId= routeData["owner"] as String
+        val idUser: String = db.getCurrentUserUid()
+        val ownerId = routeData["owner"] as String
 
-        if (idUser == ownerId){
+        if (idUser == ownerId) {
             showRouteBtnGoEdit.visibility = View.VISIBLE
         }
         showRouteBtnGoEdit.setOnClickListener {
-            val intent = Intent(this, EditRouteActivity :: class.java).apply {
-                putExtra("routeData",  routeData as Serializable)
+            val intent = Intent(this, EditRouteActivity::class.java).apply {
+                putExtra("routeData", routeData as Serializable)
                 putExtra("mapZoom", nMap.cameraPosition.zoom)
                 putExtra("newRoute", false)
             }
             startActivity(intent)
+            finish()
         }
         showRouteBtnShowData.setOnClickListener {
-            val popup: routesPopUp = routesPopUp(routeData["title"] as String, routeData["description"] as String,
-                    routeData["id"] as String, this, this.applicationContext, this.layoutInflater)
+            val popup: routesPopUp = routesPopUp(
+                routeData["title"] as String, routeData["description"] as String,
+                routeData["id"] as String, this, this.applicationContext, this.layoutInflater
+            )
             popup.show(false)
         }
         this.title = "Ruta"
@@ -80,23 +83,42 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         iconGenerator.setStyle(IconGenerator.STYLE_BLUE)
         showRoute()
         Log.i("Pruebas", routeData.toString())
-        if (!(routeData["markers"] as List<*>).isEmpty()){
-            nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mapToLatLng(routeData["position"] as Map<String, Any>), initialZoom))
-        }
-        else{
-            nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HomeActivity.lastMapPosition, initialZoom))
-            Log.i("Pruebas", HomeActivity.lastMapPosition.toString() + " ---- " + initialZoom.toString())
+        if (!(routeData["markers"] as List<*>).isEmpty()) {
+            nMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    mapToLatLng(routeData["position"] as Map<String, Any>),
+                    initialZoom
+                )
+            )
+        } else {
+            nMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    HomeActivity.lastMapPosition,
+                    initialZoom
+                )
+            )
+            Log.i(
+                "Pruebas",
+                HomeActivity.lastMapPosition.toString() + " ---- " + initialZoom.toString()
+            )
         }
 
-        nMap.setOnMarkerClickListener {
-            marker ->
+        nMap.setOnMarkerClickListener { marker ->
             val tag = marker.tag as Map<*, *>
             val title: String = tag["title"] as String
             val description: String = tag["description"] as String
             val idMarker = tag["id"] as String
             val idRoute = routeData["id"] as String
 
-            dataPointMenu.setInfo(title,description, idRoute,idMarker,this,this.applicationContext,this.layoutInflater)
+            dataPointMenu.setInfo(
+                title,
+                description,
+                idRoute,
+                idMarker,
+                this,
+                this.applicationContext,
+                this.layoutInflater
+            )
             dataPointMenu.showMenu(false)
             true
         }
@@ -104,35 +126,39 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE) {
             val ref: Uri = data?.data!!
             dataPointMenu.uploadImageShow(ref)
         }
     }
 
-    private fun showRoute(){
+    private fun showRoute() {
         val listLatLng = mutableListOf<LatLng>()
 
-        for((i, routeMarker) in (routeData["markers"] as List<*>).withIndex()) {
+        for ((i, routeMarker) in (routeData["markers"] as List<*>).withIndex()) {
             val latLng: LatLng = mapToLatLng(routeMarker as Map<String, Any>)
             val mapMarker = nMap.addMarker(MarkerOptions().position(latLng))
 
             listLatLng.add(latLng)
             mapMarker?.let {
                 it.tag = routeMarker["tag"] as MutableMap<*, *>
-                iconGenerator.setColor(if (i == 0) Color.parseColor("#FF03A9F5") else Color.parseColor("#FFc2c3c9"))
-                it.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("${i+1}")))
+                iconGenerator.setColor(
+                    if (i == 0) Color.parseColor("#FF03A9F5") else Color.parseColor(
+                        "#FFc2c3c9"
+                    )
+                )
+                it.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("${i + 1}")))
             }
         }
-        nMap.addPolyline(PolylineOptions()
-            .addAll(listLatLng)
-            .color(Color.parseColor("#AAc2c3c9"))
-            .visible(true))
+        nMap.addPolyline(
+            PolylineOptions()
+                .addAll(listLatLng)
+                .color(Color.parseColor("#AAc2c3c9"))
+                .visible(true)
+        )
     }
 
-    private fun mapToLatLng(position: Map<String, Any>) : LatLng {
+    private fun mapToLatLng(position: Map<String, Any>): LatLng {
         return LatLng(position["lat"] as Double, position["lng"] as Double)
     }
-
-
 }

@@ -54,6 +54,7 @@ class dataPointMenu {
         fun showMenu(editable: Boolean) {
             dialogBuilder = AlertDialog.Builder(activity)
             adapter = ImageAdapter(context, fotos, editable)
+            var isUpdate = true
 
             //añadimos nombre y descripción
             var puntoname: EditText = popUp.findViewById(R.id.puntoName)
@@ -89,13 +90,13 @@ class dataPointMenu {
 
             var cerrar: Button = popUp.findViewById(R.id.cerrar)
             cerrar.setOnClickListener {
-                //AQUÍ IRIA LO DE ACTUALIZAR NOMBRE Y DESCRIPCIÓN
                 dialog.dismiss()
             }
 
             val deleteMarker: Button = popUp.findViewById(R.id.borrar_marcador)
             if(!editable){ deleteMarker.visibility = View.INVISIBLE }
             deleteMarker.setOnClickListener {
+                isUpdate = false
                 EditRouteActivity.deleteMarker()
                 dialog.dismiss()
             }
@@ -116,6 +117,15 @@ class dataPointMenu {
                     showImages(position, editable)
                 }
             }
+
+            dialog.setOnDismissListener {
+                Log.i("Pruebas", "He entrado en el listener de dialog: $isUpdate")
+                if (isUpdate and editable){
+                    Log.i("Pruebas", "El titulo: ${puntoname.text} y la descripcion: ${puntodescripcion.text}")
+                    EditRouteActivity.updateMarkersRoute(tit = puntoname.text.toString(), desc = puntodescripcion.text.toString())
+                }
+            }
+
             //mostramos el dialogo
             dialog.show()
         }
@@ -218,6 +228,7 @@ class dataPointMenu {
             var tam: Int = (dp * escala + 0.5f).toInt()
             return tam
         }
+
      }
 
 }

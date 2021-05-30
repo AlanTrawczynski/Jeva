@@ -28,6 +28,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         lateinit var currentMarker: Marker
         private var markers = mutableListOf<Marker>()
         private lateinit var idRoute: String
+        private lateinit var routeData : HashMap<String, Any>
         lateinit var polyline : Polyline
 
         //private var markerIndex = 0
@@ -45,6 +46,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                 else{
                     markers.remove(currentMarker)
                     currentMarker.remove()
+                    refreshPolyline()
                     Log.i("Maps", "Todo ok")
                 }
             }
@@ -55,6 +57,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         // actualizar los datos de los puntos
 
         fun updateMarkersRoute(desc: String? = null, tit: String? = null){
+            Log.i("Pruebas", "He entrado en el updateMarkersRoute")
             val copyMarkerList = mutableListOf<Marker>()
             copyMarkerList.addAll(markers)
             val tag = mutableMapOf<String, Any>()
@@ -68,6 +71,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                 (currentMarker.tag as MutableMap<String, Any>)["title"] = t.toString()
             }
             db.updateRoute(idRoute, copyMarkerList){
+                Log.i("Pruebas", "He entrado profundo en updateMarkersRoute $it")
                 if (it){
                     Log.i("Maps", "Todo ok")
                 }
@@ -79,10 +83,19 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         fun updateRoute(desc: String? = null, tit: String? = null){
-
+            Log.i("Pruebas", "He entrado en el updateRoute0")
             db.updateRoute(idRoute, title = tit, description = desc){
-                if (it){
+                result ->
+                Log.i("Pruebas", "He entrado aún más dentro $result")
+                if (result){
                     Log.i("Maps", "Todo ok")
+                    tit?.let{ tit0->
+                        routeData["title"] = tit0
+                    }
+                    desc?.let { desc0 ->
+                        routeData["description"] = desc0
+                    }
+
                 }
                 else{
                     Log.i("Maps", "Algo ha fallado, quizás lanzar fallo")
@@ -91,6 +104,18 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }
 
+        fun deleteRoute(activity: Activity){
+            db.deleteRoute(routeId = idRoute){
+                if(it){
+                    Log.i("Pruebas", "Muerete actividad")
+                    activity.finish()
+                }
+            }
+        }
+
+        private fun refreshPolyline() {
+            polyline.points = markers.map { it.position }
+        }
         // hacer para actualizar los datos de las rutas, necesitaré de los tres puntitos para desplegar el popup quizás
     }
 
@@ -98,7 +123,6 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     private lateinit var nMap: GoogleMap
-    private lateinit var routeData : HashMap<String, Any>
     private lateinit var iconGenerator: IconGenerator
 
     private var newRoute: Boolean = false
@@ -157,20 +181,23 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             routepopup = routesPopUp(routeData["title"] as String, routeData["description"] as String,
                 routeData["id"] as String, this, this.applicationContext, this.layoutInflater)
 
-            routepopup.show(true)
+            routepopup.show(true, this)
         }
 
         this.title = "Editar"
-    }
 
+    }
 
     override fun onMapReady(googleMap: GoogleMap) {
         nMap = googleMap
         iconGenerator = IconGenerator(this)
         iconGenerator.setStyle(IconGenerator.STYLE_BLUE)
 
-        if(!newRoute){
-            Log.i("Maps", "He entrado, creame la nueva ruta")
+        if(newRoute){
+            polyline = nMap.addPolyline(PolylineOptions().color(Color.parseColor("#AAc2c3c9")).visible(true))
+
+        }
+        else{
             showRoute()
         }
         nMap.apply {
@@ -244,8 +271,6 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun showRoute() {
         val routeMarkers = routeData["markers"] as List<Map<String, Any>>
         setMarkerColorDefault()
-        markers.clear()
-
         for((i, routeMarker) in routeMarkers.withIndex()) {
             val latLng: LatLng = mapToLatLng(routeMarker)
             val mapMarker = nMap.addMarker(MarkerOptions().position(latLng))
@@ -266,9 +291,6 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             .visible(true))
     }
 
-    private fun refreshPolyline() {
-        polyline.points = markers.map { it.position }
-    }
 
     private fun mapToLatLng(position: Map<String, Any>) : LatLng {
         return LatLng(position["lat"] as Double, position["lng"] as Double)
@@ -280,6 +302,13 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun setMarkerColorDefault() {
         iconGenerator.setColor(Color.parseColor("#FFc2c3c9"))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        markers.clear()
+        Log.i("Pruebas", "Me he destruido y he limpiado la lista")
     }
 
 }

@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -17,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.storage.StorageReference
 import com.jeva.jeva.R
 import com.jeva.jeva.database.Database
+import com.jeva.jeva.home.EditRouteActivity
 
 // AÚN NO FUNCIONAL
 class routesPopUp(title: String, description: String, routeId: String, activity: Activity, context: Context, layoutInflater: LayoutInflater) {
@@ -36,9 +38,10 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
 
     val REQUEST_CODE = 2 //el de datapoint es 1
 
-    fun show(editable:Boolean) {
+    fun show(editable:Boolean, activityEditRoute: Activity? = null) {
         dialogBuilder = AlertDialog.Builder(activity)
         popUp = layoutInflater.inflate(R.layout.popup_route,null)
+        var isUpdate = true
 
         //añadimos nombre y descripción
         var rutaname: EditText = popUp.findViewById(R.id.routeName)
@@ -52,10 +55,19 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
         //creamos el cuadro de diálogo y añadimos listener al boton
         dialogBuilder.setView(popUp)
         var dialog = dialogBuilder.create()
+        val deleteRoute: Button = popUp.findViewById(R.id.borrar_ruta)
+        deleteRoute.setOnClickListener {
+            //Añadir el método que elimina
+            isUpdate = false
+            activityEditRoute?.let {
+                EditRouteActivity.deleteRoute(activityEditRoute)
+            }
+            dialog.dismiss()
+
+        }
 
         var cerrar: Button = popUp.findViewById(R.id.cerrar)
         cerrar.setOnClickListener {
-            //AQUÍ IRIA LO DE ACTUALIZAR NOMBRE Y DESCRIPCIÓN
             dialog.dismiss()
         }
 
@@ -72,6 +84,14 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
         if (editable) {
             imagen.setOnClickListener {
                 pickImageFromGallery()
+            }
+        }
+
+        dialog.setOnDismissListener {
+            Log.i("Pruebas", "He entrado en el listener de dialog marker: $isUpdate")
+            if (isUpdate and editable){
+                Log.i("Pruebas", "MARKER -> El titulo: ${rutaname.text} y la descripcion: ${rutadescripcion.text}")
+                EditRouteActivity.updateRoute(tit = rutaname.text.toString(), desc = rutadescripcion.text.toString())
             }
         }
 
