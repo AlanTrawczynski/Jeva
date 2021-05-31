@@ -27,6 +27,7 @@ class MyRoutesFragment : Fragment(), Serializable {
 
     private val db : Database = Database()
     private lateinit var root : View
+    private var recharge = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,9 +75,13 @@ class MyRoutesFragment : Fragment(), Serializable {
     override fun onStart() {
         super.onStart()
         val buttonContainer = root.findViewById(R.id.myRoutesButtonContainer) as LinearLayout
-
+        if(recharge) {
+            buttonContainer.removeAllViews()
+        }
         addRoutesButtons(buttonContainer)
     }
+
+
 
 
     private fun addRoutesButtons(btnContainer: LinearLayout) {
@@ -121,6 +126,7 @@ class MyRoutesFragment : Fragment(), Serializable {
 
             }
         }
+        recharge = true
     }
 
 
