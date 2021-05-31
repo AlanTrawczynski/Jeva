@@ -57,6 +57,9 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         if (idUser == ownerId) {
             showRouteBtnGoEdit.visibility = View.VISIBLE
         }
+
+        showRouteBtnBack.setOnClickListener { finish() }
+
         showRouteBtnGoEdit.setOnClickListener {
             val intent = Intent(this, EditRouteActivity::class.java).apply {
                 putExtra("routeData", routeData as Serializable)
@@ -66,6 +69,7 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             startActivity(intent)
             finish()
         }
+
         showRouteBtnShowData.setOnClickListener {
             val popup: routesPopUp = routesPopUp(
                 routeData["title"] as String, routeData["description"] as String,
@@ -73,7 +77,6 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             )
             popup.show(false)
         }
-        this.title = "Ruta"
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

@@ -19,7 +19,6 @@ import com.jeva.jeva.images.dataPointMenu
 import com.jeva.jeva.images.routesPopUp
 import kotlinx.android.synthetic.main.activity_edit_route.*
 import java.util.*
-import kotlin.collections.HashMap
 
 class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -82,31 +81,26 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
         }
 
-        fun updateRoute(desc: String? = null, tit: String? = null){
+        fun updateRoute(desc: String? = null, tit: String? = null) {
             Log.i("Pruebas", "He entrado en el updateRoute0")
-            db.updateRoute(idRoute, title = tit, description = desc){
+            db.updateRoute(idRoute, title = tit, description = desc) {
                 result ->
                 Log.i("Pruebas", "He entrado aún más dentro $result")
-                if (result){
+                if (result) {
                     Log.i("Maps", "Todo ok")
-                    tit?.let{ tit0->
-                        routeData["title"] = tit0
-                    }
-                    desc?.let { desc0 ->
-                        routeData["description"] = desc0
-                    }
-
+                    tit?.let { routeData["title"] = it }
+                    desc?.let { routeData["description"] = it }
                 }
-                else{
+                else {
                     Log.i("Maps", "Algo ha fallado, quizás lanzar fallo")
                 }
             }
 
         }
 
-        fun deleteRoute(activity: Activity){
-            db.deleteRoute(routeId = idRoute){
-                if(it){
+        fun deleteRoute(activity: Activity) {
+            db.deleteRoute(routeId = idRoute) {
+                if(it) {
                     Log.i("Pruebas", "Muerete actividad")
                     activity.finish()
                 }
@@ -176,6 +170,8 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                 "owner" to db.getCurrentUserUid()
             ) as HashMap<String, Any>
         }
+
+        editRouteBtnBack.setOnClickListener { finish() }
 
         editRouteBtnShowData.setOnClickListener {
             routepopup = routesPopUp(routeData["title"] as String, routeData["description"] as String,

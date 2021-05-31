@@ -7,6 +7,20 @@
     tools:context=".home.tabs.ExploreFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/editRouteBtnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/jeva_blue"
+        android:clickable="true"
+        android:src="?attr/actionModeCloseDrawable"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:maxImageSize="30dp"
+        app:tint="@color/white" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/editRouteBtnShowData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
