@@ -84,8 +84,6 @@ class MyRoutesFragment : Fragment(), Serializable {
     }
 
 
-
-
     private fun addRoutesButtons(btnContainer: LinearLayout) {
         db.getCurrentUserRoutes { routes ->
             routes?.forEach { route ->
@@ -106,7 +104,7 @@ class MyRoutesFragment : Fragment(), Serializable {
                 cardView.radius = radius
 
 
-                textito.text = "Este es el titulo: $nameRoute"//routeData["description"] as String
+                textito.text = nameRoute//routeData["description"] as String
                 textito.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7f, context?.resources?.displayMetrics)
 
                 cosaQueSeVe.addView(textito)

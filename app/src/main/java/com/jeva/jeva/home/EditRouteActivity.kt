@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -16,9 +17,11 @@ import com.google.maps.android.ui.IconGenerator
 import com.jeva.jeva.R
 import com.jeva.jeva.database.Database
 import com.jeva.jeva.images.dataPointMenu
+import com.jeva.jeva.images.dataPointMenu.Companion.context
 import com.jeva.jeva.images.routesPopUp
 import kotlinx.android.synthetic.main.activity_edit_route.*
 import java.util.*
+import kotlin.collections.HashMap
 
 class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -29,34 +32,26 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         private lateinit var idRoute: String
         private lateinit var routeData : HashMap<String, Any>
         lateinit var polyline : Polyline
-
-        //private var markerIndex = 0
+        private lateinit var iconGenerator: IconGenerator
 
         fun deleteMarker(){
             val copyMarkerList = mutableListOf<Marker>()
             copyMarkerList.addAll(markers)
-            Log.i("Maps", "todo ok y el marcador es: $currentMarker")
-            Log.i("Maps", "La lista es: $markers")
             copyMarkerList.remove(currentMarker)
             db.updateRoute(idRoute, copyMarkerList){
                 if(!it){
-                    Log.i("Maps", "ERROR")
+                    Toast.makeText(context, context.getString(R.string.deleteMarkerError), Toast.LENGTH_SHORT).show()
                 }
                 else{
                     markers.remove(currentMarker)
                     currentMarker.remove()
+                    reloadMarkerStyle()
                     refreshPolyline()
-                    Log.i("Maps", "Todo ok")
                 }
             }
         }
 
-        // subir nuevos puntos a la bd hecho
-
-        // actualizar los datos de los puntos
-
         fun updateMarkersRoute(desc: String? = null, tit: String? = null){
-            Log.i("Pruebas", "He entrado en el updateMarkersRoute")
             val copyMarkerList = mutableListOf<Marker>()
             copyMarkerList.addAll(markers)
             val tag = mutableMapOf<String, Any>()
@@ -70,54 +65,61 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                 (currentMarker.tag as MutableMap<String, Any>)["title"] = t.toString()
             }
             db.updateRoute(idRoute, copyMarkerList){
-                Log.i("Pruebas", "He entrado profundo en updateMarkersRoute $it")
-                if (it){
-                    Log.i("Maps", "Todo ok")
-                }
-                else{
+                if (!it){
                     (currentMarker.tag as MutableMap<String,Any>).putAll(tag)
+                    Toast.makeText(context, context.getString(R.string.updateMarkerError), Toast.LENGTH_SHORT).show()
                 }
             }
 
         }
 
-        fun updateRoute(desc: String? = null, tit: String? = null) {
-            Log.i("Pruebas", "He entrado en el updateRoute0")
-            db.updateRoute(idRoute, title = tit, description = desc) {
+        fun updateRoute(desc: String? = null, tit: String? = null){
+            db.updateRoute(idRoute, title = tit, description = desc){
                 result ->
-                Log.i("Pruebas", "He entrado aún más dentro $result")
-                if (result) {
-                    Log.i("Maps", "Todo ok")
-                    tit?.let { routeData["title"] = it }
-                    desc?.let { routeData["description"] = it }
+                if (result){
+                    tit?.let{ tit0->
+                        routeData["title"] = tit0
+                    }
+                    desc?.let { desc0 ->
+                        routeData["description"] = desc0
+                    }
                 }
                 else {
                     Log.i("Maps", "Algo ha fallado, quizás lanzar fallo")
+                    Toast.makeText(context, context.getString(R.string.udateRouteError), Toast.LENGTH_SHORT).show()
                 }
             }
 
-        }
-
-        fun deleteRoute(activity: Activity) {
-            db.deleteRoute(routeId = idRoute) {
-                if(it) {
-                    Log.i("Pruebas", "Muerete actividad")
-                    activity.finish()
-                }
-            }
         }
 
         private fun refreshPolyline() {
             polyline.points = markers.map { it.position }
         }
-        // hacer para actualizar los datos de las rutas, necesitaré de los tres puntitos para desplegar el popup quizás
+
+        private fun reloadMarkerStyle(){
+            setMarkerColorDefault()
+            for ((index,m) in markers.withIndex()){
+                m.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("${index+1}")))
+            }
+            if(markers.isNotEmpty()) {
+                setMarkerColorHighlight()
+                markers.last().setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon()))
+            }
+        }
+
+        private fun setMarkerColorHighlight() {
+            iconGenerator.setColor(Color.parseColor("#FF03A9F5"))
+        }
+
+        private fun setMarkerColorDefault() {
+            iconGenerator.setColor(Color.parseColor("#FFc2c3c9"))
+        }
     }
 
 
 
 
     private lateinit var nMap: GoogleMap
-    private lateinit var iconGenerator: IconGenerator
 
     private var newRoute: Boolean = false
 
@@ -141,14 +143,11 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
         newRoute = intent.getBooleanExtra("newRoute", false)
-        Log.i("Maps", "Esto es una nueva ruta?: $newRoute")
         if(!newRoute){
-            Log.i("Maps", "He entrado debería de estar cargando todas las mierdas")
 
             routeData = intent.getSerializableExtra("routeData") as HashMap<String, Any>
             idRoute = routeData["id"] as String
 
-            Log.i("Maps", "Esta es mi ruta: $routeData")
             if ((routeData["markers"] as List<*>).isEmpty()){
                 initialPosition = HomeActivity.lastMapPosition
                 initialZoom = HomeActivity.lastMapZoom
@@ -177,10 +176,8 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             routepopup = routesPopUp(routeData["title"] as String, routeData["description"] as String,
                 routeData["id"] as String, this, this.applicationContext, this.layoutInflater)
 
-            routepopup.show(true, this)
+            routepopup.show(true)
         }
-
-        this.title = "Editar"
 
     }
 
@@ -191,6 +188,10 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
         if(newRoute){
             polyline = nMap.addPolyline(PolylineOptions().color(Color.parseColor("#AAc2c3c9")).visible(true))
+            routepopup = routesPopUp(routeData["title"] as String, routeData["description"] as String,
+                routeData["id"] as String, this, this.applicationContext, this.layoutInflater)
+
+            routepopup.show(true)
 
         }
         else{
@@ -207,7 +208,6 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
             val description: String = tag["description"] as String
             val idMarker = tag["id"] as String
             currentMarker = marker
-            Log.i("Maps", "He entrado y el marcador es: $dataPointMenu.currentMarker")
 
             dataPointMenu.setInfo(title,description, idRoute,idMarker,this,this.applicationContext,this.layoutInflater)
             dataPointMenu.showMenu(true)
@@ -239,9 +239,10 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 db.updateRoute(idRoute, markers){
                     if (!it){
-                        Log.i("Maps", "Error en la subida")
                         marker.remove()
                         markers.remove(marker)
+
+                        Toast.makeText(context, getString(R.string.createMarkerError), Toast.LENGTH_SHORT).show()
                     }
                     else{
                         currentMarker = marker
@@ -251,6 +252,32 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
         }
+
+        nMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener{
+            lateinit var initialMarkerPosition: LatLng
+            override fun onMarkerDragStart(p0: Marker) {
+                refreshPolyline()
+                initialMarkerPosition = p0.position
+            }
+
+            override fun onMarkerDrag(p0: Marker) {
+                refreshPolyline()
+            }
+
+            override fun onMarkerDragEnd(p0: Marker) {
+                db.updateRoute(idRoute, markers = markers){ it0 ->
+                    if (it0){
+                        refreshPolyline()
+                    }
+                    else{
+                        p0.position = initialMarkerPosition
+                        Toast.makeText(context, getString(R.string.dragMarkerError), Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+            }
+
+        })
 
     }
 
@@ -278,6 +305,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 mapMarker.setIcon(BitmapDescriptorFactory.fromBitmap(iconGenerator.makeIcon("${i+1}")))
                 markers.add(mapMarker)
+                mapMarker.isDraggable = true
             }
         }
         polyline = nMap.addPolyline(
@@ -292,19 +320,10 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
         return LatLng(position["lat"] as Double, position["lng"] as Double)
     }
 
-    private fun setMarkerColorHighlight() {
-        iconGenerator.setColor(Color.parseColor("#FF03A9F5"))
-    }
-
-    private fun setMarkerColorDefault() {
-        iconGenerator.setColor(Color.parseColor("#FFc2c3c9"))
-    }
 
     override fun onDestroy() {
         super.onDestroy()
-
         markers.clear()
-        Log.i("Pruebas", "Me he destruido y he limpiado la lista")
     }
 
 }

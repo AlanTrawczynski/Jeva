@@ -41,7 +41,7 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
 
     val REQUEST_CODE = 2 //el de datapoint es 1
 
-    fun show(editable:Boolean, activityEditRoute: Activity? = null) {
+    fun show(editable:Boolean) {
         dialogBuilder = AlertDialog.Builder(activity)
         popUp = layoutInflater.inflate(R.layout.popup_route,null)
         var isUpdate = true
@@ -63,11 +63,14 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
         deleteRoute.setOnClickListener {
             //Añadir el método que elimina
             isUpdate = false
-            activityEditRoute?.let {
-                EditRouteActivity.deleteRoute(activityEditRoute)
+            db.deleteRoute(routeId = routeId){
+                if(it){
+                    activity.finish()
+                }
+                else{
+                    Toast.makeText(activity, context.getString(R.string.deleteRouteError), Toast.LENGTH_SHORT).show()
+                }
             }
-            dialog.dismiss()
-
         }
 
         var cerrar: Button = popUp.findViewById(R.id.cerrar)
@@ -97,9 +100,7 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
         }
 
         dialog.setOnDismissListener {
-            Log.i("Pruebas", "He entrado en el listener de dialog marker: $isUpdate")
-            if (isUpdate and editable){
-                Log.i("Pruebas", "MARKER -> El titulo: ${rutaname.text} y la descripcion: ${rutadescripcion.text}")
+            if (isUpdate && editable){
                 EditRouteActivity.updateRoute(tit = rutaname.text.toString(), desc = rutadescripcion.text.toString())
             }
         }

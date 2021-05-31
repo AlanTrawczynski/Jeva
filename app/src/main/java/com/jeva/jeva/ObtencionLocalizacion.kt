@@ -22,8 +22,7 @@ class ObtencionLocalizacion {
 
     @SuppressLint("MissingPermission") //ya compruebo anteriormente que se hayan permitido los permisos (llamando a gestionarPermisos)
     private fun getLastKnownLocation(): Task<Location> {
-        val servicioLoc = fusedLocationClient.lastLocation
-        return servicioLoc
+        return fusedLocationClient.lastLocation
     }
 
 }

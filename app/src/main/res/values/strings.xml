@@ -22,4 +22,11 @@
     <string name="gallery_justification">Usamos el acceso a la galería para subir fotos propias</string>
     <string name="storage_language_justification">Accedemos al almacenamiento para almacenar preferencias de idiomas</string>
     <string name="okay">Vale</string>
+    <string name="udateRouteError">Error al actualizar la ruta</string>
+    <string name="deleteRouteError">Error al eliminar la ruta</string>
+    <string name="updateMarkerError">Error al eliminar el marcador</string>
+    <string name="deleteMarkerError">Error al eliminar el marcador</string>
+    <string name="createMarkerError">Error al crear el marcador</string>
+    <string name="getNearbyRoutesError">Error al cargar las rutas cercanas</string>
+    <string name="dragMarkerError">Error al actualizar posición del marcador</string>
 </resources>

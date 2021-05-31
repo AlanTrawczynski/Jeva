@@ -43,7 +43,6 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
         setContentView(R.layout.activity_show_route)
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.showMap) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -99,10 +98,6 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                     HomeActivity.lastMapPosition,
                     initialZoom
                 )
-            )
-            Log.i(
-                "Pruebas",
-                HomeActivity.lastMapPosition.toString() + " ---- " + initialZoom.toString()
             )
         }
 

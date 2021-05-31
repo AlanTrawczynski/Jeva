@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.activity.OnBackPressedCallback
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -34,12 +35,12 @@ class ExploreFragment : Fragment(), OnMapReadyCallback {
     private var indexRoute: Int? = null
     private var idRoute: String? = null
 
-    private var currentRoute = mutableListOf<Marker>()         // lista que almacena los marcadores de la ruta seleccionada, para así poder eliminarlos posteriormente
-    private var routesFirstMarker = mutableListOf<Marker>()    // los marcadores iniciales de cada ruta, se usa para hacerlos invisibles
+    private var currentRoute = mutableListOf<Marker>()
+    private var routesFirstMarker = mutableListOf<Marker>()
 
-    private lateinit var routes: List<Map<String, Any>>         //es una lista que almacena lo que se devuelve de la BD
-    private lateinit var iconGenerator: IconGenerator           //generador de iconos, se inicializa cuando se inicia el maps
-    private var inRoute = false //variable para ver si estamos dentro de una ruta en el mapa
+    private lateinit var routes: List<Map<String, Any>>
+    private lateinit var iconGenerator: IconGenerator
+    private var inRoute = false
     private var firstExecution = true
 
 
@@ -173,13 +174,11 @@ class ExploreFragment : Fragment(), OnMapReadyCallback {
                 routes = it
                 show()
             } else {
-                Log.e("Maps", "No se ha encontrado ruta")
+                Toast.makeText(activity, getString(R.string.getNearbyRoutesError), Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-
-    //Muestra los puntos de la ruta seleccionada en el mapa
     private fun showRouteMarkers(i : Int) {
         val listaLatLng = mutableListOf<LatLng>()
         val routeMarkers = (routes[i]["markers"] as List<Map<String, Any>>)

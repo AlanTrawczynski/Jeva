@@ -123,9 +123,7 @@ class dataPointMenu {
             }
 
             dialog.setOnDismissListener {
-                Log.i("Pruebas", "He entrado en el listener de dialog: $isUpdate")
                 if (isUpdate and editable){
-                    Log.i("Pruebas", "El titulo: ${puntoname.text} y la descripcion: ${puntodescripcion.text}")
                     EditRouteActivity.updateMarkersRoute(tit = puntoname.text.toString(), desc = puntodescripcion.text.toString())
                 }
             }
