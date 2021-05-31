@@ -38,7 +38,8 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
 
     private lateinit var routes: List<Map<String, Any>>         //es una lista que almacena lo que se devuelve de la BD
     private lateinit var iconGenerator: IconGenerator           //generador de iconos, se inicializa cuando se inicia el maps
-    private var inRoute = false                                  //variable para ver si estamos dentro de una ruta en el mapa
+    private var inRoute = false //variable para ver si estamos dentro de una ruta en el mapa
+    private var reloadFragment = false
 
 
     companion object {
@@ -84,6 +85,7 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         nMap = googleMap
+        reloadFragment = true
         nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HomeActivity.lastMapPosition, HomeActivity.lastMapZoom))
         iconGenerator = IconGenerator(activity)
         iconGenerator.setStyle(STYLE_BLUE)
@@ -228,6 +230,15 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
         HomeActivity.lastMapPosition = nMap.cameraPosition.target
         HomeActivity.lastMapZoom = nMap.cameraPosition.zoom
         super.onDestroyView()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (reloadFragment){
+            nMap.clear()
+            showRoutes()
+            inRoute = false
+        }
     }
 
 }
