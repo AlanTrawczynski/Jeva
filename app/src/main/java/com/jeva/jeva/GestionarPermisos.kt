@@ -23,7 +23,8 @@ class GestionarPermisos {
                 val permisos = arrayOf(FINE_LOCATION_PERMISSION)
                 if(shouldShowRequestPermissionRationale(contexto, FINE_LOCATION_PERMISSION)) {
                     // recibe un título y una explicación. Tras presionar vale, llama a la función que se le pasa como parámetro.
-                    cuadroExplicativo("Acepte los permisos","Empleamos la ubicación para ofrecerle rutas cercanas", contexto, permisos, ::askPermission)
+                    cuadroExplicativo(contexto.getString(R.string.accept_permissions),contexto.getString(
+                                            R.string.location_justification), contexto, permisos, ::askPermission)
                 } else {
                     askPermission(contexto,permisos)
                 }
@@ -36,7 +37,8 @@ class GestionarPermisos {
                 val permisos = arrayOf(READ_EXTERNAL_STORAGE)
                 if(shouldShowRequestPermissionRationale(actividad, READ_EXTERNAL_STORAGE)) {
                     // recibe un título y una explicación. Tras presionar vale, llama a la función que se le pasa como parámetro.
-                    cuadroExplicativo("Acepte los permisos","Usamos el acceso a la galería para subir fotos propias", actividad, permisos,::askPermission)
+                    cuadroExplicativo(actividad.getString(R.string.accept_permissions),actividad.getString(
+                                            R.string.gallery_justification), actividad, permisos,::askPermission)
                 } else {
                     askPermission(actividad,permisos)
                 }
@@ -49,7 +51,8 @@ class GestionarPermisos {
                 if(shouldShowRequestPermissionRationale(actividad, READ_EXTERNAL_STORAGE)
                     ||shouldShowRequestPermissionRationale(actividad, WRITE_EXTERNAL_STORAGE)) {
                     // recibe un título y una explicación. Tras presionar vale, llama a la función que se le pasa como parámetro.
-                    cuadroExplicativo("Acepte los permisos","Accedemos al almacenamiento para almacenar preferencias de idiomas",
+                    cuadroExplicativo(actividad.getString(R.string.accept_permissions),actividad.getString(
+                                            R.string.storage_language_justification),
                                             actividad, permisos,::askPermission)
                 } else {
                     askPermission(actividad,permisos)
@@ -61,7 +64,7 @@ class GestionarPermisos {
             var dialogo = AlertDialog.Builder(contexto)
             dialogo.setTitle(titulo)
             dialogo.setMessage(mensaje)
-            dialogo.setPositiveButton("Vale") { dialog, which -> funcionAlAceptar(contexto,permisos)}
+            dialogo.setPositiveButton(contexto.getString(R.string.okay)) { dialog, which -> funcionAlAceptar(contexto,permisos)}
             dialogo.show()
         }
 

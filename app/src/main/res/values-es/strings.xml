@@ -9,4 +9,18 @@
     <string name="change_password">Cambiar contraseña</string>
     <string name="sign_out">Cerrar sesión</string>
     <string name="change_language">Cambiar idioma</string>
+    <string name="checkInternet">Compruebe la conexión a internet</string>
+    <string name="errorUploadPhoto">Hubo un error al subir la imagen</string>
+    <string name="cannotDeletePhoto">No se pudo eliminar la foto</string>
+    <string name="popUpRouteMarkerTitle">Datos del marcador</string>
+    <string name="popUpRouteRouteTitle">Datos de la ruta</string>
+    <string name="titulo">Título</string>
+    <string name="descripcion">Descripción</string>
+    <string name="close">CERRAR</string>
+    <string name="delete">BORRAR</string>
+    <string name="accept_permissions">Acepte los permisos</string>
+    <string name="location_justification">Empleamos la ubicación para ofrecerle rutas cercanas</string>
+    <string name="gallery_justification">Usamos el acceso a la galería para subir fotos propias</string>
+    <string name="storage_language_justification">Accedemos al almacenamiento para almacenar preferencias de idiomas</string>
+    <string name="okay">Vale</string>
 </resources>

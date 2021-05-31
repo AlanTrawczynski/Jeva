@@ -153,7 +153,7 @@ class dataPointMenu {
                         }
                     }
                 } else {
-                    Toast.makeText(activity, "Compruebe la conexión a internet", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, context.getString(R.string.checkInternet), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -162,10 +162,9 @@ class dataPointMenu {
         fun uploadImageShow(imageRef: Uri) {
             db.uploadMarkerPhoto(imageRef, routeId, markerId, context) {
                 if(it != null) {
-                    Log.d("ref", imageRef.toString())
                     adapter.add(it,imageRef)
                 } else {
-                    Toast.makeText(activity, "Hubo un error al subir la imagen", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, context.getString(R.string.errorUploadPhoto), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -191,7 +190,7 @@ class dataPointMenu {
                 if(it) {
                     adapter.remove(position)
                 } else {
-                    Toast.makeText(activity, "No se pudo eliminar la foto", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, context.getString(R.string.cannotDeletePhoto), Toast.LENGTH_SHORT).show()
                 }
             }
         }
