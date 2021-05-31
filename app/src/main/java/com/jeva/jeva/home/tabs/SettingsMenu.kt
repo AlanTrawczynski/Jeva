@@ -49,7 +49,7 @@ class SettingsMenu {
                 }
 
                 R.id.change_email -> {
-                    popup.showPopupWindow(view, R.layout.popup_change_email, R.id.borrar_marcador, context)
+                    popup.showPopupWindow(view, R.layout.popup_change_email, R.id.changeemailBtnChange, context)
                 }
 
                 R.id.change_pwd -> {
