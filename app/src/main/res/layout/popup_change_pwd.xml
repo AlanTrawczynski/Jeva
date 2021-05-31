@@ -1,52 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
     android:gravity="center">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         app:cardCornerRadius="5dp">
 
         <LinearLayout
-            android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="10dp">
 
+
+            <TextView
+                android:id="@+id/changepwdTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/title_change_pwd"
+                android:textSize="22sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/popupTitle3" />
 
             <EditText
-                android:id="@+id/popUpChangePwdOldPwd"
+                android:id="@+id/changepwdEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="textPersonName"/>
+                android:hint="@string/hint_email"
+                android:inputType="textEmailAddress"
+                android:autofillHints="email" />
 
             <EditText
-                android:id="@+id/popUpChangePwdNewPwd"
+                android:id="@+id/changeemailPwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="New Password"
-                android:inputType="textPersonName"/>
+                android:hint="@string/hint_old_password"
+                android:inputType="textPassword"
+                android:autofillHints="password" />
 
             <EditText
-                android:id="@+id/popUpChangePwdRepeatPwd"
+                android:id="@+id/changepwdNewPwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Repeat Password"
-                android:inputType="textPersonName"/>
+                android:hint="@string/hint_new_password"
+                android:inputType="textPassword"
+                android:autofillHints="password" />
 
-            <Button
-                android:id="@+id/popUpChangePwdButton"
+            <EditText
+                android:id="@+id/changepwdNewPwdRepeat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Change" />
+                android:hint="@string/hint_repeat_new_password"
+                android:inputType="textPassword"
+                android:autofillHints="password" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:showDividers="middle">
+
+                <Button
+                    android:id="@+id/changepwdBtnChange"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/button_change" />
+
+                <Space
+                    android:layout_width="8dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0" />
+
+                <Button
+                    android:id="@+id/changepwdBtnClose"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/close" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

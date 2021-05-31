@@ -29,4 +29,14 @@
     <string name="createMarkerError">Error al crear el marcador</string>
     <string name="getNearbyRoutesError">Error al cargar las rutas cercanas</string>
     <string name="dragMarkerError">Error al actualizar posición del marcador</string>
+    <string name="title_change_pwd">Cambiar contraseña</string>
+    <string name="title_change_email">Cambiar email</string>
+    <string name="hint_old_email">Email anterior</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="hint_new_email">Nuevo email</string>
+    <string name="button_change">cambiar</string>
+    <string name="hint_repeat_new_password">Repetir nueva contraseña</string>
+    <string name="hint_new_password">Nueva contraseña</string>
+    <string name="hint_old_password">Contraseña anterior</string>
+    <string name="hint_email">Email</string>
 </resources>
