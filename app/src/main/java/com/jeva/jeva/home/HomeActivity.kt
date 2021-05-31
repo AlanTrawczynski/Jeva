@@ -16,6 +16,7 @@ import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.ObtencionLocalizacion
 import com.jeva.jeva.R
 import com.jeva.jeva.images.dataPointMenu
+import java.util.*
 
 class HomeActivity : AppCompatActivity() {
 
@@ -43,8 +44,7 @@ class HomeActivity : AppCompatActivity() {
         ))
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        Log.i("Pruebas", "He entrado en HomeActivity")
-
+        Log.i("Pruebas", Locale.getDefault().language)
         saveMyLocation()
     }
 
