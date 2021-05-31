@@ -50,11 +50,11 @@ class SettingsMenu {
                 }
 
                 R.id.change_email -> {
-                    popup.showPopupWindow(view, R.layout.popup_change_email, R.id.popUpChangeEmailButton, context)
+                    popup.showPopupWindow(view, R.layout.popup_change_email, R.id.borrar_marcador, context)
                 }
 
                 R.id.change_pwd -> {
-                    popup.showPopupWindow(view, R.layout.popup_change_pwd,  R.id.popUpChangePwdButton, context)
+                    popup.showPopupWindow(view, R.layout.popup_change_pwd,  R.id.changepwdBtnChange, context)
                 }
             }
         }

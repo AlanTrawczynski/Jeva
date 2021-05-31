@@ -89,11 +89,12 @@
         tools:ignore="ExtraText">
 
         <Button
-            android:id="@+id/cerrar"
+            android:id="@+id/borrar_marcador"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/close" />
+            android:text="@string/delete"
+            android:visibility="visible" />
 
         <Space
             android:id="@+id/spaceBetweenBtns"
@@ -102,12 +103,11 @@
             android:layout_weight="0" />
 
         <Button
-            android:id="@+id/borrar_marcador"
+            android:id="@+id/cerrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/delete"
-            android:visibility="visible" />
+            android:text="@string/close" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
