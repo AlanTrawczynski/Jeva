@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_explore.*
 import java.io.Serializable
 
 
-class ExploreFragment : Fragment(),OnMapReadyCallback {
+class ExploreFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var nMap : GoogleMap
     private val db = Database()
@@ -34,12 +35,12 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
     private var idRoute: String? = null
 
     private var currentRoute = mutableListOf<Marker>()         // lista que almacena los marcadores de la ruta seleccionada, para así poder eliminarlos posteriormente
-    private var routesFirstMarker = mutableListOf<Marker>()        // los marcadores iniciales de cada ruta, se usa para hacerlos invisibles
+    private var routesFirstMarker = mutableListOf<Marker>()    // los marcadores iniciales de cada ruta, se usa para hacerlos invisibles
 
     private lateinit var routes: List<Map<String, Any>>         //es una lista que almacena lo que se devuelve de la BD
     private lateinit var iconGenerator: IconGenerator           //generador de iconos, se inicializa cuando se inicia el maps
     private var inRoute = false //variable para ver si estamos dentro de una ruta en el mapa
-    private var reloadFragment = false
+    private var firstExecution = true
 
 
     companion object {
@@ -48,11 +49,24 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
 
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (inRoute) {
+                        exitCurrentRoute()
+                    }   else {
+                        activity?.moveTaskToBack(true)
+                    }
+                }
+            }
+        activity?.onBackPressedDispatcher?.addCallback(this, callback)
+    }
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_explore, container, false)
         if (savedInstanceState == null) {
             mapView = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -62,14 +76,18 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
         return root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mapsBtnLocate.setOnClickListener {
-            //db.newRoute(markerList){}//temporal, por eso no hay nada en el callback
             posicionarMapa()
         }
-        //boton para ir al fragment visualizador de ruta.
+
+        mapsBtnBack.setOnClickListener {
+            exitCurrentRoute()
+        }
+
         btnGoShowMap.setOnClickListener {
             indexRoute?.let {
                 indexRoute0 ->
@@ -83,36 +101,26 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
         }
     }
 
+
     override fun onMapReady(googleMap: GoogleMap) {
         nMap = googleMap
-        reloadFragment = true
+        firstExecution = false
         nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HomeActivity.lastMapPosition, HomeActivity.lastMapZoom))
         iconGenerator = IconGenerator(activity)
         iconGenerator.setStyle(STYLE_BLUE)
         if(!inRoute) { showRoutes() }
 
-
-        nMap.setOnMapLongClickListener {
-            if(inRoute) {
-                nMap.clear()
-                currentRoute.clear()
-                inRoute = false
-
-                showRoutes()
-                btnGoShowMap.visibility = View.INVISIBLE //lo volvemos a poner ne invisible
-            }
-        }
-
         nMap.setOnMarkerClickListener {
             marker ->
-            if(!inRoute) {//variable global que nos dice si estamos viendo todas las rutas, o los puntos de una
+            if(!inRoute) {
                 indexRoute = marker.tag as Int
                 val route = routes[indexRoute!!]
                 idRoute = route["id"] as String
                 inRoute = true
 
-                showRouteMarkers(indexRoute!!) //siempre al final de cada método
-                btnGoShowMap.visibility = View.VISIBLE //pongo visible el botón que me lleva al nuevo fragment
+                showRouteMarkers(indexRoute!!)
+                btnGoShowMap.visibility = View.VISIBLE
+                mapsBtnBack.visibility = View.VISIBLE
 
                 val routePosition = route["position"] as Map<String, Double>
                 routePosition["lat"]?.let { lat ->
@@ -125,18 +133,15 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
         }
 
         nMap.setOnCameraIdleListener {
-
             if (!inRoute){
-                for (m in routesFirstMarker){
-                    m.remove()
-                }
+                routesFirstMarker.forEach { it.remove() }
                 routesFirstMarker.clear()
                 showRoutes()
             }
         }
     }
 
-    //función para conseguir de la bd todas las rutas de la BD (se transformará a solo los vecinos
+
     private fun showRoutes() {
         fun getMarkerIcon(color: String): BitmapDescriptor {
             val hsv = FloatArray(3)
@@ -166,13 +171,13 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
         db.getNearbyRoutes(nMap.projection.visibleRegion.latLngBounds) {
             if (it != null) {
                 routes = it
-                //routesId = it.map { par -> par.first} as List<String>
                 show()
             } else {
                 Log.e("Maps", "No se ha encontrado ruta")
             }
         }
     }
+
 
     //Muestra los puntos de la ruta seleccionada en el mapa
     private fun showRouteMarkers(i : Int) {
@@ -195,9 +200,11 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
         }
     }
 
+
     private fun mapToLatLng(position: Map<String, Any>) : LatLng {
         return LatLng(position["lat"] as Double, position["lng"] as Double)
     }
+
 
     private fun posicionarMapa() {
         GestionarPermisos.requestLocationPermissions(this.requireActivity())
@@ -210,10 +217,23 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
             }
     }
 
+
+    private fun exitCurrentRoute() {
+        nMap.clear()
+        currentRoute.clear()
+        inRoute = false
+
+        showRoutes()
+        btnGoShowMap.visibility = View.INVISIBLE
+        mapsBtnBack.visibility = View.INVISIBLE
+    }
+
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         SettingsMenu.onCreateOptionsMenu(menu, inflater)
         super.onCreateOptionsMenu(menu, inflater)
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         view?.let { v ->
@@ -226,18 +246,18 @@ class ExploreFragment : Fragment(),OnMapReadyCallback {
         return super.onOptionsItemSelected(item)
     }
 
+
     override fun onDestroyView() {
         HomeActivity.lastMapPosition = nMap.cameraPosition.target
         HomeActivity.lastMapZoom = nMap.cameraPosition.zoom
         super.onDestroyView()
     }
 
+
     override fun onStart() {
         super.onStart()
-        if (reloadFragment){
-            nMap.clear()
-            showRoutes()
-            inRoute = false
+        if (!firstExecution){
+            exitCurrentRoute()
         }
     }
 

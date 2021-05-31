@@ -29,16 +29,18 @@ class MyRoutesFragment : Fragment(), Serializable {
     private lateinit var root : View
     private var recharge = false
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val callback: OnBackPressedCallback =
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    Log.e("Soy el boton patras", "Toy desactivado")
+                    activity?.moveTaskToBack(true)
                 }
             }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+        activity?.onBackPressedDispatcher?.addCallback(this, callback)
     }
 
 
