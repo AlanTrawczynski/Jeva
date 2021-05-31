@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/navigation_dashboard">
+    app:startDestination="@id/navigation_explore">
 
     <fragment
-        android:id="@+id/navigation_routes"
+        android:id="@+id/navigation_explore"
         android:name="com.jeva.jeva.home.tabs.ExploreFragment"
-        android:label="@string/title_routes"
+        android:label="@string/title_explore"
         tools:layout="@layout/fragment_explore">
         <action
             android:id="@+id/action_navigation_maps_to_navigation_dashboard"
-            app:destination="@id/navigation_dashboard"
+            app:destination="@id/navigation_myroutes"
             app:enterAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_navigation_routes_to_swipeImages"
@@ -20,22 +20,22 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_myroutes"
         android:name="com.jeva.jeva.home.tabs.MyRoutesFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_my_routes" >
+        android:label="@string/title_myroutes"
+        tools:layout="@layout/fragment_my_routes">
         <action
             android:id="@+id/action_navigation_dashboard_to_navigation_maps"
-            app:destination="@id/navigation_routes" />
+            app:destination="@id/navigation_explore" />
     </fragment>
     <fragment
         android:id="@+id/swipeImages"
         android:name="com.jeva.jeva.images.swipeImages"
-        android:label="swipeImages" >
+        android:label="swipeImages">
         <action
             android:id="@+id/action_swipeImages_to_navigation_maps"
-            app:destination="@id/navigation_routes"
-            app:popUpTo="@id/navigation_routes" />
+            app:destination="@id/navigation_explore"
+            app:popUpTo="@id/navigation_explore" />
         <argument
             android:name="title"
             app:argType="string" />

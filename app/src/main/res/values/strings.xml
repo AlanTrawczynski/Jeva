@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Jeva</string>
-    <string name="title_routes">Explorar</string>
-    <string name="title_dashboard">Mis rutas</string>
+    <string name="title_explore">Explorar</string>
+    <string name="title_myroutes">Mis rutas</string>
     <string name="title_activity_show_route">Ver ruta</string>
     <string name="title_activity_edit_route">Editar ruta</string>
     <string name="change_email">Cambiar email</string>

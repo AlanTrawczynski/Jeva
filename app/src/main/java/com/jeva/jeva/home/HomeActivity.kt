@@ -23,8 +23,11 @@ class HomeActivity : AppCompatActivity() {
         var lastMapZoom: Float = 4F
         var lastMapPosition: LatLng = LatLng(0.0,0.0)
     }
+
     private val obtencionLocalizacion = ObtencionLocalizacion()
     private val REQUEST_CODE: Int = 1
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,13 +39,15 @@ class HomeActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.navigation_routes, R.id.navigation_dashboard
+            R.id.navigation_explore, R.id.navigation_myroutes
         ))
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         Log.i("Pruebas", "He entrado en HomeActivity")
+
         saveMyLocation()
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -51,6 +56,7 @@ class HomeActivity : AppCompatActivity() {
             dataPointMenu.uploadImageShow(ref)
         }
     }
+
 
     private fun saveMyLocation() {
         Log.i("Pruebas", "He entrado ")
@@ -66,6 +72,7 @@ class HomeActivity : AppCompatActivity() {
                 Log.i("Pruebas", "No he entrado en saveMyLocation")
             }
     }
+
 
     override fun onRestart() {
         super.onRestart()

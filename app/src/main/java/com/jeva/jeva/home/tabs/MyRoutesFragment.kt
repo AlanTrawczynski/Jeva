@@ -39,6 +39,7 @@ class MyRoutesFragment : Fragment(), Serializable {
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root : View = inflater.inflate(R.layout.fragment_my_routes, container, false)
         val buttonContainer = root.findViewById(R.id.myRoutesButtonContainer) as LinearLayout
@@ -83,7 +84,7 @@ class MyRoutesFragment : Fragment(), Serializable {
 
                 
                 cosaQueSeVe.orientation = LinearLayout.VERTICAL
-                cosaQueSeVe.addView(loadRouteImageFromDB(R.drawable.error_image, route["id"] as String, ImageView(context)))
+                cosaQueSeVe.addView(loadRouteImageFromDB(route["id"] as String, ImageView(context)))
 
 
                 val radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, context?.resources?.displayMetrics)
@@ -95,7 +96,7 @@ class MyRoutesFragment : Fragment(), Serializable {
                 textito.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7f, context?.resources?.displayMetrics)
 
                 cosaQueSeVe.addView(textito)
-                cosaQueSeVe.addView(loadRouteImageFromDB(R.drawable.error_image, route["id"] as String, ImageView(context)))
+                cosaQueSeVe.addView(loadRouteImageFromDB(route["id"] as String, ImageView(context)))
 
                 cardView.addView(cosaQueSeVe)
 
@@ -116,28 +117,20 @@ class MyRoutesFragment : Fragment(), Serializable {
     }
 
 
-    private fun loadRouteImageFromDB(placeholder: Int, routeId : String, view : ImageView) : ImageView {
+    private fun loadRouteImageFromDB(routeId : String, view : ImageView) : ImageView {
         val ref: StorageReference = db.getRoutePhotoRef(routeId)
+        val req = RequestOptions()
+            .placeholder(R.drawable.loading)
+            .error(R.drawable.error_image)
+        val glide = Glide.with(this).applyDefaultRequestOptions(req)
 
-        ref.downloadUrl.addOnSuccessListener {
-            Glide.with(requireContext())
-                .load(it)
-                .apply(
-                    RequestOptions()
-                        .placeholder(R.drawable.loading)
-                        .error(placeholder)
-                )
-                .into(view)
-            view.scaleType = ImageView.ScaleType.CENTER_CROP
-            view.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,350)
-        }
-            .addOnFailureListener {
-                Glide.with(requireContext())
-                    .load(placeholder)
-                    .into(view)
-                view.scaleType = ImageView.ScaleType.CENTER_CROP
-                view.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,350)
-            }
+        view.scaleType = ImageView.ScaleType.CENTER_CROP
+        view.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,350)
+
+        ref.downloadUrl
+            .addOnSuccessListener { glide.load(it).into(view) }
+            .addOnFailureListener { glide.load(R.drawable.error_image).into(view) }
+
         return view
     }
 
@@ -146,6 +139,7 @@ class MyRoutesFragment : Fragment(), Serializable {
         SettingsMenu.onCreateOptionsMenu(menu, inflater)
         super.onCreateOptionsMenu(menu, inflater)
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         view?.let { v ->
@@ -157,6 +151,5 @@ class MyRoutesFragment : Fragment(), Serializable {
         }
         return super.onOptionsItemSelected(item)
     }
-
 
 }
