@@ -26,6 +26,7 @@ import java.io.Serializable
 class MyRoutesFragment : Fragment(), Serializable {
 
     private val db : Database = Database()
+    private lateinit var root : View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +42,8 @@ class MyRoutesFragment : Fragment(), Serializable {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val root : View = inflater.inflate(R.layout.fragment_my_routes, container, false)
-        val buttonContainer = root.findViewById(R.id.myRoutesButtonContainer) as LinearLayout
+        root = inflater.inflate(R.layout.fragment_my_routes, container, false)
 
-        addRoutesButtons(buttonContainer)
         setHasOptionsMenu(true)
 
         return root
@@ -69,6 +68,14 @@ class MyRoutesFragment : Fragment(), Serializable {
                 }
             }
         }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        val buttonContainer = root.findViewById(R.id.myRoutesButtonContainer) as LinearLayout
+
+        addRoutesButtons(buttonContainer)
     }
 
 
