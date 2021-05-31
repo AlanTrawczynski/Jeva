@@ -8,10 +8,7 @@ import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -33,6 +30,12 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
     lateinit var dialogBuilder: AlertDialog.Builder
     lateinit var popUp: View
     lateinit var imagen: Icon
+    private val glide = Glide.with(context)
+        .applyDefaultRequestOptions(
+            RequestOptions()
+                .placeholder(R.drawable.loading)
+                .error(R.drawable.error_image)
+        )
 
     private var db = Database()
 
@@ -106,16 +109,12 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
 
     fun uploadPhotoDBShow(ref: Uri) {
         db.uploadRoutePhoto(ref,routeId,context) {
-            if(it!=null) {
-                Glide.with(context)
-                    .load(ref)
-                    .apply(
-                        RequestOptions()
-                            .placeholder(R.drawable.loading)
-                            .error(R.drawable.error_image)
-                    )
-                    .into(imagen)
+            if(it != null) {
+                glide.load(ref).into(imagen)
                 imagen.cutImage()
+            }
+            else {
+                Toast.makeText(context, "Ha ocurrido un error al subir la foto", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -124,23 +123,13 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
         val ref: StorageReference = db.getRoutePhotoRef(routeId)
 
         ref.downloadUrl.addOnSuccessListener {
-            Glide.with(context)
-                .load(it)
-                .apply(
-                    RequestOptions()
-                    .placeholder(R.drawable.loading)
-                    .error(placeholder)
-                )
-                .into(imagen)
+            glide.load(it).into(imagen)
             imagen.cutImage()
         }
         .addOnFailureListener {
-            Glide.with(context)
-                .load(placeholder)
-                .into(imagen)
+            glide.load(placeholder).into(imagen)
             imagen.cutImage()
         }
-
     }
 
     //TOMAR IMAGEN DE GALERÍA

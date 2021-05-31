@@ -23,10 +23,10 @@ class Icon(context: Context) :  ImageView(context) {
 
     fun setImage(resource: Int) {
         this.setImageResource(resource)
-        this.scaleType = ImageView.ScaleType.CENTER_CROP
+        this.scaleType = ScaleType.CENTER_CROP
     }
 
     fun cutImage() {
-        this.scaleType = ImageView.ScaleType.CENTER_CROP
+        this.scaleType = ScaleType.CENTER_CROP
     }
 }

@@ -19,7 +19,7 @@ import com.jeva.jeva.images.dataPointMenu
 
 class HomeActivity : AppCompatActivity() {
 
-    companion object{
+    companion object {
         var lastMapZoom: Float = 4F
         var lastMapPosition: LatLng = LatLng(0.0,0.0)
     }
@@ -72,13 +72,5 @@ class HomeActivity : AppCompatActivity() {
                 Log.i("Pruebas", "No he entrado en saveMyLocation")
             }
     }
-
-
- /*   override fun onRestart() {
-        super.onRestart()
-        finish()
-        startActivity(intent)
-        Log.i("Prueba", "Ha entrado en el restart")
-    }*/
 
 }
