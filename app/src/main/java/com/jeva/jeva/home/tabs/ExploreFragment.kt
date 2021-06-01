@@ -25,7 +25,6 @@ import com.jeva.jeva.home.ShowRouteActivity
 import kotlinx.android.synthetic.main.fragment_explore.*
 import java.io.Serializable
 
-
 class ExploreFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var nMap : GoogleMap
@@ -69,18 +68,19 @@ class ExploreFragment : Fragment(), OnMapReadyCallback {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_explore, container, false)
-        if (savedInstanceState == null) {
-            mapView = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-            mapView?.getMapAsync(this)
-        }
+
+        mapView = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapView?.getMapAsync(this)
+
         setHasOptionsMenu(true)
+
         return root
+
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mapsBtnLocate.setOnClickListener {
             posicionarMapa()
         }
@@ -228,6 +228,7 @@ class ExploreFragment : Fragment(), OnMapReadyCallback {
     }
 
 
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         SettingsMenu.onCreateOptionsMenu(menu, inflater)
         super.onCreateOptionsMenu(menu, inflater)
@@ -261,3 +262,4 @@ class ExploreFragment : Fragment(), OnMapReadyCallback {
     }
 
 }
+
