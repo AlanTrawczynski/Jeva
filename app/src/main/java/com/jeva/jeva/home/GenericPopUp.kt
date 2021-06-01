@@ -36,7 +36,7 @@ class GenericPopUp {
             R.layout.popup_change_email -> {
                 return {
                     val oldEmail = popUpView.findViewById<EditText>(R.id.changeemailOldEmail).text.toString()
-                    val pwd = popUpView.findViewById<EditText>(R.id.changeemailPwd).text.toString()
+                    val pwd = popUpView.findViewById<EditText>(R.id.changepemailPwd).text.toString()
                     val newEmail = popUpView.findViewById<EditText>(R.id.changeemailNewEmail).text.toString()
                     db.updateUserEmail(newEmail, oldEmail,pwd){
                         when(it){
@@ -65,7 +65,7 @@ class GenericPopUp {
             R.layout.popup_change_pwd -> {
                 return {
                     val email = popUpView.findViewById<EditText>(R.id.changepwdEmail).text.toString()
-                    val oldPwd = popUpView.findViewById<EditText>(R.id.changeemailPwd).text.toString()
+                    val oldPwd = popUpView.findViewById<EditText>(R.id.changepemailPwd).text.toString()
                     val newPwd = popUpView.findViewById<EditText>(R.id.changepwdNewPwd).text.toString()
                     val newPwdRepeat= popUpView.findViewById<EditText>(R.id.changepwdNewPwdRepeat).text.toString()
                     db.updateUserPassword(newPwd, email, oldPwd){
