@@ -85,7 +85,6 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
                 }
                 else {
-                    Log.i("Maps", "Algo ha fallado, quizás lanzar fallo")
                     Toast.makeText(context, context.getString(R.string.udateRouteError), Toast.LENGTH_SHORT).show()
                 }
             }
@@ -235,6 +234,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                     "description" to ""
                 )
                 markers.add(marker)
+                marker.isDraggable = true
                 refreshPolyline()
 
                 db.updateRoute(idRoute, markers){
