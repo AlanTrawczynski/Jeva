@@ -31,24 +31,6 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/signupName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz "
-                android:hint="Nombre"
-                android:inputType="textPersonName|textFilter"
-                android:maxLength="25" />
-
-            <EditText
-                android:id="@+id/signupUsername"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_.-"
-                android:hint="Nombre de usuario"
-                android:inputType="textNoSuggestions|textFilter"
-                android:maxLength="15" />
-
-            <EditText
                 android:id="@+id/signupEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

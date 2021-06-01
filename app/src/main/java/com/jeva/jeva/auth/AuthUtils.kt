@@ -15,14 +15,6 @@ class AuthUtils {
             return pwd.length >= 6
         }
 
-        fun isValidName(name: String) : Boolean {
-            return Pattern.compile("^[a-zA-Z ]{4,25}\$").matcher(name).matches()
-        }
-
-        fun isValidUsername(username: String) : Boolean {
-            return Pattern.compile("^[\\w._-]{4,15}\$").matcher(username).matches()
-        }
-
         fun authToast(message: CharSequence, c: Context) {
             Toast.makeText(c, message, Toast.LENGTH_SHORT).show()
         }

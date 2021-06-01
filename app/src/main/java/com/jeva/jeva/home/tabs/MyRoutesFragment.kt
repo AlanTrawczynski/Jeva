@@ -1,5 +1,6 @@
 package com.jeva.jeva.home.tabs
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -89,28 +90,15 @@ class MyRoutesFragment : Fragment(), Serializable {
             routes?.forEach { route ->
 
                 val nameRoute = route["title"] as String
-                val cosaQueSeVe = LinearLayout(context)
-                val cardView = CardView(requireContext())
-                val textito = TextView(context)
+                val inflater = view?.context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+                val cardView : CardView = inflater.inflate(R.layout.popup_cardview_route, null) as CardView
+                val textito : TextView = cardView.findViewById(R.id.popupCardViewTitle)
+                var routeImage : ImageView = cardView.findViewById(R.id.popupCardViewImage)
                 val espacio = Space(context)
 
-                
-                cosaQueSeVe.orientation = LinearLayout.VERTICAL
-                cosaQueSeVe.addView(loadRouteImageFromDB(route["id"] as String, ImageView(context)))
 
-
-                val radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10f, context?.resources?.displayMetrics)
-                cardView.layoutParams =LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 410)
-                cardView.radius = radius
-
-
+                setImageFromDB(route["id"] as String, routeImage)
                 textito.text = nameRoute//routeData["description"] as String
-                textito.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 7f, context?.resources?.displayMetrics)
-
-                cosaQueSeVe.addView(textito)
-                cosaQueSeVe.addView(loadRouteImageFromDB(route["id"] as String, ImageView(context)))
-
-                cardView.addView(cosaQueSeVe)
 
                 cardView.setOnClickListener{
                     val intent = Intent(context, ShowRouteActivity :: class.java).apply {
@@ -130,7 +118,7 @@ class MyRoutesFragment : Fragment(), Serializable {
     }
 
 
-    private fun loadRouteImageFromDB(routeId : String, view : ImageView) : ImageView {
+    private fun setImageFromDB(routeId : String, view : ImageView) {
         val ref: StorageReference = db.getRoutePhotoRef(routeId)
         val req = RequestOptions()
             .placeholder(R.drawable.loading)
@@ -143,8 +131,6 @@ class MyRoutesFragment : Fragment(), Serializable {
         ref.downloadUrl
             .addOnSuccessListener { glide.load(it).into(view) }
             .addOnFailureListener { glide.load(R.drawable.error_image).into(view) }
-
-        return view
     }
 
 
