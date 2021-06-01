@@ -2,7 +2,9 @@ package com.jeva.jeva.home.tabs
 
 import android.app.Activity
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.res.Configuration
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -30,16 +32,14 @@ class SettingsMenu {
                 R.id.set_Spanish -> {
                     if(!item.isChecked) {
                         item.isChecked = true
-                        setLanguageForApp("es",context)
-                        activity.recreate()
+                        setLanguageForApp("es",context,activity)
                     }
                 }
 
                 R.id.set_English -> {
                     if (!item.isChecked) {
                         item.isChecked = true
-                        setLanguageForApp("en",context)
-                        activity.recreate()
+                        setLanguageForApp("en",context,activity)
                     }
                 }
 
@@ -58,15 +58,23 @@ class SettingsMenu {
             }
         }
 
-        private fun setLanguageForApp(languageToLoad: String, context: Context) {
+        fun setLanguageForApp(languageToLoad: String, context: Context, activity: Activity) {
             val locale = Locale(languageToLoad)
             Locale.setDefault(locale)
+
             val config = Configuration()
             config.setLocale(locale)
             context.getResources().updateConfiguration(
                 config,
                 context.getResources().getDisplayMetrics()
             )
+
+            context.getSharedPreferences("GENERAL_STORAGE", MODE_PRIVATE)
+                .edit()
+                .putString("KEY_USER_LANGUAGE", languageToLoad)
+                .apply()
+
+            activity.recreate()
         }
 
     }

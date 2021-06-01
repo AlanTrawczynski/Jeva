@@ -2,8 +2,10 @@ package com.jeva.jeva.home
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -15,6 +17,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jeva.jeva.GestionarPermisos
 import com.jeva.jeva.ObtencionLocalizacion
 import com.jeva.jeva.R
+import com.jeva.jeva.home.tabs.SettingsMenu
 import com.jeva.jeva.images.dataPointMenu
 import java.util.*
 
@@ -32,6 +35,8 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setLanguage(userLanguage()!!)
+        Log.d("lenguaje", userLanguage()!!)
         setContentView(R.layout.activity_home)
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
@@ -45,6 +50,7 @@ class HomeActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         Log.i("Pruebas", Locale.getDefault().language)
+
         saveMyLocation()
     }
 
@@ -73,4 +79,26 @@ class HomeActivity : AppCompatActivity() {
             }
     }
 
+    private fun userLanguage():String? {
+        return this.applicationContext.getSharedPreferences("GENERAL_STORAGE", MODE_PRIVATE)
+            .getString("KEY_USER_LANGUAGE", "es")
+    }
+
+    private fun languageChangedFromSettings():Boolean{
+        return this.applicationContext.getSharedPreferences("GENERAL_STORAGE", MODE_PRIVATE)
+            .getBoolean("FROM_SETTINGS",false)
+    }
+
+    private fun setLanguage(language: String) {
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+
+        val config = Configuration()
+        config.setLocale(locale)
+        this.applicationContext.getResources().updateConfiguration(
+            config,
+            this.applicationContext.getResources().getDisplayMetrics()
+        )
+
+    }
 }
