@@ -42,9 +42,9 @@
                 android:id="@+id/changepwdEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints="email"
                 android:hint="@string/hint_email"
-                android:inputType="textEmailAddress"
-                android:autofillHints="email" />
+                android:inputType="textEmailAddress" />
 
             <EditText
                 android:id="@+id/changeemailPwd"
