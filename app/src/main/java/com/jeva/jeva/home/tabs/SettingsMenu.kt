@@ -9,11 +9,13 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.LinearLayout
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.jeva.jeva.R
-import com.jeva.jeva.home.PopUpActivity
+import com.jeva.jeva.home.GenericPopUp
 import java.util.*
+import kotlinx.android.synthetic.main.popup_change_email.*
 
 
 class SettingsMenu {
@@ -26,7 +28,7 @@ class SettingsMenu {
 
 
         fun onOptionsItemSelected(item: MenuItem, view: View, activity: Activity, context: Context) {
-            val popup = PopUpActivity()
+            val popup = GenericPopUp()
             when(item.itemId) {
 
                 R.id.set_Spanish -> {
@@ -49,11 +51,15 @@ class SettingsMenu {
                 }
 
                 R.id.change_email -> {
-                    popup.showPopupWindow(view, R.layout.popup_change_email, R.id.changeemailBtnChange, context)
+                    popup.showPopupWindow(view, R.layout.popup_change_email) {
+                        Log.d("ei", "email")
+                    }
                 }
 
                 R.id.change_pwd -> {
-                    popup.showPopupWindow(view, R.layout.popup_change_pwd,  R.id.changepwdBtnChange, context)
+                    popup.showPopupWindow(view, R.layout.popup_change_pwd) {
+                        Log.d("ei", "pwd")
+                    }
                 }
             }
         }
@@ -64,9 +70,9 @@ class SettingsMenu {
 
             val config = Configuration()
             config.setLocale(locale)
-            context.getResources().updateConfiguration(
+            context.resources.updateConfiguration(
                 config,
-                context.getResources().getDisplayMetrics()
+                context.resources.displayMetrics
             )
 
             context.getSharedPreferences("GENERAL_STORAGE", MODE_PRIVATE)
