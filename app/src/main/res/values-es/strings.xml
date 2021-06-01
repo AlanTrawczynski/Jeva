@@ -25,7 +25,7 @@
     <string name="okay">Vale</string>
     <string name="udateRouteError">Error al actualizar la ruta</string>
     <string name="deleteRouteError">Error al eliminar la ruta</string>
-    <string name="updateMarkerError">Error al eliminar el marcador</string>
+    <string name="updateMarkerError">Error al actualizar el marcador</string>
     <string name="deleteMarkerError">Error al eliminar el marcador</string>
     <string name="createMarkerError">Error al crear el marcador</string>
     <string name="getNearbyRoutesError">Error al cargar las rutas cercanas</string>
