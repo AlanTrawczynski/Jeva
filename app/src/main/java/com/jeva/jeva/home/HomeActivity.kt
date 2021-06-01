@@ -36,9 +36,8 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setLanguage(userLanguage()!!)
-        Log.d("lenguaje", userLanguage()!!)
-        setContentView(R.layout.activity_home)
 
+        setContentView(R.layout.activity_home)
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
 
@@ -47,10 +46,9 @@ class HomeActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(setOf(
             R.id.navigation_explore, R.id.navigation_myroutes
         ))
+
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        Log.i("Pruebas", Locale.getDefault().language)
-
         saveMyLocation()
     }
 
@@ -84,21 +82,14 @@ class HomeActivity : AppCompatActivity() {
             .getString("KEY_USER_LANGUAGE", "es")
     }
 
-    private fun languageChangedFromSettings():Boolean{
-        return this.applicationContext.getSharedPreferences("GENERAL_STORAGE", MODE_PRIVATE)
-            .getBoolean("FROM_SETTINGS",false)
-    }
-
     private fun setLanguage(language: String) {
         val locale = Locale(language)
         Locale.setDefault(locale)
-
         val config = Configuration()
         config.setLocale(locale)
-        this.applicationContext.getResources().updateConfiguration(
+        this.baseContext.getResources().updateConfiguration(
             config,
-            this.applicationContext.getResources().getDisplayMetrics()
+            this.baseContext.getResources().getDisplayMetrics()
         )
-
     }
 }
