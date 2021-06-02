@@ -39,4 +39,5 @@
     <string name="hint_new_password">New password</string>
     <string name="hint_old_password">Previous password</string>
     <string name="hint_email">Email</string>
+    <string name="no_title">Sin título</string>
 </resources>

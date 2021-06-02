@@ -2,9 +2,9 @@ package com.jeva.jeva.home.tabs
 
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.*
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -12,6 +12,7 @@ import android.widget.Space
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -88,29 +89,37 @@ class MyRoutesFragment : Fragment(), Serializable {
     private fun addRoutesButtons(btnContainer: LinearLayout) {
         db.getCurrentUserRoutes { routes ->
             routes?.forEach { route ->
+                val routeTitle = route["title"] as String
+                val routeDescription = route["description"] as String
 
-                val nameRoute = route["title"] as String
                 val inflater = view?.context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-                val cardView : CardView = inflater.inflate(R.layout.popup_cardview_route, null) as CardView
-                val textito : TextView = cardView.findViewById(R.id.popupCardViewTitle)
-                var routeImage : ImageView = cardView.findViewById(R.id.popupCardViewImage)
-                val espacio = Space(context)
+                val card : CardView = inflater.inflate(R.layout.cardview_route, null) as CardView
+                var cardImg : ImageView = card.findViewById(R.id.popupCardViewImage)
+                val cardTitle : TextView = card.findViewById(R.id.popupCardViewTitle)
+                val cardDescription : TextView = card.findViewById(R.id.popupCardViewDescription)
+                val cardLinks : LinearLayout = card.findViewById(R.id.popupCardViewLinks)
+                val space = Space(context)
 
+                setImageFromDB(route["id"] as String, cardImg)
+                cardTitle.text = if (routeTitle != "") routeTitle else getString(R.string.no_title)
 
-                setImageFromDB(route["id"] as String, routeImage)
-                textito.text = nameRoute//routeData["description"] as String
+                if (routeDescription != "") {
+                    cardDescription.text = routeDescription
+                }   else {
+                    cardDescription.visibility = View.GONE
+                }
 
-                cardView.setOnClickListener{
+                card.setOnClickListener{
                     val intent = Intent(context, ShowRouteActivity :: class.java).apply {
                         putExtra("routeData",  route as Serializable)
                     }
                     startActivity(intent)
                 }
 
-                espacio.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 60)
+                space.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 60)
 
-                btnContainer.addView(cardView)
-                btnContainer.addView(espacio)
+                btnContainer.addView(card)
+//                btnContainer.addView(space)
 
             }
         }
@@ -126,7 +135,6 @@ class MyRoutesFragment : Fragment(), Serializable {
         val glide = Glide.with(this).applyDefaultRequestOptions(req)
 
         view.scaleType = ImageView.ScaleType.CENTER_CROP
-        view.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,350)
 
         ref.downloadUrl
             .addOnSuccessListener { glide.load(it).into(view) }
