@@ -34,7 +34,6 @@
     <string name="dragMarkerError">Error al actualizar posición del marcador</string>
     <string name="title_change_pwd">Cambiar contraseña</string>
     <string name="title_change_email">Cambiar email</string>
-    <string name="hint_old_email">Email anterior</string>
     <string name="hint_password">Contraseña</string>
     <string name="hint_new_email">Nuevo email</string>
     <string name="button_change">cambiar</string>
@@ -53,7 +52,7 @@
     <string name="password_reset_sent">Email de recuperación enviado</string>
     <string name="not_valid_newEmail">Introduce un email nuevo válido</string>
     <string name="user_data_updated">Los datos del usuario han sido actualizados</string>
-    <string name="invalid_credentials">Credenciales incorrectas</string>
     <string name="account_disabled_or_deleted">La cuenta ha sido deshabilitada o eliminada</string>
     <string name="show_route_details">"Ver en detalle"</string>
+    <string name="no_internet_connection">No hay conexión</string>
 </resources>

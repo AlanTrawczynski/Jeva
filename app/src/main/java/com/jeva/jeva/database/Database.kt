@@ -16,6 +16,7 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import id.zelory.compressor.Compressor
 import java.io.File
+import java.net.InetAddress
 import java.util.*
 
 class Database {
@@ -46,73 +47,73 @@ class Database {
 
 //    USERS
 //    Update user data
-    enum class UpdateUserEmailStatus { SERVER_FAIL, INVALID_CREDENTIALS, ACCOUNT_DISABLED_OR_DELETED, EMAIL_ALREADY_IN_USE, OK }
-    fun updateUserEmail(newEmail: String, oldEmail: String, password: String, callback: (UpdateUserEmailStatus) -> Unit) {
+    enum class UpdateUserEmailStatus { NO_INTERNET_CONNECTION, INCCORRECT_PASSWORD, ACCOUNT_DISABLED_OR_DELETED, EMAIL_ALREADY_IN_USE, OK }
+    fun updateUserEmail(newEmail: String, password: String, callback: (UpdateUserEmailStatus) -> Unit) {
         val user = getCurrentUser()
 
-        user.reauthenticate(EmailAuthProvider.getCredential(oldEmail, password))
-            .addOnCompleteListener { reauthTask ->
-                if (reauthTask.isSuccessful) {
-                    user.updateEmail(newEmail)
-                        .addOnCompleteListener { emailTask ->
-                            if (emailTask.isSuccessful) {
-                                callback(UpdateUserEmailStatus.OK)
-                            }
-                            else {
-                                try {
-                                    throw emailTask.exception!!
+        user.email?.let { email ->
+            user.reauthenticate(EmailAuthProvider.getCredential(email, password))
+                .addOnCompleteListener { reauthTask ->
+                    if (reauthTask.isSuccessful) {
+                        user.updateEmail(newEmail)
+                            .addOnCompleteListener { emailTask ->
+                                if (emailTask.isSuccessful) {
+                                    callback(UpdateUserEmailStatus.OK)
                                 }
-                                catch (_: FirebaseAuthUserCollisionException) {
-                                    callback(UpdateUserEmailStatus.EMAIL_ALREADY_IN_USE)
+                                else {
+                                    try {
+                                        throw emailTask.exception!!
+                                    }
+                                    catch (_: FirebaseAuthUserCollisionException) {
+                                        callback(UpdateUserEmailStatus.EMAIL_ALREADY_IN_USE)
+                                    }
                                 }
                             }
+                    }
+                    else {
+                        try {
+                            throw reauthTask.exception!!
                         }
-                        .addOnFailureListener { callback(UpdateUserEmailStatus.SERVER_FAIL) }
-                }
-                else {
-                    try {
-                        throw reauthTask.exception!!
-                    }
-                    catch (_: FirebaseAuthInvalidCredentialsException) {
-                        callback(UpdateUserEmailStatus.INVALID_CREDENTIALS)
-                    }
-                    catch (_: FirebaseAuthInvalidUserException) {
-                        callback(UpdateUserEmailStatus.ACCOUNT_DISABLED_OR_DELETED)
+                        catch (_: FirebaseAuthInvalidCredentialsException) {
+                            callback(UpdateUserEmailStatus.INCCORRECT_PASSWORD)
+                        }
+                        catch (_: FirebaseAuthInvalidUserException) {
+                            callback(UpdateUserEmailStatus.ACCOUNT_DISABLED_OR_DELETED)
+                        }
                     }
                 }
-            }
-            .addOnFailureListener { callback(UpdateUserEmailStatus.SERVER_FAIL) }
+        }
     }
 
 
-    enum class UpdateUserPasswordStatus { SERVER_FAIL, INVALID_CREDENTIALS, ACCOUNT_DISABLED_OR_DELETED, OK }
-    fun updateUserPassword(newPassword: String, email: String, oldPassword: String, callback: (UpdateUserPasswordStatus) -> Unit) {
+    enum class UpdateUserPasswordStatus { NO_INTERNET_CONNECTION, INCCORRECT_PASSWORD, ACCOUNT_DISABLED_OR_DELETED, OK }
+    fun updateUserPassword(newPassword: String, oldPassword: String, callback: (UpdateUserPasswordStatus) -> Unit) {
         val user = getCurrentUser()
 
-        user.reauthenticate(EmailAuthProvider.getCredential(email, oldPassword))
-            .addOnCompleteListener { reauthTask ->
-                if (reauthTask.isSuccessful) {
-                    user.updatePassword(newPassword)
-                        .addOnCompleteListener { pwdTask ->
-                            if (pwdTask.isSuccessful) {
-                                callback(UpdateUserPasswordStatus.OK)
+        user.email?.let { email ->
+            user.reauthenticate(EmailAuthProvider.getCredential(email, oldPassword))
+                .addOnCompleteListener { reauthTask ->
+                    if (reauthTask.isSuccessful) {
+                        user.updatePassword(newPassword)
+                            .addOnCompleteListener { pwdTask ->
+                                if (pwdTask.isSuccessful) {
+                                    callback(UpdateUserPasswordStatus.OK)
+                                }
                             }
+                    }
+                    else {
+                        try {
+                            throw reauthTask.exception!!
                         }
-                        .addOnFailureListener { callback(UpdateUserPasswordStatus.SERVER_FAIL) }
-                }
-                else {
-                    try {
-                        throw reauthTask.exception!!
-                    }
-                    catch (_: FirebaseAuthInvalidCredentialsException) {
-                        callback(UpdateUserPasswordStatus.INVALID_CREDENTIALS)
-                    }
-                    catch (_: FirebaseAuthInvalidUserException) {
-                        callback(UpdateUserPasswordStatus.ACCOUNT_DISABLED_OR_DELETED)
+                        catch (_: FirebaseAuthInvalidCredentialsException) {
+                            callback(UpdateUserPasswordStatus.INCCORRECT_PASSWORD)
+                        }
+                        catch (_: FirebaseAuthInvalidUserException) {
+                            callback(UpdateUserPasswordStatus.ACCOUNT_DISABLED_OR_DELETED)
+                        }
                     }
                 }
-            }
-            .addOnFailureListener { callback(UpdateUserPasswordStatus.SERVER_FAIL) }
+        }
     }
 
 

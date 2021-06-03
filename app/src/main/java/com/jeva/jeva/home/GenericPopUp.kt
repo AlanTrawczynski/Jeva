@@ -31,26 +31,21 @@ class GenericPopUp {
     }
 
 
-    //TODO("comprobaciones de datos")
     private fun getApplyBtnFunction(id : Int, popUpView : View, popupWindow: PopupWindow, context: Context) : () -> Unit {
         when(id) {
             R.layout.popup_change_email -> {
                 return {
-                    val oldEmail = popUpView.findViewById<EditText>(R.id.changeemailOldEmail).text.toString()
                     val newEmail = popUpView.findViewById<EditText>(R.id.changeemailNewEmail).text.toString()
                     val pwd = popUpView.findViewById<EditText>(R.id.changepemailPwd).text.toString()
 
-                    if (!AuthUtils.isValidEmail(oldEmail)) {
-                        showToast(R.string.not_valid_email, context)
-                    }
-                    else if (!AuthUtils.isValidEmail(newEmail)) {
+                    if (!AuthUtils.isValidEmail(newEmail)) {
                         showToast(R.string.not_valid_newEmail, context)
                     }
                     else if (!AuthUtils.isValidPassword(pwd)) {
                         showToast(R.string.not_valid_password, context)
                     }
                     else {
-                        db.updateUserEmail(newEmail, oldEmail,pwd) {
+                        db.updateUserEmail(newEmail, pwd) {
                             when(it) {
                                 Database.UpdateUserEmailStatus.OK -> {
                                     popupWindow.dismiss()
@@ -62,11 +57,11 @@ class GenericPopUp {
                                 Database.UpdateUserEmailStatus.EMAIL_ALREADY_IN_USE -> {
                                     showToast(R.string.email_in_use, context)
                                 }
-                                Database.UpdateUserEmailStatus.INVALID_CREDENTIALS -> {
-                                    showToast(R.string.invalid_credentials, context)
+                                Database.UpdateUserEmailStatus.INCCORRECT_PASSWORD -> {
+                                    showToast(R.string.incorrect_password, context)
                                 }
-                                Database.UpdateUserEmailStatus.SERVER_FAIL -> {
-                                    showToast(R.string.error_occurred, context)
+                                Database.UpdateUserEmailStatus.NO_INTERNET_CONNECTION -> {
+                                    showToast(R.string.no_internet_connection, context)
                                 }
                             }
                         }
@@ -76,22 +71,18 @@ class GenericPopUp {
 
             R.layout.popup_change_pwd -> {
                 return {
-                    val email = popUpView.findViewById<EditText>(R.id.changepwdEmail).text.toString()
                     val oldPwd = popUpView.findViewById<EditText>(R.id.changepwdOldPwd).text.toString()
                     val newPwd = popUpView.findViewById<EditText>(R.id.changepwdNewPwd).text.toString()
                     val newPwdRepeat = popUpView.findViewById<EditText>(R.id.changepwdNewPwdRepeat).text.toString()
 
-                    if (!AuthUtils.isValidEmail(email)) {
-                        showToast(R.string.not_valid_email, context)
-                    }
-                    else if (!AuthUtils.isValidPassword(oldPwd) || !AuthUtils.isValidPassword(newPwd)) {
+                    if (!AuthUtils.isValidPassword(oldPwd) || !AuthUtils.isValidPassword(newPwd)) {
                         showToast(R.string.not_valid_password, context)
                     }
                     else if (newPwd != newPwdRepeat) {
                         showToast(R.string.passwords_dont_match, context)
                     }
                     else {
-                        db.updateUserPassword(newPwd, email, oldPwd) {
+                        db.updateUserPassword(newPwd, oldPwd) {
                             when(it) {
                                 Database.UpdateUserPasswordStatus.OK -> {
                                     popupWindow.dismiss()
@@ -100,11 +91,11 @@ class GenericPopUp {
                                 Database.UpdateUserPasswordStatus.ACCOUNT_DISABLED_OR_DELETED -> {
                                     showToast(R.string.account_disabled_or_deleted, context)
                                 }
-                                Database.UpdateUserPasswordStatus.INVALID_CREDENTIALS -> {
-                                    showToast(R.string.invalid_credentials, context)
+                                Database.UpdateUserPasswordStatus.INCCORRECT_PASSWORD -> {
+                                    showToast(R.string.incorrect_password, context)
                                 }
-                                Database.UpdateUserPasswordStatus.SERVER_FAIL -> {
-                                    showToast(R.string.error_occurred, context)
+                                Database.UpdateUserPasswordStatus.NO_INTERNET_CONNECTION -> {
+                                    showToast(R.string.no_internet_connection, context)
                                 }
                             }
                         }
