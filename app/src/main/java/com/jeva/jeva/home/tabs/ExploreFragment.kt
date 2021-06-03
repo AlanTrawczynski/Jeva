@@ -105,6 +105,7 @@ class ExploreFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         nMap = googleMap
+        nMap.uiSettings.isRotateGesturesEnabled = false
         firstExecution = false
         nMap.moveCamera(CameraUpdateFactory.newLatLngZoom(HomeActivity.lastMapPosition, HomeActivity.lastMapZoom))
         iconGenerator = IconGenerator(activity)

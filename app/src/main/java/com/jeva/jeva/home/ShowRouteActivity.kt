@@ -81,6 +81,7 @@ class ShowRouteActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         ready = true
         nMap = googleMap
+        nMap.uiSettings.isRotateGesturesEnabled = false
         iconGenerator = IconGenerator(this)
         iconGenerator.setStyle(IconGenerator.STYLE_BLUE)
         showRoute()

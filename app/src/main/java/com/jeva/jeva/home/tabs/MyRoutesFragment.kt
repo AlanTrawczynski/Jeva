@@ -5,10 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.Space
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
@@ -92,6 +89,8 @@ class MyRoutesFragment : Fragment(), Serializable {
 
                 val inflater = view?.context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 val card : CardView = inflater.inflate(R.layout.cardview_route, null) as CardView
+                val showBtn: TextView = card.findViewById(R.id.popupCardViewLinkShow)
+                val editBtn: TextView = card.findViewById(R.id.popupCardViewLinkEdit)
                 val cardImg : ImageView = card.findViewById(R.id.popupCardViewImage)
                 val cardTitle : TextView = card.findViewById(R.id.popupCardViewTitle)
                 val cardDescription : TextView = card.findViewById(R.id.popupCardViewDescription)
@@ -106,9 +105,17 @@ class MyRoutesFragment : Fragment(), Serializable {
                     cardDescription.visibility = View.GONE
                 }
 
-                card.setOnClickListener{
-                    val intent = Intent(context, ShowRouteActivity :: class.java).apply {
-                        putExtra("routeData",  route as Serializable)
+                showBtn.setOnClickListener {
+                    val intent = Intent(context, ShowRouteActivity:: class.java).apply {
+                        putExtra("routeData", route as Serializable)
+                    }
+                    startActivity(intent)
+                }
+
+                editBtn.setOnClickListener {
+                    val intent = Intent(context, EditRouteActivity:: class.java).apply {
+                        putExtra("routeData", route as Serializable)
+                        putExtra("newRoute", false)
                     }
                     startActivity(intent)
                 }
@@ -116,7 +123,6 @@ class MyRoutesFragment : Fragment(), Serializable {
                 space.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 60)
 
                 btnContainer.addView(card)
-//                btnContainer.addView(space)
 
             }
         }

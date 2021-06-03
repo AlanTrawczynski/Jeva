@@ -152,7 +152,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
                 initialZoom = HomeActivity.lastMapZoom
             }
             else{
-                initialZoom = intent.getFloatExtra("mapZoom", 10f)
+                initialZoom = intent.getFloatExtra("mapZoom", 5f)
                 initialPosition = mapToLatLng(routeData["position"] as HashMap<String,Any>)
             }
 
@@ -182,6 +182,7 @@ class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         nMap = googleMap
+        nMap.uiSettings.isRotateGesturesEnabled = false
         iconGenerator = IconGenerator(this)
         iconGenerator.setStyle(IconGenerator.STYLE_BLUE)
 
