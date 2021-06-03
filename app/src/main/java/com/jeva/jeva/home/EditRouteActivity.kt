@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -21,7 +20,6 @@ import com.jeva.jeva.images.dataPointMenu.Companion.context
 import com.jeva.jeva.images.routesPopUp
 import kotlinx.android.synthetic.main.activity_edit_route.*
 import java.util.*
-import kotlin.collections.HashMap
 
 class EditRouteActivity : AppCompatActivity(), OnMapReadyCallback {
 

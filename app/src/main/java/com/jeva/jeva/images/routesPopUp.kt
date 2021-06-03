@@ -91,7 +91,7 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
             notImageCase = R.drawable.error_image
         }
 
-        loadRouteImageFromDB(notImageCase)
+        loadRouteImageFromDB(notImageCase, editable)
 
         if (editable) {
             imagen.setOnClickListener {
@@ -120,7 +120,7 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
         }
     }
 
-    private fun loadRouteImageFromDB(placeholder: Int) {
+    private fun loadRouteImageFromDB(placeholder: Int, editable: Boolean) {
         val ref: StorageReference = db.getRoutePhotoRef(routeId)
 
         ref.downloadUrl.addOnSuccessListener {
@@ -128,8 +128,10 @@ class routesPopUp(title: String, description: String, routeId: String, activity:
             imagen.cutImage()
         }
         .addOnFailureListener {
-            glide.load(placeholder).into(imagen)
-            imagen.cutImage()
+            if (editable) {
+                glide.load(placeholder).into(imagen)
+                imagen.cutImage()
+            }
         }
     }
 

@@ -25,6 +25,7 @@ class MyRoutesFragment : Fragment(), Serializable {
     private val db : Database = Database()
     private lateinit var root : View
     private var recharge = false
+    private var creatingNewRoute = false
 
 
 
@@ -54,17 +55,19 @@ class MyRoutesFragment : Fragment(), Serializable {
         super.onViewCreated(view, savedInstanceState)
 
         myRoutesBtnNewRoute.setOnClickListener {
-            db.newRoute(listOf()){
-                id ->
-                if (id != null){
-                    val intent = Intent(context, EditRouteActivity :: class.java).apply {
-                        putExtra("newRoute", true)
-                        putExtra("idRoute", id)
+            if (!creatingNewRoute) {
+                creatingNewRoute = true
+                db.newRoute(listOf()) { id ->
+                    if (id != null) {
+                        val intent = Intent(context, EditRouteActivity :: class.java).apply {
+                            putExtra("newRoute", true)
+                            putExtra("idRoute", id)
+                        }
+                        startActivity(intent)
                     }
-                    startActivity(intent)
-                }
-                else{
-                    Log.e("ErrorDB", "Ha habido error en la subida")
+                    else {
+                        Toast.makeText(context, R.string.error_occurred, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -78,6 +81,12 @@ class MyRoutesFragment : Fragment(), Serializable {
             buttonContainer.removeAllViews()
         }
         addRoutesButtons(buttonContainer)
+    }
+
+
+    override fun onStop() {
+        super.onStop()
+        creatingNewRoute = false
     }
 
 
