@@ -24,6 +24,12 @@ class SettingsMenu {
 
         fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
             inflater.inflate(R.menu.settings_menu,menu)
+            if(Locale.getDefault().language == "es"){
+                menu.findItem(R.id.set_Spanish).isChecked = true
+            }else{
+                menu.findItem(R.id.set_English).isChecked = true
+
+            }
         }
 
 

@@ -80,7 +80,7 @@
                 android:gravity="center"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Editar"
+                android:text="@string/cardview_edit"
                 android:textColor="@color/jeva_blue"
                 android:textSize="18sp" />
 
@@ -94,7 +94,7 @@
                 android:gravity="center"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Ver"
+                android:text="@string/cardview_see"
                 android:textSize="18sp" />
 
         </LinearLayout>

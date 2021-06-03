@@ -5,6 +5,8 @@
     <string name="title_myroutes">My routes</string>
     <string name="title_activity_show_route">Route details</string>
     <string name="title_activity_edit_route">Route edition</string>
+    <string name="cardview_edit">Edit</string>
+    <string name="cardview_see">See</string>
     <string name="change_email">Change Email</string>
     <string name="change_password">Change Password</string>
     <string name="sign_out">Sign Out</string>
@@ -28,6 +30,7 @@
     <string name="updateMarkerError">Failed to update the marker</string>
     <string name="deleteMarkerError">Failed to delete the marker</string>
     <string name="createMarkerError">Failed to create the marker</string>
+    <string name="getNearbyRoutesError">Error charging nearby routes</string>
     <string name="dragMarkerError">Error updating marker position</string>
     <string name="title_change_pwd">Change password</string>
     <string name="title_change_email">Change email</string>
@@ -39,5 +42,6 @@
     <string name="hint_new_password">New password</string>
     <string name="hint_old_password">Previous password</string>
     <string name="hint_email">Email</string>
-    <string name="no_title">Sin título</string>
+    <string name="no_title">Without title</string>
+    <string name="see_route_detail">"See details"</string>
 </resources>

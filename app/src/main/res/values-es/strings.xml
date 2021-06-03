@@ -5,6 +5,8 @@
     <string name="title_myroutes">Mis Rutas</string>
     <string name="title_activity_show_route">Ruta en detalle</string>
     <string name="title_activity_edit_route">Edición de ruta</string>
+    <string name="cardview_edit">Editar</string>
+    <string name="cardview_see">Ver</string>
     <string name="change_email">Cambiar email</string>
     <string name="change_password">Cambiar contraseña</string>
     <string name="sign_out">Cerrar sesión</string>
@@ -41,4 +43,5 @@
     <string name="hint_old_password">Contraseña anterior</string>
     <string name="hint_email">Email</string>
     <string name="no_title">Sin título</string>
+    <string name="see_route_detail">"Ver en detalle"</string>
 </resources>
