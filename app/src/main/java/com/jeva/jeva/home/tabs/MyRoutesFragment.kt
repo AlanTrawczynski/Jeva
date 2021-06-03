@@ -2,7 +2,6 @@ package com.jeva.jeva.home.tabs
 
 import android.content.Context
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -12,7 +11,6 @@ import android.widget.Space
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -94,17 +92,16 @@ class MyRoutesFragment : Fragment(), Serializable {
 
                 val inflater = view?.context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
                 val card : CardView = inflater.inflate(R.layout.cardview_route, null) as CardView
-                var cardImg : ImageView = card.findViewById(R.id.popupCardViewImage)
+                val cardImg : ImageView = card.findViewById(R.id.popupCardViewImage)
                 val cardTitle : TextView = card.findViewById(R.id.popupCardViewTitle)
                 val cardDescription : TextView = card.findViewById(R.id.popupCardViewDescription)
-                val cardLinks : LinearLayout = card.findViewById(R.id.popupCardViewLinks)
                 val space = Space(context)
 
                 setImageFromDB(route["id"] as String, cardImg)
                 cardTitle.text = if (routeTitle != "") routeTitle else getString(R.string.no_title)
 
                 if (routeDescription != "") {
-                    cardDescription.text = routeDescription
+                    cardDescription.text = routeDescription.replace(System.lineSeparator(), " ")
                 }   else {
                     cardDescription.visibility = View.GONE
                 }

@@ -2,6 +2,7 @@ package com.jeva.jeva.database
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.core.net.toUri
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
@@ -221,7 +222,7 @@ class Database {
     fun updateRoute(routeId: String, markers: List<Marker>? = null, title: String? = null, description: String? = null, callback: (Boolean) -> Unit) {
         val data = mutableMapOf<String, Any>()
         title?.let { data["title"] = it }
-        description?.let { data["description"] = it }
+        description?.let { data["description"] = removeMultipleSpaces(it) }
         markers?.let {
             data["markers"] = it.map { marker -> markerToMap(marker) }
             data["position"] = if (markers.isEmpty()) FieldValue.delete() else mapOf("lat" to markers[0].position.latitude, "lng" to markers[0].position.longitude)
@@ -240,6 +241,12 @@ class Database {
             "lng" to marker.position.longitude,
             "tag" to marker.tag!!
         )
+    }
+
+
+    private fun removeMultipleSpaces(str: String): String {
+        val lineBreak = System.lineSeparator()
+        return str.replace("${lineBreak}+".toRegex(), lineBreak).replace("[ \t]+".toRegex(), " ").trim()
     }
 
 
