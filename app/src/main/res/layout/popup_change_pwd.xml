@@ -44,14 +44,14 @@
                 android:layout_height="wrap_content"
                 android:autofillHints="email"
                 android:hint="@string/hint_email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textNoSuggestions|textEmailAddress" />
 
             <EditText
                 android:id="@+id/changepemailPwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_old_password"
-                android:inputType="textPassword"
+                android:inputType="textNoSuggestions|textPassword"
                 android:autofillHints="password" />
 
             <EditText
@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_new_password"
-                android:inputType="textPassword"
+                android:inputType="textNoSuggestions|textPassword"
                 android:autofillHints="password" />
 
             <EditText
@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_repeat_new_password"
-                android:inputType="textPassword"
+                android:inputType="textNoSuggestions|textPassword"
                 android:autofillHints="password" />
 
             <LinearLayout
