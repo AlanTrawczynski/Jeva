@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.Marker
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -223,9 +224,7 @@ class Database {
         description?.let { data["description"] = it }
         markers?.let {
             data["markers"] = it.map { marker -> markerToMap(marker) }
-            if (markers.isNotEmpty()) {
-                data["position"] = mapOf("lat" to markers[0].position.latitude, "lng" to markers[0].position.longitude)
-            }
+            data["position"] = if (markers.isEmpty()) FieldValue.delete() else mapOf("lat" to markers[0].position.latitude, "lng" to markers[0].position.longitude)
         }
 
         fs.collection("routes").document(routeId).update(data)
