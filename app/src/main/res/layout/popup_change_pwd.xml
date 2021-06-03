@@ -47,12 +47,12 @@
                 android:inputType="textNoSuggestions|textEmailAddress" />
 
             <EditText
-                android:id="@+id/changepemailPwd"
+                android:id="@+id/changepwdOldPwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints="password"
                 android:hint="@string/hint_old_password"
-                android:inputType="textNoSuggestions|textPassword"
-                android:autofillHints="password" />
+                android:inputType="textNoSuggestions|textPassword" />
 
             <EditText
                 android:id="@+id/changepwdNewPwd"

@@ -57,20 +57,17 @@ class SettingsMenu {
                 }
 
                 R.id.change_email -> {
-                    popup.showPopupWindow(view, R.layout.popup_change_email) {
-                        Log.d("ei", "email")
-                    }
+                    popup.showPopupWindow(view, R.layout.popup_change_email)
                 }
 
                 R.id.change_pwd -> {
-                    popup.showPopupWindow(view, R.layout.popup_change_pwd) {
-                        Log.d("ei", "pwd")
-                    }
+                    popup.showPopupWindow(view, R.layout.popup_change_pwd)
                 }
             }
         }
 
-        fun setLanguageForApp(languageToLoad: String, context: Context, activity: Activity) {
+
+        private fun setLanguageForApp(languageToLoad: String, context: Context, activity: Activity) {
             val locale = Locale(languageToLoad)
             Locale.setDefault(locale)
 
@@ -90,4 +87,5 @@ class SettingsMenu {
         }
 
     }
+
 }

@@ -31,8 +31,7 @@ class ForgotpwdActivity : AppCompatActivity() {
                 resetPassword(email)
             }
             else {
-                Log.e("forgotpwdError", "Email no válido")
-                AuthUtils.authToast("Introduce un email válido", applicationContext)
+                AuthUtils.authToast(R.string.not_valid_email, applicationContext)
             }
         }
     }
@@ -41,8 +40,7 @@ class ForgotpwdActivity : AppCompatActivity() {
     private fun resetPassword(email: String) {
         auth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Log.i("forgotPwd", "Email sent.")
-                AuthUtils.authToast("Email de recuperación enviado", applicationContext)
+                AuthUtils.authToast(R.string.password_reset_sent, applicationContext)
                 finish()
             }
             else {
@@ -50,12 +48,10 @@ class ForgotpwdActivity : AppCompatActivity() {
                     throw task.exception!!
                 }
                 catch (_: FirebaseAuthInvalidUserException) {
-                    Log.d("forgotpwdError", "Email no registrado")
-                    AuthUtils.authToast("El email no se encuentra registrado", applicationContext)
+                    AuthUtils.authToast(R.string.email_not_registered, applicationContext)
                 }
                 catch (e: Exception) {
-                    Log.d("forgotpwdError", "Se ha producido un error: $e")
-                    AuthUtils.authToast("Ha ocurrido un error, inténtelo de nuevo", applicationContext)
+                    AuthUtils.authToast(R.string.error_occurred, applicationContext)
                 }
             }
         }

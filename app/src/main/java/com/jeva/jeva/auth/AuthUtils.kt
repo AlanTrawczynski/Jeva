@@ -15,8 +15,8 @@ class AuthUtils {
             return pwd.length >= 6
         }
 
-        fun authToast(message: CharSequence, c: Context) {
-            Toast.makeText(c, message, Toast.LENGTH_SHORT).show()
+        fun authToast(rId: Int, c: Context) {
+            Toast.makeText(c, rId, Toast.LENGTH_SHORT).show()
         }
 
     }

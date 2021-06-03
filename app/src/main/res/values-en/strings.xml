@@ -6,7 +6,7 @@
     <string name="title_activity_show_route">Route details</string>
     <string name="title_activity_edit_route">Route edition</string>
     <string name="cardview_edit">Edit</string>
-    <string name="cardview_see">See</string>
+    <string name="cardview_see">Show</string>
     <string name="change_email">Change Email</string>
     <string name="change_password">Change Password</string>
     <string name="sign_out">Sign Out</string>
@@ -30,7 +30,7 @@
     <string name="updateMarkerError">Failed to update the marker</string>
     <string name="deleteMarkerError">Failed to delete the marker</string>
     <string name="createMarkerError">Failed to create the marker</string>
-    <string name="getNearbyRoutesError">Error charging nearby routes</string>
+    <string name="getNearbyRoutesError">Error loading nearby routes</string>
     <string name="dragMarkerError">Error updating marker position</string>
     <string name="title_change_pwd">Change password</string>
     <string name="title_change_email">Change email</string>
@@ -42,6 +42,18 @@
     <string name="hint_new_password">New password</string>
     <string name="hint_old_password">Previous password</string>
     <string name="hint_email">Email</string>
-    <string name="no_title">Without title</string>
-    <string name="see_route_detail">"See details"</string>
+    <string name="no_title">No title</string>
+    <string name="not_valid_email">Enter a valid email</string>
+    <string name="not_valid_password">Password must have at least 6 characters</string>
+    <string name="email_not_registered">No account associated with the email</string>
+    <string name="incorrect_password">Entered password is incorrect</string>
+    <string name="error_occurred">An error occurred, please try again</string>
+    <string name="passwords_dont_match">Passwords do not match</string>
+    <string name="email_in_use">Email already in use</string>
+    <string name="password_reset_sent">Password reset email sent</string>
+    <string name="not_valid_newEmail">Enter a valid new email</string>
+    <string name="user_data_updated">User data has been updated</string>
+    <string name="invalid_credentials">Invalid credentials</string>
+    <string name="account_disabled_or_deleted">Your account has been disabled or deleted</string>
+    <string name="show_route_details">Show in detail</string>
 </resources>

@@ -2,7 +2,6 @@ package com.jeva.jeva.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.ktx.auth
@@ -14,7 +13,6 @@ import kotlinx.android.synthetic.main.activity_signup.*
 class SignupActivity : AppCompatActivity() {
 
     private val auth = Firebase.auth
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,13 +32,13 @@ class SignupActivity : AppCompatActivity() {
             val pwd2 = signupPasswordRepeat.text.toString()
 
             if (!AuthUtils.isValidEmail(email)) {
-                AuthUtils.authToast("Introduce un email válido", applicationContext)
+                AuthUtils.authToast(R.string.not_valid_email, applicationContext)
             }
             else if (!AuthUtils.isValidPassword(pwd1)) {
-                AuthUtils.authToast("La contraseña debe de tener al menos 6 caracteres", applicationContext)
+                AuthUtils.authToast(R.string.not_valid_password, applicationContext)
             }
             else if (pwd1 != pwd2) {
-                AuthUtils.authToast("Las contraseñas no coinciden", applicationContext)
+                AuthUtils.authToast(R.string.passwords_dont_match, applicationContext)
             }
             else {
                 signUp(email, pwd1)
@@ -54,18 +52,19 @@ class SignupActivity : AppCompatActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     startActivity(Intent(this, HomeActivity::class.java))
+                    finish()
                 }
                 else {
                     try {
                         throw task.exception!!
                     }
                     catch (_: FirebaseAuthUserCollisionException) {
-                        AuthUtils.authToast("El email ya se encuentra en uso", applicationContext)
+                        AuthUtils.authToast(R.string.email_in_use, applicationContext)
                     }
                 }
             }
             .addOnFailureListener {
-                AuthUtils.authToast("Ha ocurrido un error, inténtelo de nuevo", applicationContext)
+                AuthUtils.authToast(R.string.error_occurred, applicationContext)
             }
     }
 

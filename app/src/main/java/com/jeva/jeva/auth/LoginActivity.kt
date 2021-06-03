@@ -2,15 +2,14 @@ package com.jeva.jeva.auth
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.jeva.jeva.R
 import com.jeva.jeva.database.Database
 import com.jeva.jeva.home.HomeActivity
-import com.jeva.jeva.R
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -43,12 +42,10 @@ class LoginActivity : AppCompatActivity() {
             val pwd = loginPassword.text.toString()
 
             if (!AuthUtils.isValidEmail(email)) {
-                Log.e("loginError", "Email no válido")
-                AuthUtils.authToast("Introduce un email válido", applicationContext)
+                AuthUtils.authToast(R.string.not_valid_email, applicationContext)
             }
             else if (!AuthUtils.isValidPassword(pwd)) {
-                Log.e("loginError", "Contraseña no válida")
-                AuthUtils.authToast("La contraseña debe de tener al menos 6 caracteres", applicationContext)
+                AuthUtils.authToast(R.string.not_valid_password, applicationContext)
             }
             else {
                 logIn(email, pwd)
@@ -67,16 +64,13 @@ class LoginActivity : AppCompatActivity() {
                     throw task.exception!!
                 }
                 catch (_: FirebaseAuthInvalidUserException) {
-                    Log.e("loginError", "Usuario no registrado o deshabilitado")
-                    AuthUtils.authToast("El email no se encuentra registrado", applicationContext)
+                    AuthUtils.authToast(R.string.email_not_registered, applicationContext)
                 }
                 catch (_: FirebaseAuthInvalidCredentialsException) {
-                    Log.e("loginError", "Contraseña incorrecta")
-                    AuthUtils.authToast("Contraseña incorrecta", applicationContext)
+                    AuthUtils.authToast(R.string.incorrect_password, applicationContext)
                 }
                 catch (e: Exception) {
-                    Log.e("loginError", "Se ha producido el error: $e")
-                    AuthUtils.authToast("Ha ocurrido un error, inténtelo de nuevo", applicationContext)
+                    AuthUtils.authToast(R.string.error_occurred, applicationContext)
                 }
             }
         }

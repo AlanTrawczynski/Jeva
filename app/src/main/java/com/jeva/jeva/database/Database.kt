@@ -46,7 +46,7 @@ class Database {
 
 //    USERS
 //    Update user data
-    enum class UpdateUserEmailStatus { SERVER_FAIL, INVALID_CREDENTIALS, ACCOUNT_DISABLED_OR_DELETED, EMAIL_MALFORMED, EMAIL_ALREADY_IN_USE, OK }
+    enum class UpdateUserEmailStatus { SERVER_FAIL, INVALID_CREDENTIALS, ACCOUNT_DISABLED_OR_DELETED, EMAIL_ALREADY_IN_USE, OK }
     fun updateUserEmail(newEmail: String, oldEmail: String, password: String, callback: (UpdateUserEmailStatus) -> Unit) {
         val user = getCurrentUser()
 
@@ -61,9 +61,6 @@ class Database {
                             else {
                                 try {
                                     throw emailTask.exception!!
-                                }
-                                catch (_: FirebaseAuthInvalidCredentialsException) {
-                                    callback(UpdateUserEmailStatus.EMAIL_MALFORMED)
                                 }
                                 catch (_: FirebaseAuthUserCollisionException) {
                                     callback(UpdateUserEmailStatus.EMAIL_ALREADY_IN_USE)
@@ -88,7 +85,7 @@ class Database {
     }
 
 
-    enum class UpdateUserPasswordStatus { SERVER_FAIL, INVALID_CREDENTIALS, ACCOUNT_DISABLED_OR_DELETED, PASSWORD_WEAK, OK }
+    enum class UpdateUserPasswordStatus { SERVER_FAIL, INVALID_CREDENTIALS, ACCOUNT_DISABLED_OR_DELETED, OK }
     fun updateUserPassword(newPassword: String, email: String, oldPassword: String, callback: (UpdateUserPasswordStatus) -> Unit) {
         val user = getCurrentUser()
 
@@ -99,14 +96,6 @@ class Database {
                         .addOnCompleteListener { pwdTask ->
                             if (pwdTask.isSuccessful) {
                                 callback(UpdateUserPasswordStatus.OK)
-                            }
-                            else {
-                                try {
-                                    throw pwdTask.exception!!
-                                }
-                                catch (_: FirebaseAuthWeakPasswordException) {
-                                    callback(UpdateUserPasswordStatus.PASSWORD_WEAK)
-                                }
                             }
                         }
                         .addOnFailureListener { callback(UpdateUserPasswordStatus.SERVER_FAIL) }

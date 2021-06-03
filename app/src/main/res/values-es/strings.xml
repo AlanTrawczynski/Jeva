@@ -43,5 +43,17 @@
     <string name="hint_old_password">Contraseña anterior</string>
     <string name="hint_email">Email</string>
     <string name="no_title">Sin título</string>
-    <string name="see_route_detail">"Ver en detalle"</string>
+    <string name="not_valid_email">Introduce un email válido</string>
+    <string name="not_valid_password">La contraseña debe de tener al menos 6 caracteres</string>
+    <string name="email_not_registered">El email no se encuentra registrado</string>
+    <string name="incorrect_password">Contraseña incorrecta</string>
+    <string name="error_occurred">Ha ocurrido un error, inténtelo de nuevo</string>
+    <string name="passwords_dont_match">Las contraseñas no coinciden</string>
+    <string name="email_in_use">El email ya se encuentra en uso</string>
+    <string name="password_reset_sent">Email de recuperación enviado</string>
+    <string name="not_valid_newEmail">Introduce un email nuevo válido</string>
+    <string name="user_data_updated">Los datos del usuario han sido actualizados</string>
+    <string name="invalid_credentials">Credenciales incorrectas</string>
+    <string name="account_disabled_or_deleted">La cuenta ha sido deshabilitada o eliminada</string>
+    <string name="show_route_details">"Ver en detalle"</string>
 </resources>
