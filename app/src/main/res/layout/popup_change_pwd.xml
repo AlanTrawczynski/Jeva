@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/popupBackground"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center">
+    android:layout_height="match_parent"
+    android:background="@color/transparent_black"
+    android:clickable="true"
+    android:gravity="center"
+    android:focusable="true">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        app:cardCornerRadius="5dp">
+        android:clickable="true"
+        app:cardCornerRadius="5dp"
+        app:cardUseCompatPadding="true"
+        android:focusable="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,17 +57,17 @@
                 android:id="@+id/changepwdNewPwd"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints="password"
                 android:hint="@string/hint_new_password"
-                android:inputType="textNoSuggestions|textPassword"
-                android:autofillHints="password" />
+                android:inputType="textNoSuggestions|textPassword" />
 
             <EditText
                 android:id="@+id/changepwdNewPwdRepeat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:autofillHints="password"
                 android:hint="@string/hint_repeat_new_password"
-                android:inputType="textNoSuggestions|textPassword"
-                android:autofillHints="password" />
+                android:inputType="textNoSuggestions|textPassword" />
 
             <LinearLayout
                 android:layout_width="match_parent"

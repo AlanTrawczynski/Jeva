@@ -10,4 +10,5 @@
 
     <color name="jeva_blue">#FF03A9F5</color>
     <color name="jeva_grey">#FFc2c3c9</color>
+    <color name="transparent_black">#A0000000</color>
 </resources>
