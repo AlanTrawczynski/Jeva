@@ -9,17 +9,17 @@ Para más información consultar la [presentación](readme-files/presentation.pd
 
 
 
-<div style="height:600px">
-  <img src="readme-files/auth.jpg" alt="auth">
-  <img src="readme-files/explore.jpg" alt="explore">
-  <img src="readme-files/explore-route.jpg" alt="explore route">
-  <img src="readme-files/myroutes.jpg" alt="my routes">
-  <img src="readme-files/menu.jpg" alt="menu">
-  <img src="readme-files/change-popup.jpg" alt="change popup">
-  <img src="readme-files/route-detail.jpg" alt="route">
-  <img src="readme-files/route-popup.jpg" alt="route popup">
-  <img src="readme-files/marker-popup.jpg" alt="marker popup">
-  <img src="readme-files/marker-popup-edit.jpg" alt="marker popup editing">
-  <img src="readme-files/swipe-images.jpg" alt="swipe images">
+<div>
+  <img src="readme-files/auth.jpg" alt="auth" height=600px>
+  <img src="readme-files/explore.jpg" alt="explore" height=600px>
+  <img src="readme-files/explore-route.jpg" alt="explore route" height=600px>
+  <img src="readme-files/myroutes.jpg" alt="my routes" height=600px>
+  <img src="readme-files/menu.jpg" alt="menu" height=600px>
+  <img src="readme-files/change-popup.jpg" alt="change popup" height=600px>
+  <img src="readme-files/route-detail.jpg" alt="route" height=600px>
+  <img src="readme-files/route-popup.jpg" alt="route popup" height=600px>
+  <img src="readme-files/marker-popup.jpg" alt="marker popup" height=600px>
+  <img src="readme-files/marker-popup-edit.jpg" alt="marker popup editing" height=600px>
+  <img src="readme-files/swipe-images.jpg" alt="swipe images" height=600px>
 </div>
 
